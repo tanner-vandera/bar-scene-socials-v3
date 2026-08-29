@@ -1,0 +1,3 @@
+# Prototype for client review — not the live Bar Scene Socials site.
+User-agent: *
+Disallow: /
