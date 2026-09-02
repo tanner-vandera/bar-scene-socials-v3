@@ -2,38 +2,36 @@
 
 /* ============================================================
    BAR SCENE SOCIALS — v3
-   A hand-made zine pinned to a bar wall. Torn paper, riso ink,
-   collage grids, one rust accent. Not a ticketing platform.
+   A hand-made zine pinned to a bar wall, printed loud. Black and white
+   grounds, three electric accents — orange, green, red — and nothing else.
+   Not a ticketing platform.
    ============================================================ */
 
 :root{
   color-scheme: light;
 
-  /* --- ink & paper -------------------------------------- */
-  --paper:      #F4F1EC;   /* warm off-white, the ground */
-  --paper-2:    #FEFEFB;   /* cream, cards and stickers */
-  --ink:        #24291F;   /* warm near-black, never #000 */
-  --ink-2:      #323E33;
-  --stone:      #969182;
+  /* --- ground: black and white only ---------------------- */
+  --paper:      #F8F8F6;   /* near-white — never pure #fff as a ground */
+  --paper-2:    #FFFFFF;   /* true white, for cards sitting on the ground */
+  --paper-3:    #EFEFEC;   /* the one light grey, for a quiet band */
+  --ink:        #111110;   /* near-black — never pure #000 */
+  --ink-2:      #1F1F1D;
+  --stone:      #8A8A85;
 
-  /* --- brand ------------------------------------------- */
-  --rust:       #C0512F;   /* THE accent. CTAs, tickets, marks. */
-  --rust-deep:  #823F2C;
-  --forest:     #38654A;   /* secondary — Christmas / Shamrock seasons */
-  --blush:      #F9D7D6;
-  --riso-blue:  #CFE3EE;   /* second spot colour, misregistered */
+  /* --- accents: orange, green, red. Nothing else. --------- */
+  --orange:     #FF4D14;   /* THE accent — CTAs, marks, links, live state */
+  --orange-d:   #C93A08;   /* same hue, passes AA at label sizes on white */
+  --orange-lt:  #FF9152;   /* ticket stock */
+  --green:      #00C24E;   /* electric — dark grounds and large elements */
+  --green-d:    #00873A;   /* green that survives on white */
+  --red:        #E8202A;
+  --red-d:      #B8141C;
 
-  /* --- after-dark, used exactly once -------------------- */
-  --night-1:    #EB5E35;
-  --night-2:    #C83668;
-  --night-3:    #2F1B42;
-  --night-lt:   #F2764F;   /* small text on ink */
-
-  /* --- functional -------------------------------------- */
+  /* --- functional ---------------------------------------- */
   --text:       var(--ink);
-  --text-2:     rgba(36,41,31,.78);
-  --text-3:     rgba(36,41,31,.72);
-  --rule:       rgba(36,41,31,.16);
+  --text-2:     rgba(17,17,16,.74);
+  --text-3:     rgba(17,17,16,.64);
+  --rule:       rgba(17,17,16,.14);
   --rule-hard:  var(--ink);
 
   /* --- type -------------------------------------------- */
@@ -46,6 +44,7 @@
   --quart: cubic-bezier(.25,1,.5,1);
 
   --shell: 1360px;
+  --hdr-h: 65px;
 }
 
 *{box-sizing:border-box}
@@ -54,13 +53,12 @@ body{
   margin:0; background:var(--paper); color:var(--text);
   font:400 17px/1.65 var(--body);
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
 }
-::selection{background:var(--rust); color:var(--paper-2)}
+::selection{background:var(--orange); color:var(--paper-2)}
 a{color:inherit}
 img{max-width:100%; display:block}
 :focus-visible{
-  outline:3px solid var(--rust); outline-offset:3px; border-radius:2px;
+  outline:3px solid var(--orange); outline-offset:3px; border-radius:2px;
 }
 
 /* ============================================================
@@ -82,8 +80,8 @@ img{max-width:100%; display:block}
   font:500 11.5px/1.3 var(--body); text-transform:uppercase;
   letter-spacing:.24em; color:var(--text-3); margin:0;
 }
-.kicker--rust{color:var(--rust-deep)}
-.kicker--paper{color:rgba(254,254,251,.72)}
+.kicker--orange{color:var(--orange-d)}
+.kicker--paper{color:rgba(255,255,255,.72)}
 .lede{font-size:clamp(18px,1.55vw,22px); line-height:1.6; color:var(--text-2); max-width:34ch; margin:0}
 .body p{margin:0 0 1.05em; max-width:62ch}
 .body p:last-child{margin-bottom:0}
@@ -96,7 +94,7 @@ img{max-width:100%; display:block}
   font-size:clamp(21px,2.5vw,34px); line-height:1.15; color:var(--ink);
   transform:rotate(-2.2deg); display:inline-block;
 }
-.scrawl--rust{color:var(--rust)}
+.scrawl--orange{color:var(--orange)}
 .scrawl--paper{color:var(--paper-2)}
 
 /* ============================================================
@@ -119,6 +117,50 @@ img{max-width:100%; display:block}
 .rule{border:0; border-top:1px solid var(--rule-hard); margin:0; opacity:.9}
 
 /* ============================================================
+   FULL-BLEED HERO
+   Picture edge to edge, header riding over it, everything centred.
+   ============================================================ */
+.hero{
+  position:relative; isolation:isolate; overflow:hidden;
+  min-height:100vh; min-height:100svh;
+  display:grid; place-items:center; text-align:center;
+}
+.hero > .hero__media{position:absolute; inset:0; z-index:0; place-self:stretch}
+/* the "photo goes here" marker sits in a corner, not behind the headline */
+.hero > .hero__media .photo__cap{
+  position:absolute; left:22px; bottom:20px; z-index:3; text-align:left;
+  max-width:22ch; opacity:.4; padding:0;
+}
+@media (max-width:640px){ .hero > .hero__media .photo__cap{left:18px; bottom:16px} }
+.hero__media img{width:100%; height:100%; object-fit:cover}
+/* guarantees the centred type stays legible whatever picture lands here */
+.hero > .hero__scrim{
+  position:absolute; inset:0; z-index:1; place-self:stretch;
+  background:linear-gradient(180deg,rgba(10,10,9,.62) 0%,rgba(10,10,9,.34) 42%,rgba(10,10,9,.72) 100%);
+}
+.hero__inner{
+  position:relative; z-index:2; width:100%; max-width:1000px; place-self:center;
+  padding:calc(var(--hdr-h) + clamp(40px,7vh,88px)) 28px clamp(44px,7vh,84px);
+  display:grid; justify-items:center; gap:clamp(18px,2.6vh,30px);
+  color:var(--paper-2);
+}
+.hero__inner .kicker{color:rgba(255,255,255,.86)}
+.hero__inner .d1,.hero__inner .d2{color:var(--paper-2)}
+.hero__sub{
+  font-size:clamp(15px,1.5vw,19px); line-height:1.55; color:rgba(255,255,255,.9);
+  max-width:46ch; margin:0;
+}
+.hero__meta{
+  font:500 12px/1.5 var(--body); text-transform:uppercase; letter-spacing:.2em;
+  color:rgba(255,255,255,.92); margin:0;
+}
+@media (max-width:640px){ .hero__inner{padding-left:18px; padding-right:18px} }
+
+/* centred page heads on the pages that keep a paper hero */
+.pagehead{text-align:center; display:grid; justify-items:center; gap:clamp(14px,2vw,22px)}
+.pagehead .lede{max-width:52ch}
+
+/* ============================================================
    SHELL & GRID
    ============================================================ */
 .shell{max-width:var(--shell); margin:0 auto; padding:0 28px}
@@ -130,12 +172,14 @@ section{position:relative}
 .band--tight{padding:clamp(36px,4.2vw,64px) 0}
 .band--paper2{background:var(--paper-2)}
 .band--ink{background:var(--ink); color:var(--paper-2)}
-.band--ink .lede,.band--ink .small{color:rgba(254,254,251,.7)}
-.band--ink .kicker{color:rgba(254,254,251,.66)}
-.band--rust{background:var(--rust); color:var(--paper-2)}
-.band--rust .lede{color:rgba(254,254,251,.82)}
-.band--rust .kicker{color:rgba(254,254,251,.62)}
-.band--blush{background:var(--blush)}
+.band--ink .lede,.band--ink .small{color:rgba(255,255,255,.7)}
+.band--ink .kicker{color:rgba(255,255,255,.66)}
+.band--ink .tiny,.ftr .tiny,.band--orange{background:var(--orange); color:var(--ink)}
+.band--orange .lede{color:rgba(17,17,16,.86)}
+.band--orange .kicker{color:rgba(17,17,16,.84)}
+.band--orange .btn{border-color:var(--ink); color:var(--ink)}
+.band--orange .btn:hover{background:var(--ink); color:var(--orange)}
+.band--grey{background:var(--paper-3)}
 
 .cols{display:grid; gap:clamp(24px,3vw,48px)}
 .c-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -157,24 +201,41 @@ section{position:relative}
 .row{display:flex; gap:16px; flex-wrap:wrap; align-items:center}
 .row--between{justify-content:space-between}
 .row--end{justify-content:flex-end}
-.bleed-right{margin-right:calc(-1 * max(0px, (100vw - var(--shell)) / 2) - 28px)}
-@media (max-width:1420px){ .bleed-right{margin-right:-28px} }
-@media (max-width:640px){ .bleed-right{margin-right:-18px} }
 
 /* section number — the riso listing tic */
 .secno{
   font-family:var(--display); font-size:clamp(34px,4vw,58px); line-height:.8;
-  color:var(--rust); opacity:.9;
+  color:var(--orange); opacity:.9;
 }
-.band--rust .secno,.band--ink .secno{color:var(--paper-2); opacity:.4}
+.band--ink .secno{color:var(--paper-2); opacity:.4}
+.band--orange .secno{color:var(--ink); opacity:.42}
 
 /* ============================================================
    HEADER — sticky, paper, one hairline
    ============================================================ */
 .hdr{
-  position:sticky; top:0; z-index:80;
+  position:fixed; top:0; left:0; right:0; z-index:80;
   background:var(--paper); border-bottom:1px solid var(--rule-hard);
+  transition:background .3s var(--quart), border-color .3s var(--quart);
 }
+/* pages whose hero is a full-bleed image: the bar rides over the picture until
+   you scroll, the way the Shamrock site does it */
+.hdr--over{background:transparent; border-bottom-color:transparent}
+.hdr--over .lockup__wm{color:var(--paper-2)}
+.hdr--over .lockup__wm i{color:var(--paper-2)}
+.hdr--over .nav > a,.hdr--over .nav button{color:rgba(255,255,255,.85)}
+.hdr--over .nav > a:hover,.hdr--over .nav button:hover{color:var(--paper-2)}
+.hdr--over .nav > a.is-active{color:var(--paper-2)}
+/* the dropdown is its own white panel — it never inherits the over-hero colours */
+.hdr--over .more__menu a{color:var(--ink)}
+.hdr--over .nav .soon{color:rgba(255,255,255,.6)}
+.hdr--over .burger{border-color:var(--paper-2); color:var(--paper-2)}
+.hdr--over .burger:hover{background:var(--paper-2); color:var(--ink)}
+.hdr--over .mark-stroke{stroke:var(--paper-2)}
+/* everything below the header needs the height back, except full-bleed heroes
+   which deliberately run underneath it */
+body{padding-top:var(--hdr-h)}
+body.has-hero{padding-top:0}
 .hdr__in{
   max-width:var(--shell); margin:0 auto; padding:13px 28px;
   display:flex; align-items:center; gap:26px;
@@ -188,47 +249,58 @@ section{position:relative}
   font-size:15px; letter-spacing:.005em; color:var(--ink);
 }
 .lockup__wm b{display:block; font-weight:400}
-.lockup__wm i{display:block; font-style:normal; color:var(--rust)}
+.lockup__wm i{display:block; font-style:normal; color:var(--orange)}
 @media (max-width:860px){ .lockup__wm{display:none} }
 
 .nav{display:flex; align-items:center; gap:2px; margin-left:auto; flex-wrap:wrap}
 .nav a,.nav button{
-  font:500 12px/1 var(--body); text-transform:uppercase; letter-spacing:.13em;
+  font:500 13.5px/1 var(--body); letter-spacing:.005em;
   color:var(--text-2); text-decoration:none; background:none; border:0;
-  padding:11px 11px; cursor:pointer; position:relative;
+  padding:11px 12px; cursor:pointer; position:relative; border-radius:999px;
   transition:color .25s var(--quart);
 }
 .nav a:hover,.nav button:hover{color:var(--ink)}
 .nav a::after{
   content:""; position:absolute; left:11px; right:11px; bottom:6px; height:2px;
-  background:var(--rust); transform:scaleX(0); transform-origin:left;
+  background:var(--orange); transform:scaleX(0); transform-origin:left;
   transition:transform .3s var(--ease);
 }
 .nav a:hover::after{transform:scaleX(1)}
 .nav a.is-active{color:var(--ink); font-weight:700}
 .nav a.is-active::after{transform:scaleX(1)}
-.nav .soon{font-size:9px; letter-spacing:.14em; color:var(--text-3); margin-left:5px; vertical-align:2px}
-@media (max-width:1100px){ .nav{display:none} }
+.nav .soon{font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); margin-left:6px; vertical-align:1px}
+@media (max-width:1100px){ .nav{display:none} .hdr__cta{margin-left:auto} }
 
 .more{position:relative}
 .more__menu{
   position:absolute; right:0; top:calc(100% + 9px); min-width:216px;
-  background:var(--paper-2); border:1px solid var(--ink); padding:7px;
+  background:var(--paper-2); border:1px solid var(--rule); border-radius:14px; padding:8px;
   opacity:0; visibility:hidden; transform:translateY(-5px);
   transition:opacity .22s var(--quart), transform .22s var(--quart), visibility .22s;
-  box-shadow:5px 5px 0 rgba(36,41,31,.13);
+  box-shadow:0 14px 34px rgba(17,17,16,.16), 0 2px 6px rgba(17,17,16,.08);
 }
 .more.is-open .more__menu{opacity:1; visibility:visible; transform:translateY(0)}
-.more__menu a{display:block; padding:9px 11px; letter-spacing:.1em}
-.more__menu a:hover{background:var(--paper)}
+.more__menu a{display:block; padding:10px 13px; letter-spacing:.02em; border-radius:8px; font-weight:500; text-transform:none; font-size:13.5px}
+.more__menu a:hover{background:var(--paper-3); color:var(--ink)}
 .more__menu a::after{display:none}
 
+/* phone bar carries three things: mark, ticket, Menu. 375px minus 36px of
+   padding leaves 339 — the ticket is sized to what is actually left over. */
+@media (max-width:760px){
+  .hdr__in{gap:10px; padding-left:14px; padding-right:14px}
+  .hdr__cta .ticket{max-width:150px}
+  .lockup svg{width:32px; height:32px}
+}
+@media (max-width:400px){
+  .hdr__cta .ticket{max-width:128px}
+  .burger{padding:9px 10px; letter-spacing:.1em}
+}
 .burger{display:none}
 @media (max-width:1100px){
   .burger{
-    display:block; margin-left:auto; background:none; border:1px solid var(--ink);
-    padding:10px 14px; cursor:pointer;
-    font:700 11px/1 var(--body); text-transform:uppercase; letter-spacing:.16em;
+    display:block; background:none; border:1.5px solid var(--ink); border-radius:999px;
+    padding:11px 18px; cursor:pointer;
+    font:700 12.5px/1 var(--body); letter-spacing:.02em;
   }
   .burger:hover{background:var(--ink); color:var(--paper)}
 }
@@ -246,52 +318,72 @@ section{position:relative}
 .drawer a .soon{font:500 11px/1 var(--body); letter-spacing:.16em; color:var(--text-3); vertical-align:8px; margin-left:8px}
 
 /* ============================================================
-   THE TICKET — the signature object
+   THE TICKET — Figma component 2081-85
+   2:1 stock, so it reads as an object rather than a bar. The soft
+   shadow and the tilt-on-hover come from the design's second variant.
    ============================================================ */
 .ticket{
-  display:inline-block; width:100%; max-width:352px; border:0; padding:0;
-  background:none; cursor:pointer; text-decoration:none;
-  transform:rotate(-1.1deg);
+  display:inline-block; width:100%; max-width:248px; border:0; padding:0;
+  background:none; cursor:pointer; text-decoration:none; text-align:center;
   transition:transform .34s var(--ease), filter .34s var(--ease);
-  filter:drop-shadow(4px 5px 0 rgba(36,41,31,.19));
+  filter:drop-shadow(0 6px 14px rgba(17,17,16,.26));
 }
-.ticket:hover{transform:rotate(-1.1deg) translate(-3px,-3px); filter:drop-shadow(7px 9px 0 rgba(36,41,31,.22))}
-.ticket:active{transform:rotate(-1.1deg) translate(1px,1px); filter:drop-shadow(2px 3px 0 rgba(36,41,31,.19))}
-.ticket svg{display:block; width:100%; height:auto}
-.ticket--sm{max-width:236px; transform:rotate(-1.4deg)}
-.ticket--sm:hover{transform:rotate(-1.4deg) translate(-2px,-2px)}
-.ticket--flat{transform:none}
-.ticket--flat:hover{transform:translate(-3px,-3px)}
-.ticket[data-state="sold"]{cursor:not-allowed; filter:none; transform:rotate(-1.1deg)}
-.ticket[data-state="sold"]:hover{transform:rotate(-1.1deg)}
-.ticket-row{display:flex; gap:22px; align-items:center; flex-wrap:wrap}
+.ticket:hover{transform:rotate(-3.2deg) translateY(-3px); filter:drop-shadow(0 12px 22px rgba(17,17,16,.3))}
+.ticket:active{transform:rotate(-1.4deg) translateY(0); filter:drop-shadow(0 4px 9px rgba(17,17,16,.26))}
+.ticket svg{display:block; width:100%; height:auto; overflow:visible}
+.ticket__note{
+  display:block; margin-top:11px; font:500 11px/1.4 var(--body);
+  text-transform:uppercase; letter-spacing:.16em; color:var(--text-3);
+}
+.band--ink .ticket__note,.ftr .ticket__note,.hero .ticket__note,
+.drawer .ticket__note{color:rgba(255,255,255,.82)}
+.drawer .ticket__note{color:var(--text-3)}
+.ticket--sm{max-width:206px}
+.ticket[data-state="sold"]{cursor:not-allowed; filter:none}
+.ticket[data-state="sold"]:hover{transform:none; filter:none}
+.ticket-row{display:flex; gap:26px; align-items:center; flex-wrap:wrap}
+
+/* the header needs the same object under 65px — one line, fewer scallops */
+.ticket--compact{max-width:196px; filter:drop-shadow(0 3px 7px rgba(17,17,16,.22))}
+.ticket--compact:hover{transform:rotate(-2.4deg) translateY(-2px)}
 
 /* ============================================================
-   BUTTONS, STICKERS, BADGES
+   BUTTONS, CHIPS, LABELS
+   Pills and solid fills — modern controls under the printed
+   artwork. No rotation and no fake paper here: these are the bits
+   people click, and they should feel crisp.
    ============================================================ */
 .btn{
-  display:inline-block; font:700 12px/1 var(--body); text-transform:uppercase;
-  letter-spacing:.16em; padding:15px 22px; text-decoration:none;
+  display:inline-flex; align-items:center; gap:9px;
+  font:700 13px/1 var(--body); letter-spacing:.01em;
+  padding:15px 26px; border-radius:999px; text-decoration:none;
   border:1.5px solid var(--ink); background:transparent; color:var(--ink);
-  cursor:pointer; transition:background .25s var(--quart), color .25s var(--quart), transform .25s var(--ease);
+  cursor:pointer; white-space:nowrap;
+  transition:background .22s var(--quart), color .22s var(--quart),
+             border-color .22s var(--quart), transform .22s var(--ease);
 }
-.btn:hover{background:var(--ink); color:var(--paper); transform:translate(-2px,-2px)}
-.btn--rust{background:var(--rust); border-color:var(--rust); color:var(--paper-2)}
-.btn--rust:hover{background:var(--rust-deep); border-color:var(--rust-deep); color:var(--paper-2)}
-.btn--paper{border-color:var(--paper-2); color:var(--paper-2)}
-.btn--paper:hover{background:var(--paper-2); color:var(--ink)}
+.btn:hover{background:var(--ink); color:var(--paper-2); transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn--orange{background:var(--orange); border-color:var(--orange); color:var(--ink)}
+.btn--orange:hover{background:var(--ink); border-color:var(--ink); color:var(--orange)}
+.btn--paper{border-color:rgba(255,255,255,.55); color:var(--paper-2)}
+.btn--paper:hover{background:var(--paper-2); border-color:var(--paper-2); color:var(--ink)}
 
-/* die-cut sticker — cream keyline, sits ON the page */
+/* chips / labels — pill, solid, level. The old rotated die-cut sticker read
+   as sloppy at 10px; the printed character lives in the artwork instead. */
 .sticker{
-  display:inline-block; font:700 10.5px/1 var(--body); text-transform:uppercase;
-  letter-spacing:.15em; padding:8px 13px; background:var(--rust); color:var(--paper-2);
-  border:2px solid var(--paper-2); border-radius:2px;
-  box-shadow:2px 2px 0 rgba(36,41,31,.2); transform:rotate(-1.6deg);
+  display:inline-flex; align-items:center; gap:7px;
+  font:700 11px/1 var(--body); letter-spacing:.05em;
+  padding:8px 14px; border-radius:999px;
+  background:var(--orange); color:var(--ink); border:0;
 }
-.sticker--ink{background:var(--ink)}
-.sticker--ghost{background:transparent; color:var(--ink); border-color:var(--ink); box-shadow:none}
-.sticker--ghost-paper{background:transparent; color:var(--paper-2); border-color:rgba(254,254,251,.45); box-shadow:none}
-.sticker--flat{transform:none}
+/* live state gets a pulse dot — the one place a tiny bit of motion earns itself */
+.sticker--live::before{
+  content:""; width:7px; height:7px; border-radius:999px; background:currentColor;
+  box-shadow:0 0 0 3px rgba(17,17,16,.18);
+}
+.sticker--ghost{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--rule-hard)}
+.sticker--ghost-paper{background:transparent; color:var(--paper-2); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
 
 /* ============================================================
    PHOTO — no real imagery yet, so: riso colour fields
@@ -303,7 +395,7 @@ section{position:relative}
 }
 .photo::before{
   content:""; position:absolute; inset:0;
-  background-image:radial-gradient(rgba(36,41,31,.34) 1.4px, transparent 1.5px);
+  background-image:radial-gradient(rgba(17,17,16,.34) 1.4px, transparent 1.5px);
   background-size:7px 7px; mix-blend-mode:multiply; opacity:.9;
 }
 .photo::after{
@@ -313,28 +405,30 @@ section{position:relative}
 }
 .photo__cap{
   position:relative; z-index:3; font:500 10px/1.4 var(--body);
-  text-transform:uppercase; letter-spacing:.19em; color:#FEFEFB; text-shadow:0 1px 3px rgba(36,41,31,.55);
+  text-transform:uppercase; letter-spacing:.19em; color:#FFFFFF; text-shadow:0 1px 3px rgba(17,17,16,.55);
   text-align:center; padding:14px; max-width:24ch;
 }
-.photo--rust{background:var(--rust)}
-.photo--forest{background:var(--forest)}
+.photo--orange{background:var(--orange)}
+.photo--orange .photo__cap{color:var(--ink); text-shadow:none}
+.photo--green{background:var(--green-d)}
 .photo--ink{background:var(--ink-2)}
-.photo--blush{background:var(--blush)}
-.photo--blush .photo__cap{color:rgba(36,41,31,.82)}
-.photo--blue{background:var(--riso-blue)}
-.photo--blue .photo__cap{color:rgba(36,41,31,.82)}
-.photo--night{background:linear-gradient(152deg,var(--night-1) 0%,var(--night-2) 48%,var(--night-3) 100%)}
+.photo--grey{background:var(--paper-3)}
+.photo--grey .photo__cap{color:rgba(17,17,16,.82)}
+.photo--red{background:var(--red-d)}
+
+.photo--night{background:linear-gradient(152deg,var(--orange) 0%,var(--red) 46%,var(--ink) 100%)}
+.ar-1,.ar-43,.ar-34,.ar-169{min-height:0}
 .ar-1{aspect-ratio:1/1}
 .ar-43{aspect-ratio:4/3}
 .ar-34{aspect-ratio:3/4}
 .ar-169{aspect-ratio:16/9}
 
 /* taped-down polaroid */
-.taped{position:relative; background:var(--paper-2); padding:11px 11px 40px; box-shadow:3px 4px 0 rgba(36,41,31,.16)}
+.taped{position:relative; background:var(--paper-2); padding:11px 11px 40px; box-shadow:3px 4px 0 rgba(17,17,16,.16)}
 .taped::before{
   content:""; position:absolute; top:-11px; left:50%; width:78px; height:23px;
   transform:translateX(-50%) rotate(-3.5deg);
-  background:rgba(207,227,238,.72); border-left:1px dashed rgba(36,41,31,.16); border-right:1px dashed rgba(36,41,31,.16);
+  background:rgba(207,227,238,.72); border-left:1px dashed rgba(17,17,16,.16); border-right:1px dashed rgba(17,17,16,.16);
 }
 .taped__cap{
   position:absolute; left:0; right:0; bottom:11px; text-align:center;
@@ -351,19 +445,13 @@ section{position:relative}
   border:1px solid var(--ink);
 }
 .collage > :not(.photo){background:var(--paper)}
-
-/* scribble ring around a word */
-.ring{position:relative; display:inline-block}
-.ring > svg{
-  position:absolute; left:50%; top:50%; width:114%; height:146%;
-  transform:translate(-50%,-54%); pointer-events:none; overflow:visible;
-}
-.ring > svg path{fill:none; stroke:var(--ink); stroke-width:5; stroke-linecap:round}
+.collage--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:700px){ .collage--4{grid-template-columns:repeat(2,minmax(0,1fr))} }
 
 /* underline squiggle */
 .squig{position:relative; display:inline-block}
 .squig > svg{position:absolute; left:-2%; bottom:-.22em; width:104%; height:.3em; overflow:visible}
-.squig > svg path{fill:none; stroke:var(--rust); stroke-width:5; stroke-linecap:round}
+.squig > svg path{fill:none; stroke:var(--orange); stroke-width:5; stroke-linecap:round}
 
 /* ============================================================
    CARDS
@@ -386,7 +474,7 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 .locked-hatch{position:relative}
 .locked-hatch::after{
   content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
-  background:repeating-linear-gradient(48deg,transparent 0 11px,rgba(36,41,31,.075) 11px 22px);
+  background:repeating-linear-gradient(48deg,transparent 0 11px,rgba(17,17,16,.075) 11px 22px);
 }
 
 /* inclusions — four grouped things, riso listing style */
@@ -396,11 +484,11 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   padding:clamp(20px,2.4vw,32px) 0; border-bottom:1px solid var(--rule);
 }
 .incl__row:last-child{border-bottom:2px solid var(--ink)}
-.incl__no{font-family:var(--display); font-size:clamp(28px,3.4vw,46px); line-height:.8; color:var(--rust)}
+.incl__no{font-family:var(--display); font-size:clamp(28px,3.4vw,46px); line-height:.8; color:var(--orange)}
 .incl ul{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:7px}
 .incl li{position:relative; padding-left:22px; color:var(--text-2); font-size:15.5px}
 .incl li::before{
-  content:""; position:absolute; left:0; top:.62em; width:11px; height:2px; background:var(--rust);
+  content:""; position:absolute; left:0; top:.62em; width:11px; height:2px; background:var(--orange);
 }
 
 /* numbered fact list */
@@ -409,24 +497,25 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   display:grid; grid-template-columns:52px minmax(0,1fr); gap:18px;
   padding:16px 0; border-bottom:1px solid var(--rule);
 }
-.facts b{font-family:var(--display); font-weight:400; color:var(--rust-deep); font-size:19px; line-height:1.2}
+.facts b{font-family:var(--display); font-weight:400; color:var(--orange-d); font-size:19px; line-height:1.2}
 .facts span{color:var(--text-2); font-size:15.5px}
-.band--ink .facts{border-top-color:rgba(254,254,251,.3)}
-.band--ink .facts li{border-bottom-color:rgba(254,254,251,.16)}
-.band--ink .facts span{color:rgba(254,254,251,.68)}
-.band--ink .facts b{color:var(--night-lt)}
+.band--ink .facts{border-top-color:rgba(255,255,255,.3)}
+.band--ink .facts li{border-bottom-color:rgba(255,255,255,.16)}
+.band--ink .facts span{color:rgba(255,255,255,.68)}
+.band--ink .facts b{color:var(--orange-lt)}
 
 /* big stat */
 .stat{display:grid; gap:4px}
 .stat__n{font-family:var(--display); font-size:clamp(46px,6.6vw,96px); line-height:.82; letter-spacing:-.02em}
 .stat__l{font:500 10.5px/1.3 var(--body); text-transform:uppercase; letter-spacing:.2em; color:var(--text-3)}
-.band--rust .stat__l,.band--ink .stat__l{color:rgba(254,254,251,.6)}
+.band--ink .stat__l{color:rgba(255,255,255,.6)}
+.band--orange .stat__l{color:rgba(17,17,16,.84)}
 
 /* ============================================================
    PRICE BLOCK
    ============================================================ */
 .price{border:1.5px solid var(--ink); padding:clamp(20px,2.4vw,30px); background:var(--paper-2); position:relative}
-.price--hero{background:var(--blush)}
+.price--hero{background:var(--paper-3)}
 .price__amt{font-family:var(--display); font-size:clamp(40px,5.4vw,74px); line-height:.84; letter-spacing:-.02em}
 .price__amt sup{font-size:.36em; vertical-align:.9em; letter-spacing:0; margin-right:.06em}
 .price__ea{font:500 11px/1 var(--body); letter-spacing:.18em; text-transform:uppercase; color:var(--text-3)}
@@ -440,7 +529,7 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   color:var(--text-3); padding:0 0 12px; text-align:left; font-weight:500;
 }
 .cal td{
-  border-top:1px solid var(--rule); height:clamp(74px,8vw,118px);
+  border-top:1px solid var(--rule); height:clamp(96px,9vw,132px);
   vertical-align:top; padding:9px 8px; position:relative;
 }
 .cal .dnum{font-family:var(--display); font-size:15px; color:var(--text-3); line-height:1}
@@ -450,17 +539,32 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   text-transform:uppercase; letter-spacing:.07em; color:var(--ink); text-decoration:none;
 }
 .cal .evt em{display:block; font-style:normal; color:var(--text-3); letter-spacing:.13em; font-size:9.5px; margin-top:2px}
-.cal .evt--ours{color:var(--rust); font-weight:700}
+.cal .evt--ours{color:var(--orange); font-weight:700}
 /* the hand-drawn "must go" ring */
 .cal .must{position:absolute; left:2%; top:6%; width:96%; height:88%; pointer-events:none; overflow:visible}
 .cal .must path{fill:none; stroke:var(--ink); stroke-width:2.4; stroke-linecap:round; opacity:.85}
-.cal td.ours .must path{stroke:var(--rust); stroke-width:3.2; opacity:1}
-@media (max-width:760px){
-  .cal th:nth-child(-n+5){font-size:0; letter-spacing:0}
-  .cal th:nth-child(-n+5)::first-letter{font-size:10px}
-  .cal .evt{font-size:9.5px; letter-spacing:.03em}
-  .cal td{padding:6px 4px}
+.cal td.ours .must path{stroke:var(--orange); stroke-width:3.2; opacity:1}
+@media (max-width:900px){
+  /* the venue line will not fit in a narrow cell — the name still does,
+     and the full detail is one tap away on Happening Now */
+  .cal .evt em{display:none}
 }
+@media (max-width:760px){
+  .cal th{font-size:8.5px; letter-spacing:.08em}
+  .cal .evt{font-size:9.5px; letter-spacing:.03em}
+  .cal td{padding:6px 4px; height:clamp(76px,15vw,110px)}
+}
+
+/* the calendar also runs on the dark band on the homepage */
+.band--ink .cal th{color:rgba(255,255,255,.62)}
+.band--ink .cal td{border-top-color:rgba(255,255,255,.2)}
+.band--ink .cal .dnum{color:rgba(255,255,255,.45)}
+.band--ink .cal td.has .dnum{color:var(--paper-2)}
+.band--ink .cal .evt{color:var(--paper-2)}
+.band--ink .cal .evt em{color:rgba(255,255,255,.6)}
+.band--ink .cal .evt--ours{color:var(--orange-lt)}
+.band--ink .cal .must path{stroke:rgba(255,255,255,.8)}
+.band--ink .cal td.ours .must path{stroke:var(--orange-lt)}
 
 /* ============================================================
    TABS
@@ -480,12 +584,26 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
    FORM BITS
    ============================================================ */
 .field{
-  width:100%; font:400 15px/1 var(--body); padding:15px 16px;
-  background:var(--paper-2); border:1.5px solid var(--ink); color:var(--ink);
+  width:100%; font:400 15px/1.3 var(--body); padding:16px 18px;
+  background:var(--paper-2); color:var(--ink);
+  border:1.5px solid var(--rule); border-radius:12px;
+  transition:border-color .2s var(--quart), box-shadow .2s var(--quart);
+  -webkit-appearance:none; appearance:none;
 }
 .field::placeholder{color:var(--text-3)}
-.field:focus{outline:3px solid var(--rust); outline-offset:2px}
-textarea.field{min-height:130px; line-height:1.5; resize:vertical}
+.field:hover{border-color:rgba(17,17,16,.34)}
+.field:focus{
+  outline:none; border-color:var(--orange);
+  box-shadow:0 0 0 4px rgba(255,77,20,.2);
+}
+select.field{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23111110' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 18px center; padding-right:44px;
+}
+textarea.field{min-height:140px; line-height:1.55; resize:vertical}
+.ftr .field{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.28); color:var(--paper-2)}
+.ftr .field::placeholder{color:rgba(255,255,255,.5)}
+.ftr .field:focus{border-color:var(--orange); box-shadow:0 0 0 4px rgba(255,77,20,.28)}
 .capture{display:flex; gap:12px; flex-wrap:wrap}
 .capture .field{flex:1; min-width:220px}
 
@@ -494,15 +612,15 @@ textarea.field{min-height:130px; line-height:1.5; resize:vertical}
    ============================================================ */
 .ftr{background:var(--ink); color:var(--paper-2)}
 .ftr a{color:var(--paper-2); text-decoration:none}
-.ftr a:hover{color:var(--night-lt)}
+.ftr a:hover{color:var(--orange-lt)}
 .ftr__grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(20px,3vw,44px); padding-bottom:44px}
 @media (max-width:860px){ .ftr__grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:480px){ .ftr__grid{grid-template-columns:minmax(0,1fr)} }
-.ftr__h{font:700 10.5px/1 var(--body); text-transform:uppercase; letter-spacing:.2em; color:rgba(254,254,251,.6); margin:0 0 12px}
+.ftr__h{font:700 10.5px/1 var(--body); text-transform:uppercase; letter-spacing:.2em; color:rgba(255,255,255,.6); margin:0 0 12px}
 .ftr__fine{
-  border-top:1px solid rgba(254,254,251,.18); padding:22px 0 34px;
+  border-top:1px solid rgba(255,255,255,.18); padding:22px 0 34px;
   font:500 10.5px/1.7 var(--body); text-transform:uppercase; letter-spacing:.16em;
-  color:rgba(254,254,251,.55); display:flex; gap:20px; justify-content:space-between; flex-wrap:wrap;
+  color:rgba(255,255,255,.55); display:flex; gap:20px; justify-content:space-between; flex-wrap:wrap;
 }
 
 /* ============================================================
@@ -516,24 +634,9 @@ textarea.field{min-height:130px; line-height:1.5; resize:vertical}
   html{scroll-behavior:auto}
 }
 
-/* ============================================================
-   AFTER DARK — the nightlife gradient, used on event heroes only.
-   Anywhere else and this stops being Bar Scene Socials and starts
-   being a generic club flyer.
-   ============================================================ */
-.band--night{
-  background:linear-gradient(152deg,var(--night-1) 0%,var(--night-2) 46%,var(--night-3) 100%);
+  background:linear-gradient(152deg,var(--orange) 0%,var(--red) 44%,var(--ink) 100%);
   color:var(--paper-2);
 }
-.band--night .lede{color:rgba(254,254,251,.86)}
-.band--night .kicker{color:rgba(254,254,251,.68)}
-.band--night .small{color:rgba(254,254,251,.76)}
-.band--night .tiny{color:rgba(254,254,251,.6)}
-.band--night .rule{border-top-color:rgba(254,254,251,.34)}
-.band--night .facts{border-top-color:rgba(254,254,251,.34)}
-.band--night .facts li{border-bottom-color:rgba(254,254,251,.2)}
-.band--night .facts b{color:var(--paper-2)}
-.band--night .facts span{color:rgba(254,254,251,.78)}
 
 /* route map placeholder */
 .map{
@@ -545,7 +648,7 @@ textarea.field{min-height:130px; line-height:1.5; resize:vertical}
   background-image:linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px);
   background-size:34px 34px; opacity:.55;
 }
-.map__line{position:absolute; left:8%; right:8%; top:52%; height:5px; background:var(--rust); transform:rotate(-4deg)}
+.map__line{position:absolute; left:8%; right:8%; top:52%; height:5px; background:var(--orange); transform:rotate(-4deg)}
 .map__cap{position:relative; z-index:2; font:500 10.5px/1.5 var(--body); text-transform:uppercase;
   letter-spacing:.19em; color:var(--text-3); text-align:center; background:var(--paper-2); padding:8px 12px}
 
@@ -556,5 +659,5 @@ textarea.field{min-height:130px; line-height:1.5; resize:vertical}
   break-inside:avoid; display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px;
   padding:11px 0; border-bottom:1px solid var(--rule); font-size:15px;
 }
-.stops b{font-family:var(--display); font-weight:400; color:var(--rust-deep); font-size:15px; line-height:1.35}
+.stops b{font-family:var(--display); font-weight:400; color:var(--orange-d); font-size:15px; line-height:1.35}
 .stops em{font-style:normal; color:var(--text-3); display:block; font-size:12.5px; letter-spacing:.04em}

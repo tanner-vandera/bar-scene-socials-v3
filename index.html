@@ -5,49 +5,39 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bar Scene Socials — Milwaukee's social events of the year</title>
 <meta name="description" content="Haunted Bar Hop, 12 Bars of Christmas and the Shamrock Shuffle. Milwaukee bar crawls run by people who actually go.">
+<script src="js/gate.js?v=1788378605"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="css/bss.css">
+<link rel="stylesheet" href="css/bss.css?v=1788378605">
 </head>
-<body data-page="home">
+<body data-page="home" class="has-hero">
 <div id="chrome-header"></div>
 
 <main>
 
-  <!-- ── 01 HERO ─────────────────────────────────────────── -->
-  <section class="grain" style="padding-top:clamp(30px,4vw,58px)">
-    <div class="shell">
-      <div class="row row--between" style="border-bottom:1px solid var(--rule-hard); padding-bottom:11px; margin-bottom:clamp(24px,3vw,44px)">
-        <p class="kicker">Bar Scene Socials · Milwaukee, Wisconsin</p>
-        <p class="kicker kicker--rust">On sale now · 640 left</p>
-      </div>
-
-      <div class="cols c-wide-left" style="align-items:end">
-        <div class="stack stack--lg">
-          <h1 class="d1"><span class="ring">Haunted</span><br>Bar Hop</h1>
-          <div class="row" style="gap:26px; align-items:flex-end">
-            <p class="lede" style="max-width:22ch">Saturday 31 October 2026. Sixteen bars on Brady Street, three in the afternoon until they throw us out.</p>
-            <p class="scrawl scrawl--rust" style="max-width:15ch">the only crawl on Brady — that's the whole pitch</p>
-          </div>
-          <div class="ticket-row">
-            <a class="ticket" href="tickets.html" data-ticket data-main="Get tickets" data-sub="From $11.95 each"></a>
-            <p class="tiny" style="max-width:16ch">$14.95 single<br>$11.95 in a group of five</p>
-          </div>
-        </div>
-
-        <div class="taped tilt-2 bleed-right">
-          <div class="photo photo--night ar-34"><span class="photo__cap">Crowd on Brady Street<br>Halloween 2025</span></div>
-          <span class="taped__cap">last year, about 5pm</span>
-        </div>
-      </div>
+  <!-- ── 01 HERO — full bleed, centred ──────────────────── -->
+  <section class="hero grain">
+    <div class="hero__media photo photo--night" style="min-height:0">
+      <span class="photo__cap">Full-bleed hero photograph<br>crowd on Brady Street</span>
     </div>
+    <div class="hero__scrim"></div>
+    <div class="hero__inner">
+      <p class="kicker">Bar Scene Socials · Milwaukee, Wisconsin</p>
+      <h1 class="d1">Haunted<br>Bar Hop</h1>
+      <p class="hero__meta">Saturday 10/31/26 · 3pm until close · 21+</p>
+      <p class="hero__sub">Sixteen bars on Brady Street, and the only Halloween crawl that actually happens on the street.</p>
+      <a class="ticket ticket--flat" href="tickets.html" data-ticket data-main="Get tickets" data-sub="From $11.95 each"></a>
+    </div>
+  </section>
 
-    <div class="shell" style="margin-top:clamp(40px,5vw,76px)">
-      <div class="collage" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-        <div class="photo photo--rust ar-43"><span class="photo__cap">Costumes</span></div>
+  <!-- ── 01b THE STRIP ───────────────────────────────────── -->
+  <section class="band band--tight">
+    <div class="shell">
+      <div class="collage collage--4">
+        <div class="photo photo--orange ar-43"><span class="photo__cap">Costumes</span></div>
         <div class="photo photo--ink ar-43"><span class="photo__cap">The pin</span></div>
-        <div class="photo photo--blue ar-43"><span class="photo__cap">Bingo card</span></div>
-        <div class="photo photo--forest ar-43"><span class="photo__cap">Afterparty</span></div>
+        <div class="photo photo--red ar-43"><span class="photo__cap">Bingo card</span></div>
+        <div class="photo photo--green ar-43"><span class="photo__cap">Afterparty</span></div>
       </div>
     </div>
   </section>
@@ -72,20 +62,20 @@
   </section>
 
   <!-- ── 03 NEXT UP ──────────────────────────────────────── -->
-  <section class="band band--blush grain grain--soft">
+  <section class="band band--grey grain grain--soft">
     <div class="shell">
       <p class="kicker" style="margin-bottom:clamp(22px,2.6vw,38px)">02 — Next out the door</p>
 
       <div class="cols c-wide-right" style="align-items:start">
         <div class="taped tilt-1">
-          <div class="photo photo--rust ar-1"><span class="photo__cap">Haunted Bar Hop<br>event poster</span></div>
+          <div class="photo photo--orange ar-1"><span class="photo__cap">Haunted Bar Hop<br>event poster</span></div>
           <span class="taped__cap">poster, still being drawn</span>
         </div>
 
         <div class="stack stack--lg">
           <div class="row" style="gap:10px">
-            <span class="sticker">On sale — 640 left</span>
-            <span class="sticker sticker--ghost sticker--flat">Sat 31 Oct 2026</span>
+            <span class="sticker sticker--live">On sale — 640 left</span>
+            <span class="sticker sticker--ghost sticker--flat">Sat 10/31/26</span>
             <span class="sticker sticker--ghost sticker--flat">21+</span>
           </div>
           <h2 class="d2">Haunted<br>Bar Hop</h2>
@@ -108,7 +98,7 @@
           </div>
 
           <div class="ticket-row">
-            <a class="ticket" href="haunted-bar-hop.html" data-ticket data-main="The whole thing" data-sub="Route, prizes, prices"></a>
+            <a class="ticket" href="haunted-bar-hop.html" data-ticket data-main="Get tickets" data-sub="Route, prizes, prices"></a>
           </div>
         </div>
       </div>
@@ -128,7 +118,7 @@
         <a class="event" href="haunted-bar-hop.html">
           <div class="photo photo--night ar-169"><span class="photo__cap">Haunted Bar Hop</span></div>
           <div class="event__meta">
-            <span class="tiny">31 Oct 2026 · Brady Street</span>
+            <span class="tiny">10/31/26 · Brady Street</span>
             <span class="sticker sticker--flat">On sale</span>
           </div>
           <h3 class="event__name">Haunted Bar Hop</h3>
@@ -137,7 +127,7 @@
 
         <div class="stack">
           <a class="event event--locked locked-hatch" href="christmas.html">
-            <div class="photo photo--forest ar-169"><span class="photo__cap">12 Bars of Christmas</span></div>
+            <div class="photo photo--green ar-169"><span class="photo__cap">12 Bars of Christmas</span></div>
             <div class="event__meta">
               <span class="tiny">December 2026 · date TBA</span>
               <span class="sticker sticker--ghost sticker--flat">Coming soon</span>
@@ -145,7 +135,7 @@
             <h3 class="event__name">12 Bars of<br>Christmas</h3>
           </a>
           <a class="event event--locked locked-hatch" href="shamrock.html">
-            <div class="photo photo--forest ar-169"><span class="photo__cap">Shamrock Shuffle #18</span></div>
+            <div class="photo photo--green ar-169"><span class="photo__cap">Shamrock Shuffle #18</span></div>
             <div class="event__meta">
               <span class="tiny">March 2027 · date TBA</span>
               <span class="sticker sticker--ghost sticker--flat">Coming soon</span>
@@ -157,27 +147,23 @@
     </div>
   </section>
 
-  <!-- ── 05 HAPPENING NOW ────────────────────────────────── -->
+  <!-- ── 05 HAPPENING NOW — the live month ──────────────── -->
   <section class="band band--ink grain grain--dark">
     <div class="shell">
-      <div class="cols c-offset">
+      <div class="row row--between" style="align-items:flex-end; gap:22px; margin-bottom:clamp(26px,3.2vw,46px)">
         <div>
           <p class="kicker kicker--paper">04 — Happening now</p>
-          <p class="scrawl scrawl--paper" style="margin-top:18px; max-width:14ch">updated monthly, hand-picked, kept short</p>
+          <h2 class="d3" style="margin-top:12px; max-width:15ch">What's worth<br>leaving for</h2>
         </div>
-        <div class="stack stack--lg">
-          <h2 class="d2" style="max-width:15ch">What's worth<br>leaving for</h2>
-          <p class="lede" style="max-width:44ch">Two to four things a month. Not a listings site — a very short answer to "is anything on?"</p>
+        <p class="scrawl scrawl--paper" style="max-width:15ch">if it's circled, go.</p>
+      </div>
 
-          <ul class="facts">
-            <li><b>03</b><span>Concert of the year — The Rave</span></li>
-            <li><b>17</b><span>Festival name — Third Ward</span></li>
-            <li><b>24</b><span>Big show — Fiserv Forum, Deer District</span></li>
-            <li><b>31</b><span style="color:var(--night-lt)"><strong>Haunted Bar Hop — Brady Street, ours</strong></span></li>
-          </ul>
+      <p class="kicker kicker--paper" style="margin-bottom:14px" data-month-label>October 2026</p>
+      <div data-calendar></div>
 
-          <a class="btn btn--paper" href="happening-now.html">See October</a>
-        </div>
+      <div class="row row--between" style="margin-top:clamp(24px,3vw,38px); align-items:center">
+        <p class="small" style="max-width:44ch">Two to four things a month. Not a listings site — a very short answer to "is anything on?"</p>
+        <a class="btn btn--paper" href="happening-now.html">See more</a>
       </div>
     </div>
   </section>
@@ -192,10 +178,10 @@
       </div>
 
       <div class="cols c-4">
-        <div class="taped tilt-1"><div class="photo photo--blue ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Brady St</span></div>
-        <div class="taped tilt-2"><div class="photo photo--blush ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Water St</span></div>
-        <div class="taped tilt-3"><div class="photo photo--rust ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Third Ward</span></div>
-        <div class="taped tilt-4"><div class="photo photo--forest ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">East Side</span></div>
+        <div class="taped tilt-1"><div class="photo photo--red ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Brady St</span></div>
+        <div class="taped tilt-2"><div class="photo photo--grey ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Water St</span></div>
+        <div class="taped tilt-3"><div class="photo photo--orange ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Third Ward</span></div>
+        <div class="taped tilt-4"><div class="photo photo--green ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">East Side</span></div>
       </div>
     </div>
   </section>
@@ -214,7 +200,7 @@
           </div>
           <hr class="rule">
           <div class="cols c-wide-right" style="align-items:center">
-            <div class="stat"><span class="stat__n" style="color:var(--rust)">$41k</span>
+            <div class="stat"><span class="stat__n" style="color:var(--orange-d)">$41k</span>
               <span class="stat__l">Returned to Milwaukee</span></div>
             <p class="lede" style="max-width:46ch">A share of every wristband goes to Milwaukee food banks and youth programmes. Shuffle now, feel good about it later.</p>
           </div>
@@ -225,13 +211,13 @@
   </section>
 
   <!-- ── 08 CLOSING ──────────────────────────────────────── -->
-  <section class="band band--rust grain" style="text-align:center">
+  <section class="band band--ink grain grain--dark" style="text-align:center">
     <div class="shell shell--tight">
       <h2 class="d1" style="max-width:11ch; margin:0 auto">So, are we crawling?</h2>
       <div class="row" style="justify-content:center; margin-top:clamp(30px,3.6vw,52px)">
-        <a class="ticket" href="tickets.html" data-ticket data-fill="#24291F" data-main="Get tickets" data-sub="Haunted Bar Hop · 31 Oct"></a>
+        <a class="ticket" href="tickets.html" data-ticket data-main="Get tickets" data-sub="Haunted Bar Hop · 10/31/26"></a>
       </div>
-      <p class="small" style="color:#FEFEFB; margin-top:26px">
+      <p class="small" style="color:#FFFFFF; margin-top:26px">
         No refunds — the pins get ordered the moment you buy. Sorry.</p>
     </div>
   </section>
@@ -239,6 +225,6 @@
 </main>
 
 <div id="chrome-footer"></div>
-<script src="js/bss.js"></script>
+<script src="js/bss.js?v=1788378605"></script>
 </body>
 </html>

@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Happening Now — October 2026 in Milwaukee</title>
 <meta name="description" content="Two to four things a month worth leaving the house for in Milwaukee. Hand-picked, kept short.">
+<script src="js/gate.js?v=1788378605"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="css/bss.css">
+<link rel="stylesheet" href="css/bss.css?v=1788378605">
 </head>
 <body data-page="happening">
 <div id="chrome-header"></div>
@@ -19,13 +20,13 @@
     <div class="shell">
       <div class="row row--between" style="border-bottom:1px solid var(--rule-hard); padding-bottom:11px; margin-bottom:clamp(20px,2.6vw,38px)">
         <p class="kicker">Happening now · Milwaukee</p>
-        <p class="kicker kicker--rust">Four this month</p>
+        <p class="kicker kicker--orange">Four this month</p>
       </div>
-      <div class="cols c-wide-left" style="align-items:end">
+      <div class="pagehead">
         <h1 class="d1" style="letter-spacing:-.03em">October<br>2026</h1>
         <div class="stack">
           <p class="lede">Two to four things a month. Not a listings site — a very short, opinionated answer to "is anything on?"</p>
-          <p class="scrawl scrawl--rust">if it's circled, go.</p>
+          <p class="scrawl scrawl--orange">if it's circled, go.</p>
         </div>
       </div>
     </div>
@@ -48,47 +49,7 @@
   <!-- ── THE CALENDAR ────────────────────────────────────── -->
   <section class="band band--tight">
     <div class="shell">
-      <table class="cal">
-        <thead><tr>
-          <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-        </tr></thead>
-        <tbody>
-          <tr>
-            <td></td><td></td><td></td><td></td>
-            <td><span class="dnum">1</span></td>
-            <td><span class="dnum">2</span></td>
-            <td class="has must-ring"><span class="dnum">3</span>
-              <a class="evt" href="#">Concert of the year<em>The Rave · doors 7pm</em></a></td>
-          </tr>
-          <tr>
-            <td><span class="dnum">4</span></td><td><span class="dnum">5</span></td>
-            <td><span class="dnum">6</span></td><td><span class="dnum">7</span></td>
-            <td><span class="dnum">8</span></td><td><span class="dnum">9</span></td>
-            <td><span class="dnum">10</span></td>
-          </tr>
-          <tr>
-            <td><span class="dnum">11</span></td><td><span class="dnum">12</span></td>
-            <td><span class="dnum">13</span></td><td><span class="dnum">14</span></td>
-            <td><span class="dnum">15</span></td><td><span class="dnum">16</span></td>
-            <td class="has must-ring"><span class="dnum">17</span>
-              <a class="evt" href="#">Festival name<em>Third Ward · all day</em></a></td>
-          </tr>
-          <tr>
-            <td><span class="dnum">18</span></td><td><span class="dnum">19</span></td>
-            <td><span class="dnum">20</span></td><td><span class="dnum">21</span></td>
-            <td><span class="dnum">22</span></td><td><span class="dnum">23</span></td>
-            <td class="has must-ring"><span class="dnum">24</span>
-              <a class="evt" href="#">Big show<em>Fiserv Forum · Deer District</em></a></td>
-          </tr>
-          <tr>
-            <td><span class="dnum">25</span></td><td><span class="dnum">26</span></td>
-            <td><span class="dnum">27</span></td><td><span class="dnum">28</span></td>
-            <td><span class="dnum">29</span></td><td><span class="dnum">30</span></td>
-            <td class="has must-ring ours"><span class="dnum">31</span>
-              <a class="evt evt--ours" href="haunted-bar-hop.html">Haunted Bar Hop<em>Brady Street · ours</em></a></td>
-          </tr>
-        </tbody>
-      </table>
+      <div data-calendar></div>
     </div>
   </section>
 
@@ -102,7 +63,7 @@
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
             <div class="row" style="gap:22px; align-items:baseline">
               <span class="secno">03</span>
-              <div><span class="tiny">Friday 3 October</span>
+              <div><span class="tiny">Friday 10/03/26</span>
                 <h3 class="h4" style="margin-top:6px">Concert of the year</h3>
                 <p class="small" style="margin-top:4px">The Rave · doors 7pm · 18+</p></div>
             </div>
@@ -114,7 +75,7 @@
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
             <div class="row" style="gap:22px; align-items:baseline">
               <span class="secno">17</span>
-              <div><span class="tiny">Saturday 17 October</span>
+              <div><span class="tiny">Saturday 10/17/26</span>
                 <h3 class="h4" style="margin-top:6px">Festival name</h3>
                 <p class="small" style="margin-top:4px">Third Ward · all day · free entry</p></div>
             </div>
@@ -126,7 +87,7 @@
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
             <div class="row" style="gap:22px; align-items:baseline">
               <span class="secno">24</span>
-              <div><span class="tiny">Saturday 24 October</span>
+              <div><span class="tiny">Saturday 10/24/26</span>
                 <h3 class="h4" style="margin-top:6px">Big show</h3>
                 <p class="small" style="margin-top:4px">Fiserv Forum · Deer District</p></div>
             </div>
@@ -134,12 +95,12 @@
           </div>
         </div>
 
-        <div class="card card--pad" style="border-width:2px; border-color:var(--rust)">
+        <div class="card card--pad" style="border-width:2px; border-color:var(--orange-d)">
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
             <div class="row" style="gap:22px; align-items:baseline">
               <span class="secno">31</span>
               <div><span class="sticker sticker--flat">Ours</span>
-                <p class="tiny" style="margin-top:10px">Saturday 31 October</p>
+                <p class="tiny" style="margin-top:10px">Saturday 10/31/26</p>
                 <h3 class="h4" style="margin-top:6px">Haunted Bar Hop</h3>
                 <p class="small" style="margin-top:4px">Brady Street · 3pm until close · 21+</p></div>
             </div>
@@ -179,6 +140,6 @@
 </main>
 
 <div id="chrome-footer"></div>
-<script src="js/bss.js"></script>
+<script src="js/bss.js?v=1788378605"></script>
 </body>
 </html>
