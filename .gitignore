@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Working files that must not reach the deploy. Vercel serves whatever is in
+# the repo, so an underscore prefix is NOT privacy — anything committed here
+# is publicly reachable at barscenesocials.com/<name>. These are local-only:
+#   _neon-preview.html   an unfinished alternate homepage direction
+#   _fallback.html       Brush Script MT vs Yellowtail comparison
+#   _lead.html           headline line-height ladder
+_*.html

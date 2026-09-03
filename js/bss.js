@@ -88,6 +88,22 @@
     return d + ' Z';
   }
 
+  /* Jomhuria is ~1.5x wider than the old display face at the same cap
+     height, so a fixed-width component like the ticket can no longer
+     assume a label fits. Measure the real advance width and step the
+     size down only when it has to. Runs again after document.fonts
+     resolves, because a first pass before the webfont lands would
+     measure the fallback. */
+  function fitFs(text, maxW, idealFs, track) {
+    var c = fitFs._c || (fitFs._c = document.createElement('canvas'));
+    var x = c.getContext('2d');
+    x.font = '400 100px Jomhuria, sans-serif';
+    var unit = x.measureText(text).width / 100;          // width per 1px of size
+    if (!unit) return idealFs;
+    var fs = (maxW - track * text.length) / unit;
+    return Math.max(12, Math.min(idealFs, Math.floor(fs)));
+  }
+
   function splitLabel(text, lines) {
     var w = String(text).toUpperCase().trim().split(/\s+/);
     if (lines === 1 || w.length === 1) return [w.join(' ')];
@@ -116,22 +132,32 @@
     var pad  = compact ? 11 : 15;          // keyline inset
     var stub = compact ? 42 : 54;          // stub width inside the keyline
     var rows = splitLabel(label, compact ? 1 : 2);
-    var fs   = compact ? 40 : 46;
+    // fsA is the old display size, kept ONLY as the unit for the baseline
+    // maths below so the ticket geometry is unchanged. Jomhuria's Latin cap
+    // is .3907em against the old face's .8594em, so the size actually set on
+    // the <text> is 2.2x that, to print the same cap height.
+    var fsA  = compact ? 40 : 46;
+    var TRACK = 3;
+    var labelW = W - 2 * (pad + stub) - 12;            // room between the stubs
+    var fs = Math.round(fsA * 2.2);
+    for (var ri = 0; ri < rows.length; ri++) {
+      fs = Math.min(fs, fitFs(rows[ri], labelW, Math.round(fsA * 2.2), TRACK));
+    }
     var midY = H / 2;
 
     var text = rows.length === 1
-      ? '<text x="' + (W / 2) + '" y="' + (midY + fs * 0.35) + '" text-anchor="middle" ' +
-          'fill="' + ink + '" font-family="Anton, sans-serif" font-size="' + fs + '" ' +
-          'letter-spacing="1">' + esc(rows[0]) + '</text>'
+      ? '<text x="' + (W / 2) + '" y="' + (midY + fsA * 0.35) + '" text-anchor="middle" ' +
+          'fill="' + ink + '" font-family="Jomhuria, sans-serif" font-size="' + fs + '" ' +
+          'letter-spacing="3">' + esc(rows[0]) + '</text>'
       : '<text x="' + (W / 2) + '" y="' + (midY - 4) + '" text-anchor="middle" fill="' + ink + '" ' +
-          'font-family="Anton, sans-serif" font-size="' + fs + '" letter-spacing="1">' + esc(rows[0]) + '</text>' +
-        '<text x="' + (W / 2) + '" y="' + (midY + fs - 2) + '" text-anchor="middle" fill="' + ink + '" ' +
-          'font-family="Anton, sans-serif" font-size="' + fs + '" letter-spacing="1">' + esc(rows[1]) + '</text>';
+          'font-family="Jomhuria, sans-serif" font-size="' + fs + '" letter-spacing="3">' + esc(rows[0]) + '</text>' +
+        '<text x="' + (W / 2) + '" y="' + (midY + fsA - 2) + '" text-anchor="middle" fill="' + ink + '" ' +
+          'font-family="Jomhuria, sans-serif" font-size="' + fs + '" letter-spacing="3">' + esc(rows[1]) + '</text>';
 
     var stubDate = function (cx) {
       return '<text transform="translate(' + cx + ' ' + midY + ') rotate(-90)" text-anchor="middle" ' +
-        'fill="' + line + '" font-family="Anton, sans-serif" font-size="' + (compact ? 15 : 17) + '" ' +
-        'letter-spacing="1.1">' + esc(date) + '</text>';
+        'fill="' + line + '" font-family="Jomhuria, sans-serif" font-size="' + (compact ? 33 : 37) + '" ' +
+        'letter-spacing="2.4">' + esc(date) + '</text>';
     };
 
     el.innerHTML =
@@ -236,13 +262,6 @@
   function footer() {
     return '' +
     '<footer class="ftr grain grain--dark"><div class="shell" style="padding-top:clamp(44px,5vw,76px)">' +
-      '<div class="row row--between" style="align-items:flex-end; gap:26px; margin-bottom:44px">' +
-        '<div>' +
-          '<p class="kicker kicker--paper">Next one out the door</p>' +
-          '<p class="d3" style="margin-top:12px">Haunted<br>Bar Hop</p>' +
-        '</div>' +
-        '<a class="ticket ticket--flat" href="tickets.html" data-ticket data-main="Get tickets" data-sub="10/31/26 · from $11.95"></a>' +
-      '</div>' +
       '<div class="ftr__grid">' +
         '<div><p class="ftr__h">When</p><p class="small">Saturday 10/31/26<br>3pm until close</p></div>' +
         '<div><p class="ftr__h">Where</p><p class="small">Brady Street<br>Milwaukee, Wisconsin</p></div>' +
@@ -283,6 +302,12 @@
     });
 
     [].forEach.call(document.querySelectorAll('[data-ticket]'), ticket);
+    // the first pass may have measured the fallback face; redraw on the real one
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        [].forEach.call(document.querySelectorAll('[data-ticket]'), ticket);
+      });
+    }
     [].forEach.call(document.querySelectorAll('.squig'), function (el) { el.insertAdjacentHTML('beforeend', SQUIG); });
     [].forEach.call(document.querySelectorAll('td.must-ring'), function (el) { el.insertAdjacentHTML('afterbegin', CALRING); });
 

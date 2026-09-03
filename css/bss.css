@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jomhuria&family=Yellowtail&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 /* ============================================================
    BAR SCENE SOCIALS — v3
@@ -8,36 +8,78 @@
    ============================================================ */
 
 :root{
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* --- ground: black and white only ---------------------- */
-  --paper:      #F8F8F6;   /* near-white — never pure #fff as a ground */
-  --paper-2:    #FFFFFF;   /* true white, for cards sitting on the ground */
-  --paper-3:    #EFEFEC;   /* the one light grey, for a quiet band */
-  --ink:        #111110;   /* near-black — never pure #000 */
-  --ink-2:      #1F1F1D;
-  --stone:      #8A8A85;
+  /* --- ground: the print is inverted — black stock, white ink -----
+     The token names still mean exactly what they always meant. "Paper"
+     is the surface you print on; "ink" is the mark you put on it. Only
+     the colours swapped, so every component built on those two ideas
+     inverts correctly without being rewritten.
+     Four steps of ground, darkest to lightest:
+       --ink-deep  closing bands + footer   (deeper than the page)
+       --paper     the page itself
+       --paper-2   raised: cards, panels, the lifted band
+       --paper-3   the one quiet band, a step further up
+     Keep the spread this tight — big jumps between bands read as a
+     theme bug rather than a section change. */
+  --paper:      #111110;   /* the page ground — near-black, never pure #000 */
+  --paper-2:    #191918;   /* raised surface: cards, panels, lifted band */
+  --paper-3:    #232321;   /* the one quiet band */
+  --ink:        #F8F8F6;   /* the mark on that ground: type, rules, keylines */
+  --ink-deep:   #080807;   /* below the ground — closing bands, footer */
+  --ink-2:      #2C2C29;   /* a flat field for placeholder photo blocks */
+  --stone:      #7A7A74;   /* the default placeholder photo field */
 
   /* --- accents: orange, green, red. Nothing else. --------- */
-  --orange:     #FF4D14;   /* THE accent — CTAs, marks, links, live state */
-  --orange-d:   #C93A08;   /* same hue, passes AA at label sizes on white */
+  --orange:     #FF4D14;   /* THE accent — CTAs, marks, links, live state.
+                              5.7:1 on the black ground, so it is safe as
+                              type here in a way it never was on white. */
+  --orange-on:  #FF8A4D;   /* small type on black where --orange is too hot */
+  --orange-d:   #C93A08;   /* the dark sibling — only for the handful of
+                              surfaces that are still light (button hover,
+                              the ticket stock, the taped polaroid) */
   --orange-lt:  #FF9152;   /* ticket stock */
   --green:      #00C24E;   /* electric — dark grounds and large elements */
-  --green-d:    #00873A;   /* green that survives on white */
+  --green-d:    #00873A;   /* the deep green field on photo blocks */
   --red:        #E8202A;
   --red-d:      #B8141C;
 
+  /* --- pinned: type sitting ON an accent or a light surface -------
+     This must never follow --ink. White on --orange measures 3.3:1 and
+     fails AA — electric orange is mid-luminance, so anything on an
+     orange surface takes near-black type instead. Same for the white
+     hover fills and the polaroid frame. */
+  --on-accent:  #111110;
+
   /* --- functional ---------------------------------------- */
   --text:       var(--ink);
-  --text-2:     rgba(17,17,16,.74);
-  --text-3:     rgba(17,17,16,.64);
-  --rule:       rgba(17,17,16,.14);
-  --rule-hard:  var(--ink);
+  --text-2:     rgba(248,248,246,.74);   /* 9.9:1 */
+  --text-3:     rgba(248,248,246,.58);   /* 6.4:1 */
+  --rule:       rgba(248,248,246,.16);
+  --rule-hard:  rgba(248,248,246,.74);
 
   /* --- type -------------------------------------------- */
-  --display: 'Anton', 'Arial Narrow', sans-serif;
-  --script:  'Caveat', 'Bradley Hand', cursive;
+  /* --- type ---------------------------------------------------------
+     Jomhuria + Brush Script MT, the pairing from the Figma frame.
+
+     METRIC WARNING. Jomhuria is an Arabic-first display face: its Latin
+     cap height is only .3907em, against Anton's .8594em. Every display
+     font-size in this file is therefore ~2.2x its old Anton value, and
+     every display line-height is ~/2.2, purely to hold the SAME optical
+     size the site already had. Do not "tidy" these numbers back down.
+
+     Brush Script MT is a macOS/Office system font, not a webfont, so it
+     is absent on iOS, Android and stock Windows. Yellowtail (Google) is
+     the web fallback — same brush-script genre, cap .70em vs Brush's
+     .6494em, so it renders ~8% larger. See --script-cap below. */
+  --display: 'Jomhuria', 'Arial Narrow', sans-serif;
+  --script:  'Brush Script MT', 'Yellowtail', cursive;
   --body:    'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  /* headline pairing, measured off the Figma frame (node 2072-5) */
+  --hl-track:  .07em;   /* sans tracking; script keeps 0 */
+  --hl-lead:   .46;     /* line-height in Jomhuria units */
+  --hl-script: .86em;   /* script size, relative to the headline size */
 
   /* --- motion (restrained on purpose) ------------------ */
   --ease: cubic-bezier(.16,1,.3,1);
@@ -54,7 +96,7 @@ body{
   font:400 17px/1.65 var(--body);
   -webkit-font-smoothing:antialiased;
 }
-::selection{background:var(--orange); color:var(--paper-2)}
+::selection{background:var(--orange); color:var(--on-accent)}
 a{color:inherit}
 img{max-width:100%; display:block}
 :focus-visible{
@@ -64,23 +106,170 @@ img{max-width:100%; display:block}
 /* ============================================================
    TYPE
    ============================================================ */
-.d1,.d2,.d3{
+.d1,.d2,.d3,.event__title{
   font-family:var(--display); font-weight:400; text-transform:uppercase;
-  line-height:.86; letter-spacing:-.015em; margin:0;
+  line-height:var(--hl-lead); letter-spacing:var(--hl-track); margin:0;
   text-wrap:balance;
 }
-.d1{font-size:clamp(58px, 12.5vw, 208px)}
-.d2{font-size:clamp(42px, 7.4vw, 118px)}
-.d3{font-size:clamp(30px, 4.2vw, 62px)}
+/* sizes are the old Anton values x2.1996 — same cap height on screen.
+   .d1 is the exception: a straight x2.2 gave 458px, and at that size the
+   longest headline line ("12 BARS OF", 3.284em of advance with tracking)
+   needs 1505px of column and overflowed every container from 1440px up.
+   380px is the largest that fits the widened hero, and 26.5vw keeps the
+   narrow end fitting too. */
+.d1{font-size:clamp(64px, 13.25vw, 190px)}
+.d2{font-size:clamp(46px, 8.15vw, 130px)}
+.d3{font-size:clamp(33px, 4.6vw, 68px)}
 .h4{
   font-family:var(--display); font-weight:400; text-transform:uppercase;
-  font-size:clamp(21px,2.3vw,30px); line-height:1.02; letter-spacing:0; margin:0;
+  font-size:clamp(23px,2.55vw,33px); line-height:.464; letter-spacing:.03em; margin:0;
+}
+
+/* Narrow screens. Jomhuria is ~1.5x wider than Anton at a matched cap
+   height, so the desktop ramp's minimum (128px on .d1) puts "SHAMROCK"
+   at 415px on a 375px phone. Headlines therefore have to run a little
+   shorter here than they did before — there is no size that both
+   matches the old cap height AND fits. Tracking eases to .04em to buy
+   back some of the width rather than shrinking the type further. */
+@media (max-width:560px){
+  .d1,.d2,.d3{letter-spacing:.04em}
+  .d1{font-size:clamp(42px, 13.5vw, 52px)}
+  .d2{font-size:clamp(35px, 10vw, 46px)}
+  .d3{font-size:clamp(27px, 7.5vw, 35px)}
+  .h4{font-size:clamp(19px, 5.5vw, 24px)}
+}
+
+/* --- the script half of a headline pairing -------------------------
+   <h1 class="d1">Haunted bar <em class="scr">Crawl</em></h1>
+   Smaller in font-size than the sans, but Brush Script's cap is 1.66x
+   Jomhuria's, so it still reads slightly TALLER — which is the whole
+   effect. Tracking stays at 0: this face connects, and any letter-
+   spacing at all breaks the joins between glyphs. */
+.scr{
+  font-family:var(--script); font-size:var(--hl-script);
+  /* the script word is always set with a capital, whatever the source
+     copy does — Brush Script's capitals carry the swash that makes the
+     pairing read. Single words in practice, so capitalize == first letter. */
+  letter-spacing:0; text-transform:capitalize; font-style:normal;
+}
+/* Brush Script overhangs its own advance box — the "C" reaches 4.8px left
+   of the origin and 3.4px above the line box at a 160px headline. A .fx
+   headline paints its fill as a background clipped to the text, and a
+   background only paints inside the element's box, so those overhangs get
+   sliced flat. Giving the span its own padded paint box fixes it: vertical
+   padding on an INLINE costs nothing in layout, and the horizontal padding
+   is cancelled by an equal negative margin. The .04em left over on the
+   right is the join spacing to the next word. */
+.fx .scr{
+  /* display:inline-block is doing real work here, not layout work. A .fx
+     headline paints its fill as a background clipped to its text, and a
+     background only paints inside the element's box — so Brush Script's
+     overhangs (the C reaches above the line box, descenders reach below)
+     were sliced flat. An inline-block is an atomic box the parent's text
+     clip cannot reach, so the span is left to paint itself, with padding
+     that gives those overhangs room. That also avoids the parent and the
+     span BOTH painting these glyphs, which multiplied the noise twice and
+     made the script word read darker than the sans beside it.
+     Every bit of padding is cancelled by an equal negative margin, so the
+     line box and the baseline are exactly where they were; the .04em left
+     over on the right is the join spacing to the next word. */
+  display:inline-block;
+  /* Vertical padding is tied to --hl-lead. The content box of an
+     inline-block IS its line box, so the baseline sits at
+     (lead - 1.23)/2 + .89 from the top (Brush Script MT is .89 ascent /
+     .34 descent). Tightening the lead pulls both box edges toward the
+     baseline by half the change — going .58 -> .46 cost .06em top and
+     bottom, which re-clipped the descenders. If --hl-lead moves again,
+     re-measure: the clip check is ink-vs-paint-box on every script word. */
+  padding:.19em .10em .33em .10em;
+  margin:-.19em -.06em -.33em -.10em;
+  background-image:inherit; background-blend-mode:multiply;
+  -webkit-background-clip:text; background-clip:text;
+}
+
+/* ============================================================
+   HEADLINE TREATMENT — noise in the letterform, glow off the edge
+   Ported from the Figma frame: a same-colour drop shadow plus a
+   wider, softer same-colour bloom (Figma's layer blur), and a fine
+   noise field multiplied into the fill.
+
+   The fill is painted as a background clipped to the glyphs, so the
+   text itself is transparent — anything that needs a solid colour
+   (a link underline, a ::selection) has to be set separately.
+   ============================================================ */
+.fx{
+  /* Paint-box padding for the SANS text. A .fx headline paints its fill as
+     a background clipped to its text, and a background only paints inside
+     the element's box — but a block's box is its line boxes, and at
+     --hl-lead .46 the first line's cap sits .0507em ABOVE the box top
+     (baseline = (lead - 1.0)/2 + .61, cap = .3907 above that). It was being
+     sliced flat across the top. The bottom pad covers descending
+     punctuation — "So, are we Crawling?" has a comma.
+     Cancelled by an equal negative margin so layout does not move; the
+     handful of headlines carrying an inline margin-top subtract --fx-pt
+     themselves. Script words are NOT covered by this — they are
+     inline-blocks that paint their own box (see .fx .scr). */
+  --fx-pt:  .09em;
+  --fx-pb:  .06em;
+  padding-top:var(--fx-pt); padding-bottom:var(--fx-pb);
+  margin-top:calc(-1 * var(--fx-pt)); margin-bottom:calc(-1 * var(--fx-pb));
+
+  --fx-c:   var(--ink);                 /* the fill */
+  --fx-g:   rgba(248,248,246,.42);      /* tight shadow */
+  --fx-b:   rgba(248,248,246,.15);      /* wide bloom */
+  --fx-n:   .25;                        /* noise strength — Figma: 000000 @ 25% */
+  --fx-blur:.003em;                     /* the layer blur — keep it tiny */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
+    linear-gradient(var(--fx-c),var(--fx-c));
+  background-blend-mode:multiply;
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+  /* Blur FIRST, so the shadows are cast from the softened shape — the
+     order Figma stacks them (Noise, Drop shadow, Layer blur). Keep
+     --fx-blur tiny: this is softening an edge, not defocusing the
+     headline.
+     Both shadows are offset 0 0 — Figma's Drop shadow panel reads
+     Position X 0 / Y 0, Blur 5, Spread 0, i.e. an even halo, not a
+     directional shadow. The previous .016em downward offset made the
+     headline sit bottom-heavy. Two radii rather than Figma's one: a
+     single hard-edged halo bands visibly at these sizes, so a tight
+     core plus a wider bloom gives the same read with a smoother
+     falloff. */
+  filter:blur(var(--fx-blur))
+         drop-shadow(0 0 .034em var(--fx-g))
+         drop-shadow(0 0 .085em var(--fx-b));
+}
+/* per-event colourways — orange is the house accent, the other two
+   belong to their event and are never used off it */
+.fx--orange{
+  --fx-c:var(--orange); --fx-g:rgba(255,77,20,.9); --fx-b:rgba(255,77,20,.4);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
+    linear-gradient(var(--fx-c),var(--fx-c));
+}
+.fx--green{
+  --fx-c:var(--green); --fx-g:rgba(0,194,78,.9); --fx-b:rgba(0,194,78,.36);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
+    linear-gradient(var(--fx-c),var(--fx-c));
+}
+.fx--red{
+  --fx-c:var(--red); --fx-g:rgba(232,32,42,.9); --fx-b:rgba(232,32,42,.36);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
+    linear-gradient(var(--fx-c),var(--fx-c));
+}
+/* Safari repaints background-clip:text badly inside a transform or a
+   will-change layer; keep the headline out of both. */
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .fx{color:var(--fx-c); background-image:none}
 }
 .kicker{
   font:500 11.5px/1.3 var(--body); text-transform:uppercase;
   letter-spacing:.24em; color:var(--text-3); margin:0;
 }
-.kicker--orange{color:var(--orange-d)}
+.kicker--orange{color:var(--orange-on)}
 .kicker--paper{color:rgba(255,255,255,.72)}
 .lede{font-size:clamp(18px,1.55vw,22px); line-height:1.6; color:var(--text-2); max-width:34ch; margin:0}
 .body p{margin:0 0 1.05em; max-width:62ch}
@@ -90,12 +279,12 @@ img{max-width:100%; display:block}
 
 /* the hand-written voice — short accents only, never body copy */
 .scrawl{
-  font-family:var(--script); font-weight:700;
-  font-size:clamp(21px,2.5vw,34px); line-height:1.15; color:var(--ink);
+  font-family:var(--script); font-weight:400;
+  font-size:clamp(22px,2.6vw,36px); line-height:1.15; color:var(--ink);
   transform:rotate(-2.2deg); display:inline-block;
 }
 .scrawl--orange{color:var(--orange)}
-.scrawl--paper{color:var(--paper-2)}
+.scrawl--paper{color:var(--ink)}
 
 /* ============================================================
    TEXTURE — the thing that makes it feel printed
@@ -104,9 +293,12 @@ img{max-width:100%; display:block}
 .grain::after{
   content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-  opacity:.19; mix-blend-mode:multiply;
+  /* overlay, not multiply: multiplying noise into a near-black ground
+     produces nothing at all. Overlay lifts and drops around the mid
+     point, so the tooth survives on black. */
+  opacity:.26; mix-blend-mode:overlay;
 }
-.grain--soft::after{opacity:.11}
+.grain--soft::after{opacity:.14}
 .grain--dark::after{mix-blend-mode:overlay; opacity:.3}
 
 /* torn / cut-paper divider, sits between two colour fields */
@@ -133,19 +325,87 @@ img{max-width:100%; display:block}
 }
 @media (max-width:640px){ .hero > .hero__media .photo__cap{left:18px; bottom:16px} }
 .hero__media img{width:100%; height:100%; object-fit:cover}
+
+/* ── REAL PHOTOGRAPHY IN A HERO ──────────────────────────────
+   A daylight source frame is graded toward dusk so a sunny picture
+   can still sit under an October headline. The halftone stays but is
+   dialled right down — print texture over a photo, not a riso wash.
+
+   The night gradient stays underneath as the fallback, so a hero whose
+   image is missing or still loading looks like the placeholder design
+   rather than a black box.
+
+   NOTE the specificity trap in the README: the scrim override below
+   matches `.hero > .hero__scrim` at (0,2,0) and only wins by being
+   declared later. Keep it after that rule. */
+.hero > .hero__media--shot{
+  overflow:hidden;
+  background:linear-gradient(152deg,var(--orange) 0%,var(--red) 46%,var(--ink-deep) 100%);
+}
+.hero__media--shot img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:saturate(.86) contrast(1.04) brightness(.93);
+  /* if the file is missing or still loading, the browser paints the alt
+     text across the hero. Hide it visually — the gradient underneath is
+     the intended fallback. Screen readers still get the alt attribute. */
+  color:transparent; font-size:0;
+}
+/* warm dusk wash — marries the frame to the palette without hiding it */
+.hero__media--shot::before{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(158deg,
+    rgba(255,77,20,.12) 0%, rgba(232,32,42,.08) 45%, rgba(17,17,16,.26) 100%);
+  mix-blend-mode:multiply;
+}
+/* print texture over photography, low (style guide calls for 8-15%) */
+.hero__media--shot::after{
+  content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+  background-image:radial-gradient(rgba(17,17,16,.3) 1.4px, transparent 1.5px);
+  background-size:7px 7px; mix-blend-mode:multiply; opacity:.09;
+}
 /* guarantees the centred type stays legible whatever picture lands here */
 .hero > .hero__scrim{
   position:absolute; inset:0; z-index:1; place-self:stretch;
-  background:linear-gradient(180deg,rgba(10,10,9,.62) 0%,rgba(10,10,9,.34) 42%,rgba(10,10,9,.72) 100%);
+  /* Two layers. The linear wash is the old full-height scrim. The radial
+     is new: a soft plate centred on the headline, because a headline in
+     --orange / --red measures 1.3:1 against the bright sky in the Brady
+     Street picture and only ~2.8:1 against a green placeholder field.
+     Darkening the whole photo to fix that killed the picture; darkening
+     only the middle keeps the edges readable as an image. */
+  background:
+    radial-gradient(125% 82% at 50% 42%,
+      rgba(8,8,7,.78) 0%, rgba(8,8,7,.60) 46%, rgba(8,8,7,0) 88%),
+    linear-gradient(180deg,rgba(10,10,9,.44) 0%,rgba(10,10,9,.24) 42%,rgba(10,10,9,.58) 100%);
+}
+/* a hero carrying a real picture wants less of a scrim — the dusk wash
+   on the image is already doing part of the legibility work */
+.hero--shot > .hero__scrim{
+  /* Two jobs, tuned separately. The linear wash is what makes the picture
+     read dark, so it comes down hard — the photo should be legible as a
+     photo. The radial is the only thing holding the orange headline above
+     3:1 against a near-white sky, so it barely moves. Re-measure after any
+     change here: the brightest pixels under the headline are #f8f8f8. */
+  background:
+    radial-gradient(125% 82% at 50% 42%,
+      rgba(8,8,7,.77) 0%, rgba(8,8,7,.59) 46%, rgba(8,8,7,0) 88%),
+    linear-gradient(180deg,rgba(10,10,9,.34) 0%,rgba(10,10,9,.06) 45%,rgba(10,10,9,.46) 100%);
 }
 .hero__inner{
-  position:relative; z-index:2; width:100%; max-width:1000px; place-self:center;
+  /* 1000px was an Anton-era measure. Jomhuria is ~1.5x wider at the same
+     cap height, so "SHAMROCK" ran 541px past the old column. The sub-copy
+     is unaffected — .hero__sub caps itself at 46ch. */
+  position:relative; z-index:2; width:100%; max-width:1320px; place-self:center;
   padding:calc(var(--hdr-h) + clamp(40px,7vh,88px)) 28px clamp(44px,7vh,84px);
   display:grid; justify-items:center; gap:clamp(18px,2.6vh,30px);
-  color:var(--paper-2);
+  color:var(--ink);
 }
 .hero__inner .kicker{color:rgba(255,255,255,.86)}
-.hero__inner .d1,.hero__inner .d2{color:var(--paper-2)}
+/* A headline carrying .fx paints its own fill through background-clip:text,
+   so it must keep color:transparent. This rule is (0,2,0) and would beat
+   .fx at (0,1,0) — the same specificity trap `.photo` hits elsewhere in
+   this file. Any NEW rule that sets `color` on .d1/.d2/.d3 needs the same
+   :not(.fx) guard, or the headline silently goes solid. */
+.hero__inner .d1:not(.fx),.hero__inner .d2:not(.fx){color:var(--ink)}
 .hero__sub{
   font-size:clamp(15px,1.5vw,19px); line-height:1.55; color:rgba(255,255,255,.9);
   max-width:46ch; margin:0;
@@ -160,26 +420,120 @@ img{max-width:100%; display:block}
 .pagehead{text-align:center; display:grid; justify-items:center; gap:clamp(14px,2vw,22px)}
 .pagehead .lede{max-width:52ch}
 
+/* --- slim head: utility pages put the content first ------------------
+   Calendar, tickets, about and contact used the same full centred hero as
+   the event pages, which pushed the thing people actually came for (the
+   calendar grid, the ticket list, the form) most of a viewport down. Here
+   the headline drops to .d3 scale, left-aligns, and the lede paragraph is
+   dropped, so the content starts just under the kicker rule. Event pages
+   keep the tall centred hero — this is deliberately only for the four. */
+.pagehead--slim{
+  text-align:left; display:flex; align-items:flex-end;
+  justify-content:space-between; flex-wrap:wrap;
+  gap:clamp(16px,3vw,44px);
+}
+.pagehead--slim > :first-child{margin:0}
+.pagehead--slim .scrawl{margin:0 0 .35em; transform:rotate(-1.6deg)}
+.pagehead--slim .taped{flex:0 0 auto; width:clamp(124px,13vw,168px)}
+@media (max-width:640px){
+  .pagehead--slim{gap:18px}
+  .pagehead--slim .taped{width:150px}
+}
+
 /* ============================================================
    SHELL & GRID
    ============================================================ */
 .shell{max-width:var(--shell); margin:0 auto; padding:0 28px}
-.shell--tight{max-width:1000px}
+/* the closing bands put a .d1 in here; 1000px was an Anton-era measure
+   and clipped "So, are we Crawling?" by 102px */
+.shell--tight{max-width:1180px}
 @media (max-width:640px){ .shell{padding:0 18px} }
 
 section{position:relative}
 .band{padding:clamp(56px,7.5vw,120px) 0}
 .band--tight{padding:clamp(36px,4.2vw,64px) 0}
-.band--paper2{background:var(--paper-2)}
-.band--ink{background:var(--ink); color:var(--paper-2)}
+/* --paper2 and --grey used to step the ground up through --paper-2 and
+   --paper-3 for visual rhythm between sections; Tanner asked for one flat
+   dark gray everywhere except image sections (2026-09-02), so both classes
+   now resolve to --paper, same as the unmodified .band. Kept as separate
+   classes rather than stripped from markup, in case the step returns later.
+   --ink-deep (.band--ink, .ftr) is deliberately UNCHANGED — the closing CTA
+   and footer stay the darkest ground on purpose, confirmed with Tanner.
+   --paper-2/--paper-3 tokens themselves are untouched: cards, the price
+   panel, the drawer-link hover and .photo--grey still use them to read as
+   raised OVER this new flat ground — only full-bleed section backgrounds
+   were flattened. */
+.band--paper2{background:var(--paper)}
+.band--ink{background:var(--ink-deep); color:var(--ink)}
 .band--ink .lede,.band--ink .small{color:rgba(255,255,255,.7)}
 .band--ink .kicker{color:rgba(255,255,255,.66)}
-.band--ink .tiny,.ftr .tiny,.band--orange{background:var(--orange); color:var(--ink)}
+/* NOTE: .band--ink .tiny / .ftr .tiny used to be grouped into the
+   .band--orange rule below, which meant every small label on a dark band
+   was silently painted with an orange background — a full-width orange
+   stripe behind the block-level ones. They only ever wanted a colour. */
+.band--ink .tiny,.ftr .tiny{color:rgba(255,255,255,.72)}
+.band--orange{background:var(--orange); color:var(--on-accent)}
 .band--orange .lede{color:rgba(17,17,16,.86)}
 .band--orange .kicker{color:rgba(17,17,16,.84)}
-.band--orange .btn{border-color:var(--ink); color:var(--ink)}
-.band--orange .btn:hover{background:var(--ink); color:var(--orange)}
-.band--grey{background:var(--paper-3)}
+.band--orange .btn{border-color:var(--on-accent); color:var(--on-accent)}
+.band--orange .btn:hover{background:var(--on-accent); color:var(--orange)}
+.band--grey{background:var(--paper)}
+
+/* ============================================================
+   ON-WHITE — the calendar prints on white stock
+   The token names already mean the right thing: --paper is "the surface
+   you print on", --ink is "the mark on it". So this is a straight value
+   swap, not a repaint, and every component built on those two inverts on
+   its own. Three things do NOT come along for the ride:
+     · --on-accent stays near-black. It is the colour of type sitting ON
+       an accent, and orange is mid-luminance — white on --orange is
+       3.3:1 and fails whichever way round the page is.
+     · --orange-on is swapped for --orange-d. #FF8A4D is tuned for small
+       type on black; on white it measures under 3:1, --orange-d gives 4.9.
+     · anything painting type on a solid --ink fill (buttons, active tabs)
+       has to take --paper instead, or it lands black-on-black.
+   ============================================================ */
+.on-white{
+  --paper:      #F8F8F6;
+  --paper-2:    #EFEFEB;
+  --paper-3:    #E4E4DF;
+  --ink:        #111110;
+  --ink-deep:   #FFFFFF;
+  --ink-2:      #DCDCD6;
+  --stone:      #C9C9C2;
+  --text:       var(--ink);
+  --text-2:     rgba(17,17,16,.74);
+  --text-3:     rgba(17,17,16,.62);   /* .56 measured 4.24:1 — under 4.5 for 11px labels */
+  --rule:       rgba(17,17,16,.16);
+  --rule-hard:  rgba(17,17,16,.72);
+  --orange-on:  var(--orange-d);
+  background:var(--paper); color:var(--text);
+}
+/* the grain is tuned to lift a near-black ground; on white it only muddies */
+.on-white.grain::after,.on-white .grain::after{display:none}
+
+/* type on a solid --ink fill flips with it */
+.on-white .btn:hover{background:var(--ink); color:var(--paper)}
+.on-white .btn--paper{border-color:rgba(17,17,16,.5); color:var(--ink)}
+.on-white .btn--paper:hover{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.on-white .tabs a.is-active{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.on-white .sheet .tabs a.is-active{color:var(--paper)}
+
+/* the sheet is redundant once the whole band is white — keep its spacing,
+   drop the panel so it does not read as a black box (--ink is now black) */
+.on-white .sheet{background:transparent; color:inherit; padding:0}
+
+/* a white headline glow is invisible on white; invert the halo */
+.on-white .fx{--fx-g:rgba(17,17,16,.26); --fx-b:rgba(17,17,16,.10)}
+.on-white .scrawl--paper,.on-white .scrawl--orange{color:var(--orange-d)}
+.on-white .kicker--paper{color:rgba(17,17,16,.62)}
+.on-white .secno{color:var(--orange-d)}   /* --orange @.9 is 2.88:1 on white */
+/* defensive: if a band--ink ever lands inside an on-white scope, its
+   hardcoded rgba(255,255,255,…) text would go white-on-white */
+.on-white .band--ink .lede,.on-white .band--ink .small{color:var(--text-2)}
+.on-white .band--ink .kicker,.on-white .band--ink .tiny,
+.on-white .band--ink .ticket__note,.on-white .band--ink .stat__l{color:var(--text-3)}
+.on-white .sticker--ghost-paper{border-color:rgba(17,17,16,.4); color:var(--ink)}
 
 .cols{display:grid; gap:clamp(24px,3vw,48px)}
 .c-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -189,6 +543,12 @@ section{position:relative}
 .c-wide-left{grid-template-columns:minmax(0,1.62fr) minmax(0,1fr)}
 .c-wide-right{grid-template-columns:minmax(0,1fr) minmax(0,1.62fr)}
 .c-offset{grid-template-columns:minmax(0,.42fr) minmax(0,1fr)}
+/* c-offset pairs a narrow label column with a wide content column. The
+   numbered eyebrows that filled that label column are gone, leaving six of
+   these grids with a single child — which would otherwise be squeezed into
+   the .42fr column. Span it instead. Self-healing: put a label back and the
+   two-column layout returns on its own. */
+.c-offset > :only-child{grid-column:1 / -1}
 @media (max-width:900px){
   .c-3,.c-4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .c-2,.c-wide-left,.c-wide-right,.c-offset{grid-template-columns:minmax(0,1fr)}
@@ -204,34 +564,34 @@ section{position:relative}
 
 /* section number — the riso listing tic */
 .secno{
-  font-family:var(--display); font-size:clamp(34px,4vw,58px); line-height:.8;
-  color:var(--orange); opacity:.9;
+  font-family:var(--display); font-size:clamp(75px,8.8vw,128px); line-height:.364;
+  letter-spacing:.03em; color:var(--orange); opacity:.9;
 }
-.band--ink .secno{color:var(--paper-2); opacity:.4}
-.band--orange .secno{color:var(--ink); opacity:.42}
+.band--ink .secno{color:var(--ink); opacity:.4}
+.band--orange .secno{color:var(--on-accent); opacity:.42}
 
 /* ============================================================
    HEADER — sticky, paper, one hairline
    ============================================================ */
 .hdr{
   position:fixed; top:0; left:0; right:0; z-index:80;
-  background:var(--paper); border-bottom:1px solid var(--rule-hard);
-  transition:background .3s var(--quart), border-color .3s var(--quart);
+  background:var(--paper);
+  transition:background .3s var(--quart);
 }
 /* pages whose hero is a full-bleed image: the bar rides over the picture until
    you scroll, the way the Shamrock site does it */
-.hdr--over{background:transparent; border-bottom-color:transparent}
-.hdr--over .lockup__wm{color:var(--paper-2)}
-.hdr--over .lockup__wm i{color:var(--paper-2)}
+.hdr--over{background:transparent}
+.hdr--over .lockup__wm{color:var(--ink)}
+.hdr--over .lockup__wm i{color:var(--ink)}
 .hdr--over .nav > a,.hdr--over .nav button{color:rgba(255,255,255,.85)}
-.hdr--over .nav > a:hover,.hdr--over .nav button:hover{color:var(--paper-2)}
-.hdr--over .nav > a.is-active{color:var(--paper-2)}
+.hdr--over .nav > a:hover,.hdr--over .nav button:hover{color:var(--ink)}
+.hdr--over .nav > a.is-active{color:var(--ink)}
 /* the dropdown is its own white panel — it never inherits the over-hero colours */
 .hdr--over .more__menu a{color:var(--ink)}
 .hdr--over .nav .soon{color:rgba(255,255,255,.6)}
-.hdr--over .burger{border-color:var(--paper-2); color:var(--paper-2)}
-.hdr--over .burger:hover{background:var(--paper-2); color:var(--ink)}
-.hdr--over .mark-stroke{stroke:var(--paper-2)}
+.hdr--over .burger{border-color:var(--ink); color:var(--ink)}
+.hdr--over .burger:hover{background:var(--ink); color:var(--on-accent)}
+.hdr--over .mark-stroke{stroke:var(--ink)}
 /* everything below the header needs the height back, except full-bleed heroes
    which deliberately run underneath it */
 body{padding-top:var(--hdr-h)}
@@ -245,8 +605,8 @@ body.has-hero{padding-top:0}
 .lockup{display:flex; align-items:center; gap:11px; text-decoration:none; flex:none}
 .lockup svg{display:block; width:38px; height:38px; overflow:visible}
 .lockup__wm{
-  font-family:var(--display); text-transform:uppercase; line-height:.84;
-  font-size:15px; letter-spacing:.005em; color:var(--ink);
+  font-family:var(--display); text-transform:uppercase; line-height:.382;
+  font-size:33px; letter-spacing:.04em; color:var(--ink);
 }
 .lockup__wm b{display:block; font-weight:400}
 .lockup__wm i{display:block; font-style:normal; color:var(--orange)}
@@ -277,7 +637,7 @@ body.has-hero{padding-top:0}
   background:var(--paper-2); border:1px solid var(--rule); border-radius:14px; padding:8px;
   opacity:0; visibility:hidden; transform:translateY(-5px);
   transition:opacity .22s var(--quart), transform .22s var(--quart), visibility .22s;
-  box-shadow:0 14px 34px rgba(17,17,16,.16), 0 2px 6px rgba(17,17,16,.08);
+  box-shadow:0 14px 34px rgba(0,0,0,.6), 0 2px 6px rgba(0,0,0,.4);
 }
 .more.is-open .more__menu{opacity:1; visibility:visible; transform:translateY(0)}
 .more__menu a{display:block; padding:10px 13px; letter-spacing:.02em; border-radius:8px; font-weight:500; text-transform:none; font-size:13.5px}
@@ -293,14 +653,15 @@ body.has-hero{padding-top:0}
 }
 @media (max-width:400px){
   .hdr__cta .ticket{max-width:128px}
-  .burger{padding:9px 10px; letter-spacing:.1em}
 }
 .burger{display:none}
 @media (max-width:1100px){
+  /* same metrics as .btn, so Menu and the drawer's Close are one button
+     in two states rather than two sizes */
   .burger{
     display:block; background:none; border:1.5px solid var(--ink); border-radius:999px;
-    padding:11px 18px; cursor:pointer;
-    font:700 12.5px/1 var(--body); letter-spacing:.02em;
+    padding:15px 26px; cursor:pointer;
+    font:700 13px/1 var(--body); letter-spacing:.01em;
   }
   .burger:hover{background:var(--ink); color:var(--paper)}
 }
@@ -312,7 +673,8 @@ body.has-hero{padding-top:0}
 .drawer.is-open{opacity:1; visibility:visible}
 .drawer a{
   display:block; text-decoration:none; font-family:var(--display);
-  text-transform:uppercase; font-size:clamp(28px,7vw,46px); line-height:1.05;
+  text-transform:uppercase; font-size:clamp(62px,15.4vw,101px); line-height:.477;
+  letter-spacing:.03em;
   padding:9px 0; border-bottom:1px solid var(--rule);
 }
 .drawer a .soon{font:500 11px/1 var(--body); letter-spacing:.16em; color:var(--text-3); vertical-align:8px; margin-left:8px}
@@ -326,10 +688,10 @@ body.has-hero{padding-top:0}
   display:inline-block; width:100%; max-width:248px; border:0; padding:0;
   background:none; cursor:pointer; text-decoration:none; text-align:center;
   transition:transform .34s var(--ease), filter .34s var(--ease);
-  filter:drop-shadow(0 6px 14px rgba(17,17,16,.26));
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.55));
 }
-.ticket:hover{transform:rotate(-3.2deg) translateY(-3px); filter:drop-shadow(0 12px 22px rgba(17,17,16,.3))}
-.ticket:active{transform:rotate(-1.4deg) translateY(0); filter:drop-shadow(0 4px 9px rgba(17,17,16,.26))}
+.ticket:hover{transform:rotate(-3.2deg) translateY(-3px); filter:drop-shadow(0 12px 22px rgba(0,0,0,.62))}
+.ticket:active{transform:rotate(-1.4deg) translateY(0); filter:drop-shadow(0 4px 9px rgba(0,0,0,.55))}
 .ticket svg{display:block; width:100%; height:auto; overflow:visible}
 .ticket__note{
   display:block; margin-top:11px; font:500 11px/1.4 var(--body);
@@ -344,7 +706,7 @@ body.has-hero{padding-top:0}
 .ticket-row{display:flex; gap:26px; align-items:center; flex-wrap:wrap}
 
 /* the header needs the same object under 65px — one line, fewer scallops */
-.ticket--compact{max-width:196px; filter:drop-shadow(0 3px 7px rgba(17,17,16,.22))}
+.ticket--compact{max-width:196px; filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
 .ticket--compact:hover{transform:rotate(-2.4deg) translateY(-2px)}
 
 /* ============================================================
@@ -362,12 +724,12 @@ body.has-hero{padding-top:0}
   transition:background .22s var(--quart), color .22s var(--quart),
              border-color .22s var(--quart), transform .22s var(--ease);
 }
-.btn:hover{background:var(--ink); color:var(--paper-2); transform:translateY(-2px)}
+.btn:hover{background:var(--ink); color:var(--on-accent); transform:translateY(-2px)}
 .btn:active{transform:translateY(0)}
-.btn--orange{background:var(--orange); border-color:var(--orange); color:var(--ink)}
-.btn--orange:hover{background:var(--ink); border-color:var(--ink); color:var(--orange)}
-.btn--paper{border-color:rgba(255,255,255,.55); color:var(--paper-2)}
-.btn--paper:hover{background:var(--paper-2); border-color:var(--paper-2); color:var(--ink)}
+.btn--orange{background:var(--orange); border-color:var(--orange); color:var(--on-accent)}
+.btn--orange:hover{background:var(--ink); border-color:var(--ink); color:var(--orange-d)}
+.btn--paper{border-color:rgba(255,255,255,.55); color:var(--ink)}
+.btn--paper:hover{background:var(--ink); border-color:var(--ink); color:var(--on-accent)}
 
 /* chips / labels — pill, solid, level. The old rotated die-cut sticker read
    as sloppy at 10px; the printed character lives in the artwork instead. */
@@ -375,7 +737,7 @@ body.has-hero{padding-top:0}
   display:inline-flex; align-items:center; gap:7px;
   font:700 11px/1 var(--body); letter-spacing:.05em;
   padding:8px 14px; border-radius:999px;
-  background:var(--orange); color:var(--ink); border:0;
+  background:var(--orange); color:var(--on-accent); border:0;
 }
 /* live state gets a pulse dot — the one place a tiny bit of motion earns itself */
 .sticker--live::before{
@@ -383,7 +745,7 @@ body.has-hero{padding-top:0}
   box-shadow:0 0 0 3px rgba(17,17,16,.18);
 }
 .sticker--ghost{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--rule-hard)}
-.sticker--ghost-paper{background:transparent; color:var(--paper-2); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
+.sticker--ghost-paper{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
 
 /* ============================================================
    PHOTO — no real imagery yet, so: riso colour fields
@@ -409,14 +771,14 @@ body.has-hero{padding-top:0}
   text-align:center; padding:14px; max-width:24ch;
 }
 .photo--orange{background:var(--orange)}
-.photo--orange .photo__cap{color:var(--ink); text-shadow:none}
+.photo--orange .photo__cap{color:var(--on-accent); text-shadow:none}
 .photo--green{background:var(--green-d)}
 .photo--ink{background:var(--ink-2)}
 .photo--grey{background:var(--paper-3)}
-.photo--grey .photo__cap{color:rgba(17,17,16,.82)}
+.photo--grey .photo__cap{color:rgba(248,248,246,.82)}
 .photo--red{background:var(--red-d)}
 
-.photo--night{background:linear-gradient(152deg,var(--orange) 0%,var(--red) 46%,var(--ink) 100%)}
+.photo--night{background:linear-gradient(152deg,var(--orange) 0%,var(--red) 46%,var(--ink-deep) 100%)}
 .ar-1,.ar-43,.ar-34,.ar-169{min-height:0}
 .ar-1{aspect-ratio:1/1}
 .ar-43{aspect-ratio:4/3}
@@ -424,7 +786,10 @@ body.has-hero{padding-top:0}
 .ar-169{aspect-ratio:16/9}
 
 /* taped-down polaroid */
-.taped{position:relative; background:var(--paper-2); padding:11px 11px 40px; box-shadow:3px 4px 0 rgba(17,17,16,.16)}
+/* the polaroid is a physical white object taped to a black wall — it is
+   one of the few surfaces that does NOT invert, so its frame and its
+   handwriting are pinned rather than tokenised */
+.taped{position:relative; background:#F8F8F6; padding:11px 11px 40px; box-shadow:4px 6px 0 rgba(0,0,0,.55)}
 .taped::before{
   content:""; position:absolute; top:-11px; left:50%; width:78px; height:23px;
   transform:translateX(-50%) rotate(-3.5deg);
@@ -432,7 +797,7 @@ body.has-hero{padding-top:0}
 }
 .taped__cap{
   position:absolute; left:0; right:0; bottom:11px; text-align:center;
-  font-family:var(--script); font-weight:500; font-size:17px; color:var(--text-2);
+  font-family:var(--script); font-weight:400; font-size:18px; color:rgba(17,17,16,.72);
 }
 .tilt-1{transform:rotate(-2deg)} .tilt-2{transform:rotate(1.6deg)}
 .tilt-3{transform:rotate(-1.1deg)} .tilt-4{transform:rotate(2.4deg)}
@@ -441,8 +806,8 @@ body.has-hero{padding-top:0}
    COLLAGE GRID — thin ink lines, unequal cells
    ============================================================ */
 .collage{
-  display:grid; gap:1px; background:var(--ink);
-  border:1px solid var(--ink);
+  display:grid; gap:1px; background:var(--rule-hard);
+  border:1px solid var(--rule-hard);
 }
 .collage > :not(.photo){background:var(--paper)}
 .collage--4{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -450,13 +815,21 @@ body.has-hero{padding-top:0}
 
 /* underline squiggle */
 .squig{position:relative; display:inline-block}
+/* An inline-block is an atomic box, so a .fx headline's background-clip:text
+   never reaches the text inside it and the words render invisible. Re-apply
+   the same clipped fill on the span itself. Any other inline-block dropped
+   inside a headline needs this too. */
+.fx .squig{
+  background-image:inherit; background-blend-mode:multiply;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
 .squig > svg{position:absolute; left:-2%; bottom:-.22em; width:104%; height:.3em; overflow:visible}
 .squig > svg path{fill:none; stroke:var(--orange); stroke-width:5; stroke-linecap:round}
 
 /* ============================================================
    CARDS
    ============================================================ */
-.card{background:var(--paper-2); border:1px solid var(--ink); display:block; text-decoration:none; position:relative}
+.card{background:var(--paper-2); border:1px solid var(--rule-hard); display:block; text-decoration:none; position:relative}
 .card--pad{padding:clamp(20px,2.2vw,30px)}
 a.card{transition:transform .3s var(--ease), box-shadow .3s var(--ease)}
 a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
@@ -465,26 +838,61 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 /* event card — the three-up */
 .event{display:grid; grid-template-rows:auto 1fr; text-decoration:none; position:relative}
 .event__meta{display:flex; justify-content:space-between; gap:12px; align-items:baseline; padding-top:14px}
-.event__name{font-family:var(--display); text-transform:uppercase; line-height:.92;
-  font-size:clamp(26px,3vw,42px); margin:6px 0 0}
-.event--locked .photo{filter:grayscale(.72) contrast(.86)}
-.event--locked .event__name{color:var(--text-3)}
-
-/* locked overlay hatch */
-.locked-hatch{position:relative}
-.locked-hatch::after{
-  content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
-  background:repeating-linear-gradient(48deg,transparent 0 11px,rgba(17,17,16,.075) 11px 22px);
+/* --- the name sits IN the thumbnail, in the event's own colour --------
+   The card used to repeat the event name below the picture; it now reads
+   once, centred on the shot. The thumbnail is sized as the query container
+   so the title scales to the CARD, not the viewport — these cards appear
+   at ~780px and ~476px wide in the same row on the homepage, so a vw-based
+   clamp would size one of them wrong. */
+.event__shot{container-type:inline-size}
+.event__shot > img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  z-index:0; display:block;
+  filter:saturate(.82) contrast(1.02) brightness(.72);
+}
+/* .photo::before normally carries the halftone; on a shot thumbnail it is
+   the scrim instead, because a coloured name over a photograph needs a
+   darker floor than the halftone alone provides. ::after (noise) is
+   untouched, so the print texture survives. */
+.event__shot::before{
+  z-index:1; mix-blend-mode:normal; opacity:1;
+  /* background-size MUST be reset. .photo::before is the 7px halftone dot
+     screen, so it ships `background-size:7px 7px` — inherit that here and
+     the scrim gradient tiles into a 7px grid instead of covering, which
+     reads as a checkered pattern over the photo. */
+  background-size:100% 100%;
+  /* Centre stop is set by measurement, not taste: the brightest pixels
+     under the title on the Brady Street shot are pure white sky, and
+     --orange needs 3:1 against them. .62 measured 2.70:1; .70 gives
+     3.29:1 while keeping the photo as light as it can be. */
+  background-image:radial-gradient(112% 92% at 50% 50%,
+    rgba(8,8,7,.70) 0%, rgba(8,8,7,.50) 58%, rgba(8,8,7,.30) 100%);
+}
+/* Only placement and size here — every other type property comes from the
+   headline rule above, so a card title is the event-page lockup at a
+   smaller size rather than a lookalike that can drift out of sync. */
+.event__title{
+  position:relative; z-index:3; text-align:center;
+  padding-left:.4em; padding-right:.4em;
+  font-size:clamp(22px, 11cqw, 60px);
 }
 
+/* Locked cards grey out the PICTURE, not the card. The filter used to sit
+   on .photo, which also desaturated the coloured title inside it. */
+.event__shot::after{display:none}   /* no print-noise field on the thumbnails */
+.event--locked .event__shot > img{filter:grayscale(.72) contrast(.86) brightness(.7)}
+.event--locked .event__shot{background:var(--ink-2)}
+
+/* locked overlay hatch */
+
 /* inclusions — four grouped things, riso listing style */
-.incl{border-top:2px solid var(--ink)}
+.incl{border-top:2px solid var(--rule-hard)}
 .incl__row{
   display:grid; grid-template-columns:64px minmax(0,1fr); gap:clamp(14px,2vw,30px);
   padding:clamp(20px,2.4vw,32px) 0; border-bottom:1px solid var(--rule);
 }
-.incl__row:last-child{border-bottom:2px solid var(--ink)}
-.incl__no{font-family:var(--display); font-size:clamp(28px,3.4vw,46px); line-height:.8; color:var(--orange)}
+.incl__row:last-child{border-bottom:2px solid var(--rule-hard)}
+.incl__no{font-family:var(--display); font-size:clamp(62px,7.5vw,101px); line-height:.364; letter-spacing:.03em; color:var(--orange)}
 .incl ul{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:7px}
 .incl li{position:relative; padding-left:22px; color:var(--text-2); font-size:15.5px}
 .incl li::before{
@@ -497,7 +905,7 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   display:grid; grid-template-columns:52px minmax(0,1fr); gap:18px;
   padding:16px 0; border-bottom:1px solid var(--rule);
 }
-.facts b{font-family:var(--display); font-weight:400; color:var(--orange-d); font-size:19px; line-height:1.2}
+.facts b{font-family:var(--display); font-weight:400; color:var(--orange-on); font-size:42px; line-height:.546; letter-spacing:.03em}
 .facts span{color:var(--text-2); font-size:15.5px}
 .band--ink .facts{border-top-color:rgba(255,255,255,.3)}
 .band--ink .facts li{border-bottom-color:rgba(255,255,255,.16)}
@@ -506,7 +914,10 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 
 /* big stat */
 .stat{display:grid; gap:4px}
-.stat__n{font-family:var(--display); font-size:clamp(46px,6.6vw,96px); line-height:.82; letter-spacing:-.02em}
+/* a straight x2.2 gave 211px, which put the widest stat ("24k", 1.05em of
+   advance) 37px into the neighbouring column of the 4-up grid at every
+   viewport over 1000px. 13vw/172px is the largest that fits the column. */
+.stat__n{font-family:var(--display); font-size:clamp(101px,13vw,172px); line-height:.373; letter-spacing:.02em}
 .stat__l{font:500 10.5px/1.3 var(--body); text-transform:uppercase; letter-spacing:.2em; color:var(--text-3)}
 .band--ink .stat__l{color:rgba(255,255,255,.6)}
 .band--orange .stat__l{color:rgba(17,17,16,.84)}
@@ -514,15 +925,36 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 /* ============================================================
    PRICE BLOCK
    ============================================================ */
-.price{border:1.5px solid var(--ink); padding:clamp(20px,2.4vw,30px); background:var(--paper-2); position:relative}
+.price{border:1.5px solid var(--rule-hard); padding:clamp(20px,2.4vw,30px); background:var(--paper-2); position:relative}
 .price--hero{background:var(--paper-3)}
-.price__amt{font-family:var(--display); font-size:clamp(40px,5.4vw,74px); line-height:.84; letter-spacing:-.02em}
+.price__amt{font-family:var(--display); font-size:clamp(88px,11.9vw,163px); line-height:.382; letter-spacing:.02em}
 .price__amt sup{font-size:.36em; vertical-align:.9em; letter-spacing:0; margin-right:.06em}
 .price__ea{font:500 11px/1 var(--body); letter-spacing:.18em; text-transform:uppercase; color:var(--text-3)}
 
 /* ============================================================
    RISO CALENDAR
    ============================================================ */
+/* --- the white sheet ------------------------------------------------
+   The calendar prints on white stock, not on the page ground — it is the
+   one surface on the site that inverts. Everything inside it therefore has
+   to stop inheriting the dark-ground colours, including the .band--ink
+   overrides further down this file, which is why .sheet re-states them. */
+.sheet{
+  background:var(--ink); color:var(--on-accent);
+  padding:clamp(16px,2.2vw,30px);
+}
+.sheet .kicker,.sheet .tiny{color:rgba(17,17,16,.62)}
+.sheet .scrawl{color:var(--orange-d)}
+
+/* month switcher, sitting on the sheet: black buttons on white */
+.sheet .tabs{border-bottom-color:rgba(17,17,16,.26)}
+.sheet .tabs a{border-color:rgba(17,17,16,.3); color:rgba(17,17,16,.66)}
+.sheet .tabs a:hover{border-color:var(--on-accent); color:var(--on-accent)}
+.sheet .tabs a.is-active{
+  background:var(--on-accent); border-color:var(--on-accent); color:var(--ink);
+}
+.sheet .tabs a.is-soon:hover{border-color:rgba(17,17,16,.3); color:rgba(17,17,16,.66)}
+
 .cal{width:100%; border-collapse:collapse; table-layout:fixed}
 .cal th{
   font:500 10px/1 var(--body); text-transform:uppercase; letter-spacing:.19em;
@@ -532,7 +964,7 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   border-top:1px solid var(--rule); height:clamp(96px,9vw,132px);
   vertical-align:top; padding:9px 8px; position:relative;
 }
-.cal .dnum{font-family:var(--display); font-size:15px; color:var(--text-3); line-height:1}
+.cal .dnum{font-family:var(--display); font-size:33px; letter-spacing:.03em; color:var(--text-3); line-height:.455}
 .cal td.has .dnum{color:var(--ink)}
 .cal .evt{
   display:block; margin-top:7px; font:500 11px/1.35 var(--body);
@@ -544,6 +976,7 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 .cal .must{position:absolute; left:2%; top:6%; width:96%; height:88%; pointer-events:none; overflow:visible}
 .cal .must path{fill:none; stroke:var(--ink); stroke-width:2.4; stroke-linecap:round; opacity:.85}
 .cal td.ours .must path{stroke:var(--orange); stroke-width:3.2; opacity:1}
+
 @media (max-width:900px){
   /* the venue line will not fit in a narrow cell — the name still does,
      and the full detail is one tap away on Happening Now */
@@ -558,13 +991,29 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 /* the calendar also runs on the dark band on the homepage */
 .band--ink .cal th{color:rgba(255,255,255,.62)}
 .band--ink .cal td{border-top-color:rgba(255,255,255,.2)}
-.band--ink .cal .dnum{color:rgba(255,255,255,.45)}
-.band--ink .cal td.has .dnum{color:var(--paper-2)}
-.band--ink .cal .evt{color:var(--paper-2)}
+.band--ink .cal .dnum{color:rgba(255,255,255,.55)}
+.band--ink .cal td.has .dnum{color:var(--ink)}
+.band--ink .cal .evt{color:var(--ink)}
 .band--ink .cal .evt em{color:rgba(255,255,255,.6)}
 .band--ink .cal .evt--ours{color:var(--orange-lt)}
 .band--ink .cal .must path{stroke:rgba(255,255,255,.8)}
 .band--ink .cal td.ours .must path{stroke:var(--orange-lt)}
+
+/* Calendar internals on the white sheet. These MUST stay below the
+   `.band--ink .cal *` rules above: the homepage calendar sits inside a
+   .band--ink section, and at equal specificity source order decides. The
+   doubled `.sheet.sheet` also lifts them to (0,3,0) so a tie is impossible
+   if anything is reordered later. */
+.sheet.sheet .cal th{color:rgba(17,17,16,.6)}
+.sheet.sheet .cal td{border-top-color:rgba(17,17,16,.2)}
+.sheet.sheet .cal .dnum{color:rgba(17,17,16,.45)}
+.sheet.sheet .cal td.has .dnum{color:var(--on-accent)}
+.sheet.sheet .cal .evt{color:var(--on-accent)}
+.sheet.sheet .cal .evt em{color:rgba(17,17,16,.58)}
+.sheet.sheet .cal .evt--ours{color:var(--orange-d)}
+.sheet.sheet .cal .must path{stroke:rgba(17,17,16,.8)}
+.sheet.sheet .cal td.ours .must path{stroke:var(--orange-d)}
+
 
 /* ============================================================
    TABS
@@ -576,7 +1025,7 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   transition:all .25s var(--quart);
 }
 .tabs a:hover{border-color:var(--ink); color:var(--ink)}
-.tabs a.is-active{background:var(--ink); border-color:var(--ink); color:var(--paper-2); font-weight:700}
+.tabs a.is-active{background:var(--ink); border-color:var(--ink); color:var(--on-accent); font-weight:700}
 .tabs a.is-soon{border-style:dashed; cursor:default}
 .tabs a.is-soon:hover{border-color:var(--rule); color:var(--text-3)}
 
@@ -591,17 +1040,17 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   -webkit-appearance:none; appearance:none;
 }
 .field::placeholder{color:var(--text-3)}
-.field:hover{border-color:rgba(17,17,16,.34)}
+.field:hover{border-color:rgba(248,248,246,.34)}
 .field:focus{
   outline:none; border-color:var(--orange);
   box-shadow:0 0 0 4px rgba(255,77,20,.2);
 }
 select.field{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23111110' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23F8F8F6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat; background-position:right 18px center; padding-right:44px;
 }
 textarea.field{min-height:140px; line-height:1.55; resize:vertical}
-.ftr .field{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.28); color:var(--paper-2)}
+.ftr .field{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.28); color:var(--ink)}
 .ftr .field::placeholder{color:rgba(255,255,255,.5)}
 .ftr .field:focus{border-color:var(--orange); box-shadow:0 0 0 4px rgba(255,77,20,.28)}
 .capture{display:flex; gap:12px; flex-wrap:wrap}
@@ -610,8 +1059,8 @@ textarea.field{min-height:140px; line-height:1.55; resize:vertical}
 /* ============================================================
    FOOTER
    ============================================================ */
-.ftr{background:var(--ink); color:var(--paper-2)}
-.ftr a{color:var(--paper-2); text-decoration:none}
+.ftr{background:var(--ink-deep); color:var(--ink)}
+.ftr a{color:var(--ink); text-decoration:none}
 .ftr a:hover{color:var(--orange-lt)}
 .ftr__grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(20px,3vw,44px); padding-bottom:44px}
 @media (max-width:860px){ .ftr__grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
@@ -634,13 +1083,10 @@ textarea.field{min-height:140px; line-height:1.55; resize:vertical}
   html{scroll-behavior:auto}
 }
 
-  background:linear-gradient(152deg,var(--orange) 0%,var(--red) 44%,var(--ink) 100%);
-  color:var(--paper-2);
-}
 
 /* route map placeholder */
 .map{
-  background:var(--paper-2); border:1.5px solid var(--ink); position:relative; overflow:hidden;
+  background:var(--paper-2); border:1.5px solid var(--rule-hard); position:relative; overflow:hidden;
   display:grid; place-items:center; min-height:260px;
 }
 .map::before{
@@ -659,5 +1105,5 @@ textarea.field{min-height:140px; line-height:1.55; resize:vertical}
   break-inside:avoid; display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px;
   padding:11px 0; border-bottom:1px solid var(--rule); font-size:15px;
 }
-.stops b{font-family:var(--display); font-weight:400; color:var(--orange-d); font-size:15px; line-height:1.35}
+.stops b{font-family:var(--display); font-weight:400; color:var(--orange-on); font-size:33px; line-height:.614; letter-spacing:.03em}
 .stops em{font-style:normal; color:var(--text-3); display:block; font-size:12.5px; letter-spacing:.04em}

@@ -5,59 +5,42 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Happening Now — October 2026 in Milwaukee</title>
 <meta name="description" content="Two to four things a month worth leaving the house for in Milwaukee. Hand-picked, kept short.">
-<script src="js/gate.js?v=1788378605"></script>
+<script src="js/gate.js?v=1788473577"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="css/bss.css?v=1788378605">
+<link rel="stylesheet" href="css/bss.css?v=1788473577">
 </head>
 <body data-page="happening">
 <div id="chrome-header"></div>
-
-<main>
-
+<main class="on-white">
   <!-- ── HERO — the riso month sheet ─────────────────────── -->
   <section class="band band--tight grain" style="padding-top:clamp(30px,3.6vw,54px); overflow:hidden">
     <div class="shell">
-      <div class="row row--between" style="border-bottom:1px solid var(--rule-hard); padding-bottom:11px; margin-bottom:clamp(20px,2.6vw,38px)">
-        <p class="kicker">Happening now · Milwaukee</p>
-        <p class="kicker kicker--orange">Four this month</p>
-      </div>
-      <div class="pagehead">
-        <h1 class="d1" style="letter-spacing:-.03em">October<br>2026</h1>
-        <div class="stack">
-          <p class="lede">Two to four things a month. Not a listings site — a very short, opinionated answer to "is anything on?"</p>
-          <p class="scrawl scrawl--orange">if it's circled, go.</p>
-        </div>
+      <div class="pagehead pagehead--slim">
+        <h1 class="d3 fx">Happening <em class="scr">now</em></h1>
+        <p class="scrawl scrawl--orange">if it's circled, go.</p>
       </div>
     </div>
   </section>
-
-  <!-- ── MONTH SWITCHER ──────────────────────────────────── -->
-  <section class="band band--tight">
+  <!-- ── MONTH SWITCHER + CALENDAR — one white sheet ─────── -->
+  <section class="band band--tight" style="padding-top:0">
     <div class="shell">
-      <nav class="tabs">
-        <a href="#" class="is-active">October</a>
-        <a href="#">November</a>
-        <a href="#">December</a>
-        <a href="#">January</a>
-        <a href="#">February</a>
-        <a href="#">March</a>
-      </nav>
+      <div class="sheet">
+        <nav class="tabs" style="margin-bottom:clamp(18px,2.2vw,30px)">
+          <a href="#" class="is-active">October</a>
+          <a href="#">November</a>
+          <a href="#">December</a>
+          <a href="#">January</a>
+          <a href="#">February</a>
+          <a href="#">March</a>
+        </nav>
+        <div data-calendar></div>
+      </div>
     </div>
   </section>
-
-  <!-- ── THE CALENDAR ────────────────────────────────────── -->
-  <section class="band band--tight">
-    <div class="shell">
-      <div data-calendar></div>
-    </div>
-  </section>
-
   <!-- ── THE LIST ────────────────────────────────────────── -->
   <section class="band band--paper2">
     <div class="shell">
-      <p class="kicker" style="margin-bottom:clamp(22px,2.6vw,38px)">The four, in order</p>
-
       <div class="stack">
         <div class="card card--pad">
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
@@ -70,7 +53,6 @@
             <div class="row row--end"><a class="btn" href="#">Their tickets</a></div>
           </div>
         </div>
-
         <div class="card card--pad">
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
             <div class="row" style="gap:22px; align-items:baseline">
@@ -82,7 +64,6 @@
             <div class="row row--end"><a class="btn" href="#">Their site</a></div>
           </div>
         </div>
-
         <div class="card card--pad">
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
             <div class="row" style="gap:22px; align-items:baseline">
@@ -94,8 +75,7 @@
             <div class="row row--end"><a class="btn" href="#">Their tickets</a></div>
           </div>
         </div>
-
-        <div class="card card--pad" style="border-width:2px; border-color:var(--orange-d)">
+        <div class="card card--pad" style="border-width:2px; border-color:var(--orange-on)">
           <div class="cols c-wide-left" style="align-items:center; gap:22px">
             <div class="row" style="gap:22px; align-items:baseline">
               <span class="secno">31</span>
@@ -112,17 +92,15 @@
       </div>
     </div>
   </section>
-
   <!-- ── THE RULE ────────────────────────────────────────── -->
-  <section class="band band--ink grain grain--dark">
+  <section class="band">
     <div class="shell">
       <div class="cols c-offset">
         <div>
-          <p class="kicker kicker--paper">How things get on here</p>
-          <p class="scrawl scrawl--paper" style="margin-top:16px; max-width:15ch">nobody pays to be on this page</p>
+          <p class="scrawl scrawl--paper" style="max-width:15ch">nobody pays to be on this page</p>
         </div>
         <div class="stack stack--lg">
-          <h2 class="d3" style="max-width:16ch">Four a month,<br>chosen by us</h2>
+          <h2 class="d3 fx" style="max-width:16ch">Four a month,<br>chosen by <em class="scr">us</em></h2>
           <p class="lede" style="max-width:48ch">If we would not go ourselves, it does not go on the calendar. That is the entire editorial policy.</p>
           <div class="cols c-3">
             <div><p class="tiny" style="margin-bottom:10px">Music</p>
@@ -136,10 +114,8 @@
       </div>
     </div>
   </section>
-
 </main>
-
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788378605"></script>
+<script src="js/bss.js?v=1788473577"></script>
 </body>
 </html>
