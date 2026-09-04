@@ -277,12 +277,48 @@ img{max-width:100%; display:block}
   92%                    { filter:var(--fx-filter) }
 }
 .fx--neon{ animation:bss-neon 5.5s var(--quart) infinite }
-/* stagger so two lit headlines on one screen never blink in unison */
-.fx--green.fx--neon{ animation-delay:-1.7s }
-.fx--red.fx--neon  { animation-delay:-3.1s }
+/* stagger so two lit headlines on one screen never blink in unison.
+   Scoped away from .fx--lit: these are animation-delay longhands at
+   (0,2,0) and would otherwise override the delay inside the two-animation
+   shorthand below, starting the ambient loop before the tube has struck. */
+.fx--green.fx--neon:not(.fx--lit){ animation-delay:-1.7s }
+.fx--red.fx--neon:not(.fx--lit)  { animation-delay:-3.1s }
+
+/* ── IGNITION ────────────────────────────────────────────────
+   The ambient loop puts its stutter at 86% of a 5.5s cycle, so a headline
+   you have just landed on sits dead still for four seconds before it does
+   anything. .fx--lit is added by JS the moment a neon headline is first in
+   view — on land for a hero, on scroll for the closing line — and the tube
+   strikes straight away: three fast misfires, two slower ones, then it
+   holds. Only then does the ambient loop take over.
+
+   Two animations on one property. Where both are running the LAST in the
+   list wins, so the loop's .92s delay is what hands over cleanly at the
+   moment the strike ends on its settled state. If JS never runs, nothing
+   gets .fx--lit and the ambient loop alone is the (working) fallback. */
+@keyframes bss-neon-on{
+  0%    { filter:grayscale(1) brightness(.32) }
+  6%    { filter:var(--fx-filter) }
+  11%   { filter:grayscale(1) brightness(.32) }
+  19%   { filter:var(--fx-filter) }
+  24%   { filter:grayscale(1) brightness(.32) }
+  28%   { filter:var(--fx-filter) }
+  37%   { filter:grayscale(1) brightness(.44) }
+  45%   { filter:var(--fx-filter) }
+  53%   { filter:grayscale(1) brightness(.44) }
+  59%   { filter:var(--fx-filter) }
+  68%   { filter:grayscale(1) brightness(.6) }
+  74%   { filter:var(--fx-filter) }
+  100%  { filter:var(--fx-filter) }
+}
+.fx--lit{
+  animation:
+    bss-neon-on .92s var(--quart) both,
+    bss-neon 5.5s var(--quart) .92s infinite;
+}
 
 @media (prefers-reduced-motion: reduce){
-  .fx--neon{ animation:none }
+  .fx--neon, .fx--lit{ animation:none }
 }
 /* per-event colourways — orange is the house accent, the other two
    belong to their event and are never used off it */
@@ -389,13 +425,31 @@ img{max-width:100%; display:block}
    ============================================================ */
 .has-js [data-reveal] > *,
 .has-js [data-reveal]:not(:has(> *)){
-  opacity:0; transform:translate3d(0,14px,0);
+  opacity:0;
+  transform:translate3d(var(--tx,0px),calc(14px + var(--ty,0px)),0)
+            rotate(var(--rot,0deg)) scale(var(--sc,1));
   transition:opacity .62s var(--ease), transform .62s var(--ease);
   will-change:opacity, transform;
 }
+/* This used to be `transform:none`, which flattened anything that carried a
+   resting rotation OR a hover transform of its own — and because this rule
+   is (0,3,0) it beat every `.thing:hover{transform:…}` on the site. Two
+   things were silently broken by it: the polaroids rendered dead straight
+   (their .tilt-* wiped the moment they revealed), and the ticket inside a
+   reveal group never tilted on hover while identical tickets outside one
+   did.
+
+   So the transform is now composed entirely from three variables that any
+   descendant is free to set — --tx/--ty (offset), --rot (angle), --sc (scale) —
+   and interaction states set THOSE rather than fighting for `transform`.
+   Specificity stops mattering: whichever rule wins still reads the same
+   three values. Anything that sets none of them resolves to the identity
+   and behaves exactly as before. */
 .has-js [data-reveal] > .is-in,
 .has-js [data-reveal].is-in:not(:has(> *)){
-  opacity:1; transform:none;
+  opacity:1;
+  transform:translate3d(var(--tx,0px),var(--ty,0px),0)
+            rotate(var(--rot,0deg)) scale(var(--sc,1));
 }
 /* once it has landed, stop advertising the layer */
 .has-js [data-reveal] > .is-in{will-change:auto}
@@ -495,6 +549,18 @@ img{max-width:100%; display:block}
     radial-gradient(125% 82% at 50% 42%,
       rgba(8,8,7,.77) 0%, rgba(8,8,7,.59) 46%, rgba(8,8,7,0) 88%),
     linear-gradient(180deg,rgba(10,10,9,.34) 0%,rgba(10,10,9,.06) 45%,rgba(10,10,9,.46) 100%);
+}
+/* --red is a darker ink than --orange or --green, so it needs a darker
+   plate to clear the same 3:1. Measured on the Christmas hero: the shared
+   .hero--shot scrim above lands it at 2.85:1 against the brightest string
+   of lights under the headline (#bcc0c1 in the source frame). Only the
+   red pages get the deeper plate — deepening it globally would flatten
+   the Brady Street and Shamrock pictures for no gain. */
+.hero--shot:has(.fx--red) > .hero__scrim{
+  background:
+    radial-gradient(125% 82% at 50% 42%,
+      rgba(8,8,7,.84) 0%, rgba(8,8,7,.70) 46%, rgba(8,8,7,0) 88%),
+    linear-gradient(180deg,rgba(10,10,9,.44) 0%,rgba(10,10,9,.20) 45%,rgba(10,10,9,.52) 100%);
 }
 .hero__inner{
   /* 1000px was an Anton-era measure. Jomhuria is ~1.5x wider at the same
@@ -640,6 +706,14 @@ section{position:relative}
 /* a white headline glow is invisible on white; invert the halo */
 .on-white .fx{--fx-g:rgba(17,17,16,.26); --fx-b:rgba(17,17,16,.10)}
 .on-white .scrawl--paper,.on-white .scrawl--orange{color:var(--orange-d)}
+/* --orange-lt (#FF8A4D) is tuned for small type on black and measures
+   2.3:1 on white. --orange-d is 4.9:1. Body links inside a white band take
+   the dark orange; the underline is kept because colour alone is not a
+   sufficient affordance for a link inside a paragraph. */
+.on-white .lede a,.on-white .small a,.on-white p a{
+  color:var(--orange-d); text-decoration:underline;
+  text-underline-offset:.16em; text-decoration-thickness:1px;
+}
 .on-white .kicker--paper{color:rgba(17,17,16,.62)}
 .on-white .secno{color:var(--orange-d)}   /* --orange @.9 is 2.88:1 on white */
 /* defensive: if a band--ink ever lands inside an on-white scope, its
@@ -648,6 +722,15 @@ section{position:relative}
 .on-white .band--ink .kicker,.on-white .band--ink .tiny,
 .on-white .band--ink .ticket__note,.on-white .band--ink .stat__l{color:var(--text-3)}
 .on-white .sticker--ghost-paper{border-color:rgba(17,17,16,.4); color:var(--ink)}
+/* A low-opacity WHITE fill does nothing on a white ground — the chip
+   vanishes and the composited fill actually darkens slightly, dropping
+   --orange-d to 4.50:1. Give it a near-white fill and a hairline so it
+   still reads as a tag: 4.94:1. */
+.on-white .sticker{
+  background:rgba(255,255,255,.72); color:var(--orange-d);
+  box-shadow:inset 0 0 0 1px rgba(17,17,16,.14);
+}
+.on-white .sticker--ghost,.on-white .sticker--ghost-paper{background:transparent}
 
 .cols{display:grid; gap:clamp(24px,3vw,48px)}
 .c-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -663,6 +746,27 @@ section{position:relative}
    the .42fr column. Span it instead. Self-healing: put a label back and the
    two-column layout returns on its own. */
 .c-offset > :only-child{grid-column:1 / -1}
+
+/* ── THE CTA PAIRING: copy left, one ticket right ───────────────────────
+   Measured before changing anything, at 1440px: the grid is 1304 wide, the
+   copy stops at 573, and the 220px ticket sat left-aligned in a 481px
+   column — leaving a 207px void mid-row and a 261px orphan to its right,
+   with the ticket vertically centred against a taller text block so no two
+   edges in the section lined up. That is the "something feels off".
+
+   Two shared edges fix it. The ticket hangs on the grid's right edge, which
+   is also the shell's right margin and the edge the header button sits on;
+   and the row is bottom-aligned so the ticket's caption closes on the same
+   line as the last line of copy. The headline keeps the top-left corner,
+   the ticket takes the bottom-right. */
+.cols--cta{align-items:end}
+.cols--cta > .ticket{justify-self:end}
+/* Stacked, a ticket shoved to the right edge under left-aligned copy reads
+   as unrelated to it. Once the columns collapse it goes back to the copy. */
+@media (max-width:900px){
+  .cols--cta{align-items:start}
+  .cols--cta > .ticket{justify-self:start}
+}
 @media (max-width:900px){
   .c-3,.c-4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .c-2,.c-wide-left,.c-wide-right,.c-offset{grid-template-columns:minmax(0,1fr)}
@@ -807,10 +911,13 @@ body.has-hero{padding-top:0}
 .ticket{
   display:inline-block; width:100%; max-width:clamp(170px,19vw,220px); border:0; padding:0;
   background:none; cursor:pointer; text-decoration:none; text-align:center;
+  /* Same three interaction variables the reveal composes, so a ticket
+     tilts identically whether or not it sits inside a [data-reveal]. */
+  transform:translate3d(0,var(--ty,0px),0) rotate(var(--rot,0deg)) scale(var(--sc,1));
   transition:transform .34s var(--ease);
 }
-.ticket:hover{transform:rotate(-3.2deg) translateY(-3px)}
-.ticket:active{transform:rotate(-1.4deg) translateY(0)}
+.ticket:hover{--rot:-3.2deg; --ty:-3px}
+.ticket:active{--rot:-1.4deg; --ty:0px}
 .ticket svg{display:block; width:100%; height:auto; overflow:visible}
 .ticket__note{
   display:block; margin-top:11px; font:500 11px/1.4 var(--body);
@@ -821,12 +928,12 @@ body.has-hero{padding-top:0}
 .drawer .ticket__note{color:var(--text-3)}
 .ticket--sm{max-width:clamp(150px,16vw,184px)}
 .ticket[data-state="sold"]{cursor:not-allowed; filter:none}
-.ticket[data-state="sold"]:hover{transform:none; filter:none}
+.ticket[data-state="sold"]:hover{--rot:0deg; --ty:0px; filter:none}
 .ticket-row{display:flex; gap:26px; align-items:center; flex-wrap:wrap}
 
 /* the header needs the same object under 65px — one line, fewer scallops */
 .ticket--compact{max-width:clamp(128px,13vw,168px)}
-.ticket--compact:hover{transform:rotate(-2.4deg) translateY(-2px)}
+.ticket--compact:hover{--rot:-2.4deg; --ty:-2px}
 
 /* ============================================================
    BUTTONS, CHIPS, LABELS
@@ -840,11 +947,12 @@ body.has-hero{padding-top:0}
   padding:15px 26px; border-radius:999px; text-decoration:none;
   border:1.5px solid var(--ink); background:transparent; color:var(--ink);
   cursor:pointer; white-space:nowrap;
+  transform:translate3d(var(--tx,0px),var(--ty,0px),0) rotate(var(--rot,0deg)) scale(var(--sc,1));
   transition:background .22s var(--quart), color .22s var(--quart),
              border-color .22s var(--quart), transform .22s var(--ease);
 }
-.btn:hover{background:var(--ink); color:var(--on-accent); transform:translateY(-2px)}
-.btn:active{transform:translateY(0)}
+.btn:hover{background:var(--ink); color:var(--on-accent); --ty:-2px}
+.btn:active{--ty:0px}
 .btn--orange{background:var(--orange); border-color:var(--orange); color:var(--on-accent)}
 .btn--orange:hover{background:var(--ink); border-color:var(--ink); color:var(--orange-d)}
 .btn--paper{border-color:rgba(255,255,255,.55); color:var(--ink)}
@@ -852,16 +960,28 @@ body.has-hero{padding-top:0}
 
 /* chips / labels — pill, solid, level. The old rotated die-cut sticker read
    as sloppy at 10px; the printed character lives in the artwork instead. */
+/* A quiet chip, not an orange blob: the fill is a low-opacity white so it
+   reads as a frosted tag on whatever it sits on, and the accent moves to
+   the type. --orange-on rather than --orange because this is 11px text —
+   #FF4D14 measures 4.1:1 on the composited fill and #FF8A4D gives 5.9:1. */
 .sticker{
   display:inline-flex; align-items:center; gap:7px;
   font:700 11px/1 var(--body); letter-spacing:.05em;
   padding:8px 14px; border-radius:999px;
-  background:var(--orange); color:var(--on-accent); border:0;
+  background:rgba(248,248,246,.12); color:var(--orange-on); border:0;
 }
 /* live state gets a pulse dot — the one place a tiny bit of motion earns itself */
 .sticker--live::before{
-  content:""; width:7px; height:7px; border-radius:999px; background:currentColor;
-  box-shadow:0 0 0 3px rgba(17,17,16,.18);
+  content:""; width:7px; height:7px; border-radius:999px;
+  background:var(--orange); flex:none;
+  animation:bss-pulse 2.4s var(--quart) infinite;
+}
+@keyframes bss-pulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(255,77,20,.55) }
+  55%    { box-shadow:0 0 0 5px rgba(255,77,20,0) }
+}
+@media (prefers-reduced-motion:reduce){
+  .sticker--live::before{animation:none}
 }
 .sticker--ghost{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--rule-hard)}
 .sticker--ghost-paper{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
@@ -897,7 +1017,12 @@ body.has-hero{padding-top:0}
 .photo--grey .photo__cap{color:rgba(248,248,246,.82)}
 .photo--red{background:var(--red-d)}
 
-.photo--night{background:linear-gradient(152deg,var(--orange) 0%,var(--red) 46%,var(--ink-deep) 100%)}
+/* Pinned, not tokenised — same reasoning as .taped. This is a stand-in for
+   a physical printed thing, so it keeps its own colours whichever way the
+   page is themed. It USED to end on var(--ink-deep), which inverts to
+   #FFFFFF inside .on-white: dropped into a white band the gradient ran
+   orange → red → white and the white .photo__cap on top measured 1.06:1. */
+.photo--night{background:linear-gradient(152deg,#FF4D14 0%,#E8202A 46%,#080807 100%)}
 .ar-1,.ar-43,.ar-34,.ar-169{min-height:0}
 .ar-1{aspect-ratio:1/1}
 .ar-43{aspect-ratio:4/3}
@@ -908,7 +1033,17 @@ body.has-hero{padding-top:0}
 /* the polaroid is a physical white object taped to a black wall — it is
    one of the few surfaces that does NOT invert, so its frame and its
    handwriting are pinned rather than tokenised */
-.taped{position:relative; background:#F8F8F6; padding:11px 11px 40px; box-shadow:4px 6px 0 rgba(0,0,0,.55)}
+.taped{
+  position:relative; background:#F8F8F6; padding:11px 11px 40px;
+  box-shadow:4px 6px 0 rgba(0,0,0,.55);
+  /* The rotation is a variable, not a literal, so the reveal above can
+     compose it into its own transform instead of overwriting it. */
+  --tilt:0deg;                        /* resting angle */
+  --rot:var(--tilt);                  /* what actually gets drawn */
+  /* Centre pivot is the safe default — see the media query below. */
+  transform-origin:50% 50%;
+  transform:translate3d(0,var(--ty,0px),0) rotate(var(--rot)) scale(var(--sc,1));
+}
 .taped::before{
   content:""; position:absolute; top:-11px; left:50%; width:78px; height:23px;
   transform:translateX(-50%) rotate(-3.5deg);
@@ -918,8 +1053,57 @@ body.has-hero{padding-top:0}
   position:absolute; left:0; right:0; bottom:11px; text-align:center;
   font-family:var(--script); font-weight:400; font-size:18px; color:rgba(17,17,16,.72);
 }
-.tilt-1{transform:rotate(-2deg)} .tilt-2{transform:rotate(1.6deg)}
-.tilt-3{transform:rotate(-1.1deg)} .tilt-4{transform:rotate(2.4deg)}
+.tilt-1{--tilt:-2deg} .tilt-2{--tilt:1.6deg}
+.tilt-3{--tilt:-1.1deg} .tilt-4{--tilt:2.4deg}
+
+/* HOVER — the photo is straightened and picked up, not swung.
+   The first attempt rotated each polaroid THROUGH upright to a mirrored
+   angle. Read badly in a row of four: sweeping ~3° about the centre is a
+   lot of travel, and crossing the axis meant a card you were leaving and a
+   card you were arriving at were moving in opposite directions at once,
+   which is what made it feel clunky. Straightening to 0 halves the travel,
+   always moves the same way, and matches what a hand does to a crooked
+   photo. The lift and the 1.5% scale carry the rest, so the near-flat
+   .tilt-3 still has a visible response.
+
+   The hard offset shadow deliberately does NOT move. Leaving it planted
+   while the card rises is the depth cue — the gap between photo and
+   shadow opens. Animating the offset made it look like the card was
+   sliding across the wall instead. */
+.taped:hover{
+  --rot:0deg;
+  --ty:-6px;
+  --sc:1.015;
+  z-index:2;                          /* over its neighbours mid-swing */
+}
+/* Quick in, softer out, so sweeping across a row does not leave four cards
+   slowly unwinding behind the cursor. --taped-dur is read by whichever
+   transition rule wins, so this works inside a reveal group and outside. */
+.taped{--taped-dur:.44s}
+.taped:hover{--taped-dur:.26s}
+.taped,
+.has-js [data-reveal] > .taped,
+.has-js [data-reveal] > .taped.is-in{
+  transition:opacity .62s var(--ease),
+             transform var(--taped-dur) cubic-bezier(.22,.68,.24,1);
+}
+/* Pivot at the tape rather than the centre: a photo stuck to a wall swings
+   from its tape, and rotating about the middle is what made the hover read
+   as the card twisting in place.
+
+   Only above the grid collapse, though. Pivoting near the top puts almost
+   the whole height below the pivot, which roughly DOUBLES how far the
+   bottom corners swing sideways — and once .c-wide-right collapses, the
+   polaroid on tickets.html becomes 745px wide, where 2deg of resting tilt
+   threw its corner 4px past the viewport and gave the page a horizontal
+   scrollbar. Below 901px the photos are wide enough that the arc reads as
+   a skew anyway, and nothing there has a pointer to hover with. */
+@media (min-width:901px){
+  .taped{transform-origin:50% 4%}
+}
+@media (prefers-reduced-motion: reduce){
+  .taped:hover{--rot:var(--tilt); --ty:0px; --sc:1}
+}
 
 /* ============================================================
    COLLAGE GRID — thin ink lines, unequal cells
@@ -944,8 +1128,14 @@ body.has-hero{padding-top:0}
    ============================================================ */
 .card{background:var(--paper-2); border:1px solid var(--rule-hard); display:block; text-decoration:none; position:relative}
 .card--pad{padding:clamp(20px,2.2vw,30px)}
-a.card{transition:transform .3s var(--ease), box-shadow .3s var(--ease)}
-a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
+a.card{
+  /* Composed from the shared interaction variables, so the lift survives
+     when the card is a direct child of a [data-reveal] group — which it is
+     on featured-bars.html. */
+  transform:translate3d(var(--tx,0px),var(--ty,0px),0) rotate(var(--rot,0deg)) scale(var(--sc,1));
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .card__body{padding:clamp(18px,2vw,26px)}
 
 /* event card — the three-up */
@@ -961,7 +1151,18 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 .event__shot > img{
   position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   z-index:0; display:block;
-  filter:saturate(.82) contrast(1.02) brightness(.72);
+  /* Every card picture is graded to one monochrome. Three different
+     photographs sat side by side in the same row — a grey street, a warm
+     night scene and a room full of green shirts — and read as three
+     unrelated pictures. Stripping the colour makes the row a set, and it
+     hands the whole colour budget of the card to the event's own ink:
+     the only colour in the thumbnail is the name. It also lifts the green
+     title off the Shamrock frame, which was green on green.
+     Brightness is set by measurement, not taste: the Brady Street frame
+     blows out to near-white sky in the top of the card crop, and --orange
+     needs 3:1 against it. .74 measured 2.79:1 at 375px, .66 gives 3.1+.
+     Re-measure if this grade or the ::before scrim moves. */
+  filter:grayscale(1) contrast(1.06) brightness(.66);
 }
 /* .photo::before normally carries the halftone; on a shot thumbnail it is
    the scrim instead, because a coloured name over a photograph needs a
@@ -1011,19 +1212,25 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
   .event:hover .event__shot > img{transform:none}
   .event:hover .event__title{transform:none}
 }
-.event--locked .event__shot > img{filter:grayscale(.72) contrast(.86) brightness(.7)}
+/* Locked cards used to be the DESATURATED ones, back when the on-sale card
+   was the only one carrying colour. Now every card is monochrome, so the
+   difference has to be light, not saturation — a locked picture is simply
+   further down. The hatch overlay and the ghost chip carry the rest. */
+.event--locked .event__shot > img{filter:grayscale(1) contrast(.98) brightness(.58)}
 .event--locked .event__shot{background:var(--ink-2)}
 
 /* locked overlay hatch */
 
 /* inclusions — four grouped things, riso listing style */
-.incl{border-top:2px solid var(--rule-hard)}
-.incl__row{
-  display:grid; grid-template-columns:64px minmax(0,1fr); gap:clamp(14px,2vw,30px);
-  padding:clamp(20px,2.4vw,32px) 0; border-bottom:1px solid var(--rule);
+/* The numerals and the rules are gone — with them removed the group reads
+   as two headed lists rather than a numbered table, so the heading has to
+   carry the hierarchy instead. Spacing does the separating now. */
+.incl{display:grid; gap:clamp(26px,3.4vw,46px)}
+.incl__row{display:block}
+.incl__row > div > .h4{
+  font-size:clamp(62px,7vw,92px);
+  margin-bottom:clamp(4px,.6vw,10px);
 }
-.incl__row:last-child{border-bottom:2px solid var(--rule-hard)}
-.incl__no{font-family:var(--display); font-size:clamp(62px,7.5vw,101px); line-height:.364; letter-spacing:.03em; color:var(--orange)}
 .incl ul{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:7px}
 .incl li{position:relative; padding-left:22px; color:var(--text-2); font-size:15.5px}
 .incl li::before{
@@ -1197,17 +1404,22 @@ textarea.field{min-height:140px; line-height:1.55; resize:vertical}
 @media (max-width:860px){ .ftr__grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:480px){ .ftr__grid{grid-template-columns:minmax(0,1fr)} }
 .ftr__h{font:700 10.5px/1 var(--body); text-transform:uppercase; letter-spacing:.2em; color:rgba(255,255,255,.6); margin:0 0 12px}
-.ftr__fine{
-  border-top:1px solid rgba(255,255,255,.18); padding:22px 0 34px;
-  font:500 10.5px/1.7 var(--body); text-transform:uppercase; letter-spacing:.16em;
-  color:rgba(255,255,255,.55); display:flex; gap:20px; justify-content:space-between; flex-wrap:wrap;
+/* the signup is the last thing in the footer now that the fine-print row is
+   gone, so it is centred and owns the closing space */
+.ftr__signup{
+  border-top:1px solid rgba(255,255,255,.18);
+  padding:clamp(30px,4vw,48px) 0 clamp(34px,4.4vw,54px);
+  display:grid; justify-items:center; text-align:center; gap:6px;
 }
+.ftr__signup .small{color:rgba(255,255,255,.6); margin:0}
+.ftr__signup .h4{margin:0}
+.ftr__signup .capture{margin-top:clamp(14px,1.8vw,22px); justify-content:center; width:100%; max-width:520px}
 
 /* ============================================================
-   MOTION — deliberately almost none.
-   The owners asked for the animation to come out. What is left is
-   interaction feedback only: hover, focus, the drawer. No scroll
-   reveals, no parallax, no counters.
+   MOTION — the global reduced-motion stop.
+   The site now carries three deliberate effects (the entrance reveal,
+   the neon hero flicker, the live-chip pulse); this kills all of them,
+   plus every transition, for anyone who asks for reduced motion.
    ============================================================ */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none !important; transition:none !important}

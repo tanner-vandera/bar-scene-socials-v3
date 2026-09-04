@@ -279,7 +279,6 @@
 
   function footer() {
     return '' +
-    '<span class="tear tear--down" style="--tear-fill:var(--ink-deep)"></span>' +
     '<footer class="ftr grain grain--dark"><div class="shell" style="padding-top:clamp(44px,5vw,76px)">' +
       '<div class="ftr__grid">' +
         '<div><p class="ftr__h">When</p><p class="small">Saturday 10/31/26<br>3pm until close</p></div>' +
@@ -290,19 +289,13 @@
           '<a href="#">@barscenesocials</a> — TikTok<br>' +
           '<a href="#">hello@barscenesocials.com</a></p></div>' +
       '</div>' +
-      '<div style="border-top:1px solid rgba(255,255,255,.18); padding:30px 0 8px">' +
-        '<div class="cols c-wide-right" style="align-items:center">' +
-          '<div><p class="h4" style="margin-bottom:6px">Know before everyone else</p>' +
-          '<p class="small" style="color:rgba(255,255,255,.6)">Two emails a year, both of them a date.</p></div>' +
-          '<form class="capture" onsubmit="return false">' +
-            '<input class="field" type="email" placeholder="you@example.com" aria-label="Email address">' +
-            '<button class="btn btn--orange" type="submit">Notify me</button>' +
-          '</form>' +
-        '</div>' +
-      '</div>' +
-      '<div class="ftr__fine">' +
-        '<span>Rain or shine · Drink water, tip your bartenders, get home safe</span>' +
-        '<span>Prototype — nothing here takes payment</span>' +
+      '<div class="ftr__signup">' +
+        '<p class="h4">Know before everyone else</p>' +
+        '<p class="small">Two emails a year, both of them a date.</p>' +
+        '<form class="capture" onsubmit="return false">' +
+          '<input class="field" type="email" placeholder="you@example.com" aria-label="Email address">' +
+          '<button class="btn btn--orange" type="submit">Notify me</button>' +
+        '</form>' +
       '</div>' +
     '</div></footer>';
   }
@@ -370,11 +363,81 @@
     check();
   }
 
+  /* Neon ignition. The ambient flicker in bss-neon puts its stutter at 86%
+     of a 5.5s cycle, so a headline you have just landed on does nothing for
+     four seconds. This strikes the tube once, the first time each headline
+     is actually in view: immediately for a hero, on scroll for the closing
+     line on the homepage. CSS does the rest — see .fx--lit.
+
+     Same rAF-throttled scroll check as reveal(), and for the same reason:
+     an IntersectionObserver misses elements that are scrolled past between
+     ticks. Worst case here is only a missed strike, but there is no reason
+     to keep two different answers to the same question in one file. */
+  function ignite() {
+    var reduced = window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    var pending = [].slice.call(document.querySelectorAll('.fx--neon'));
+    if (!pending.length) return;
+
+    var ticking = false;
+    function check() {
+      ticking = false;
+      var vh = window.innerHeight;
+      for (var i = pending.length - 1; i >= 0; i--) {
+        var r = pending[i].getBoundingClientRect();
+        if (r.top < vh * 0.9 && r.bottom > 0) {
+          pending[i].classList.add('fx--lit');
+          pending.splice(i, 1);
+        }
+      }
+      if (!pending.length) {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(check);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    check();
+  }
+
   function boot() {
     var h = document.getElementById('chrome-header');
     var f = document.getElementById('chrome-footer');
     if (h) h.innerHTML = header();
     if (f) f.innerHTML = footer();
+
+    /* The footer tear only earns its place when the section above it is a
+       different colour. On pages that close on a .band--ink the two fields
+       are both --ink-deep, so the torn silhouette reads as nothing — just a
+       flat strip with no grain between two grainy fields, which is exactly
+       the grey seam it was supposed to avoid. */
+    if (f) {
+      var lastSection = document.querySelector('main > section:last-of-type');
+      var ftr = f.querySelector('.ftr');
+      if (lastSection && ftr) {
+        var above = getComputedStyle(lastSection).backgroundColor;
+        var below = getComputedStyle(ftr).backgroundColor;
+        // a transparent section inherits the page ground
+        if (above === 'rgba(0, 0, 0, 0)') above = getComputedStyle(document.body).backgroundColor;
+        /* A page whose last section is a white band already closes on its
+           own torn edge in the markup. Adding a second one here stacks two
+           tears, ~50px of ragged edge, instead of one seam. */
+        var mainEl = document.querySelector('main');
+        var endsInTear = mainEl && mainEl.lastElementChild &&
+                         mainEl.lastElementChild.classList.contains('tear');
+        if (above !== below && !endsInTear) {
+          ftr.insertAdjacentHTML('beforebegin',
+            '<span class="tear tear--down" style="--tear-fill:var(--ink-deep)"></span>');
+        }
+      }
+    }
 
     [].forEach.call(document.querySelectorAll('[data-calendar]'), function (el) {
       el.innerHTML = calendar();
@@ -395,6 +458,7 @@
       if (!el.firstElementChild) el.insertAdjacentHTML('beforeend', TEAR);
     });
     reveal();
+    ignite();
     [].forEach.call(document.querySelectorAll('td.must-ring'), function (el) { el.insertAdjacentHTML('afterbegin', CALRING); });
 
     var more = document.querySelector('.more');
