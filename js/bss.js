@@ -123,8 +123,16 @@
     var r  = H / (2 * n);
     var id = 'tk' + (++TK);
 
-    var fill = sold ? '#C9C8C3' : (el.getAttribute('data-fill') || '#FF9152');
-    var line = sold ? '#8A8A85' : (el.getAttribute('data-line') || '#B8141C');
+    // Burnt orange, not the old bright peach #FF9152 — closer in hue to
+    // --orange (#FF4D14) and noticeably less vibrant, which is also the
+    // rust/burnt-orange the brand style guide asks for. It stays above
+    // the .42 luminance gate below, so the label keeps its near-black ink
+    // rather than flipping to white on orange (3.3:1, fails AA).
+    var fill = sold ? '#C9C8C3' : (el.getAttribute('data-fill') || '#D9713F');
+    // Keyline + the vertical stub date. The old #B8141C measures 2.0:1 on
+    // the new stock and #5A1A10 only 4.0:1 — the stub date is small text and
+    // needs 4.5. #42110A gives 4.85:1.
+    var line = sold ? '#8A8A85' : (el.getAttribute('data-line') || '#42110A');
     // ticket stock is light by design; if a dark fill is ever set, flip the
     // label rather than printing near-black on near-black
     var ink  = sold ? '#5C5B57' : (luminance(fill) < .42 ? '#FFFFFF' : '#111110');
@@ -189,6 +197,14 @@
   /* hand-drawn marks — 2 shapes reused everywhere, never regenerated
      per instance, so the "drawn by a person" feel stays consistent */
     'M170 24C152 8 96 2 54 13 12 24 2 53 15 71 28 89 79 98 123 92 167 86 197 65 190 43 186 29 161 17 139 13"/></svg>';
+  /* A torn paper edge for the seams where a light field meets a dark one.
+     Not a zigzag: a slowly wandering baseline with fibre-scale jitter on
+     top and a few deeper notches where the sheet gave way. Generated once
+     and pinned, so the tear is identical on every page and every build —
+     a re-randomised edge would flicker between navigations. */
+  var TEAR = '<svg viewBox="0 0 1200 26" preserveAspectRatio="none" aria-hidden="true">' +
+    '<path d="M0,26.0 L0,15.9 L0.0,15.9 L8.7,16.1 L23.3,13.9 L36.8,14.1 L49.3,16.7 L57.5,15.7 L70.2,16.8 L78.2,16.1 L90.2,14.6 L104.7,16.5 L116.5,14.7 L130.2,14.1 L136.6,16.1 L143.8,16.3 L155.3,15.0 L164.4,15.4 L171.0,14.8 L182.0,14.8 L190.3,15.4 L198.0,14.9 L207.4,13.0 L221.7,15.0 L235.4,9.8 L244.6,12.8 L255.1,12.8 L261.9,14.2 L275.9,14.7 L283.3,15.5 L295.2,15.9 L307.5,15.8 L315.3,14.8 L322.5,15.3 L334.7,14.7 L343.6,13.9 L351.2,14.7 L359.7,15.2 L369.2,17.5 L378.5,16.4 L384.8,16.2 L399.1,11.4 L405.7,16.5 L419.3,17.7 L432.8,15.9 L446.1,14.9 L457.4,14.8 L464.0,9.4 L471.0,17.6 L483.7,16.3 L494.8,16.9 L508.0,13.5 L519.9,14.0 L526.9,15.5 L535.1,13.6 L544.5,15.1 L556.9,13.4 L570.2,12.7 L581.7,13.4 L593.6,12.3 L606.4,12.5 L620.8,8.7 L627.7,8.5 L637.3,8.9 L645.1,11.0 L656.9,10.6 L669.2,7.5 L681.0,8.1 L689.9,9.5 L701.0,7.7 L713.9,9.9 L727.4,6.8 L740.3,7.3 L748.3,9.5 L756.0,8.1 L764.5,9.5 L776.4,7.8 L789.7,10.0 L798.9,10.3 L811.6,11.0 L825.3,10.5 L839.1,11.1 L850.2,12.5 L861.5,13.1 L872.8,10.9 L887.4,13.4 L896.0,13.3 L905.3,10.8 L917.0,11.0 L924.6,12.2 L939.2,14.1 L948.2,14.0 L957.6,13.1 L967.9,13.1 L979.5,11.9 L991.7,12.6 L998.7,11.7 L1010.3,13.3 L1018.2,12.4 L1024.7,11.6 L1037.8,12.5 L1050.2,12.6 L1062.7,10.8 L1077.4,10.7 L1087.4,10.3 L1095.5,10.9 L1102.8,11.5 L1117.6,10.5 L1130.3,11.2 L1139.9,11.7 L1148.5,11.9 L1154.8,12.8 L1167.4,14.4 L1181.9,14.2 L1191.4,13.5 L1200.0,15.3 L1200.0,26.0 Z"/></svg>';
+
   var SQUIG = '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="' +
     'M3 8C28 2 46 11 72 6 98 1 116 10 142 5 165 1 182 8 197 4"/></svg>';
   var CALRING = '<svg class="must" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="' +
@@ -249,7 +265,9 @@
         '<a class="ticket ticket--compact" href="tickets.html" data-ticket data-main="Get tickets"></a>' +
       '</div>' +
       '<button class="burger" type="button" data-burger>Menu</button>' +
-    '</div></header>' +
+    '</div>' +
+      '<span class="tear tear--hdr" style="--tear-fill:var(--paper)"></span>' +
+    '</header>' +
     '<div class="drawer" data-drawer><div class="row row--between" style="margin-bottom:26px">' +
       '<span class="kicker">Menu</span>' +
       '<button class="btn" type="button" data-close>Close</button></div>' +
@@ -261,6 +279,7 @@
 
   function footer() {
     return '' +
+    '<span class="tear tear--down" style="--tear-fill:var(--ink-deep)"></span>' +
     '<footer class="ftr grain grain--dark"><div class="shell" style="padding-top:clamp(44px,5vw,76px)">' +
       '<div class="ftr__grid">' +
         '<div><p class="ftr__h">When</p><p class="small">Saturday 10/31/26<br>3pm until close</p></div>' +
@@ -288,6 +307,69 @@
     '</div></footer>';
   }
 
+  /* Entrance reveal.
+     The owners previously said the animation on this site was too much, so
+     this is deliberately quiet: a 14px rise and a fade, once, on the way in
+     — no parallax, no scroll-driven scrubbing, no count-ups, nothing that
+     moves while you read. Siblings cascade rather than all landing at once.
+
+     Deliberately NOT IntersectionObserver. IO reports state changes, so an
+     element scrolled past between ticks (a fast flick, the End key, a
+     restored scroll position) reports isIntersecting:false and would stay
+     invisible for good — measured, not theoretical. A rAF-throttled scroll
+     check re-evaluates position every frame and cannot miss; it reveals
+     anything at or above the trigger line, including everything already
+     scrolled past. It unbinds itself once the last group has landed, so it
+     costs nothing for the rest of the visit.
+
+     The hidden state is applied by JS (html.has-js), never in the base CSS,
+     so a failed or blocked script leaves every page fully readable instead
+     of blank. prefers-reduced-motion is honoured by never arming it. */
+  function reveal() {
+    var root = document.documentElement;
+    var reduced = window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    var pending = [].slice.call(document.querySelectorAll('[data-reveal]'));
+    if (!pending.length) return;
+    root.classList.add('has-js');
+
+    function show(g) {
+      var kids = g.querySelectorAll(':scope > *');
+      var list = kids.length ? kids : [g];
+      [].forEach.call(list, function (el, i) {
+        el.style.transitionDelay = Math.min(i * 70, 420) + 'ms';
+        el.classList.add('is-in');
+      });
+      g.classList.add('is-in');
+    }
+
+    var ticking = false;
+    function check() {
+      ticking = false;
+      var trigger = window.innerHeight * 0.88;
+      for (var i = pending.length - 1; i >= 0; i--) {
+        if (pending[i].getBoundingClientRect().top < trigger) {
+          show(pending[i]);
+          pending.splice(i, 1);
+        }
+      }
+      if (!pending.length) {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(check);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    check();
+  }
+
   function boot() {
     var h = document.getElementById('chrome-header');
     var f = document.getElementById('chrome-footer');
@@ -309,6 +391,10 @@
       });
     }
     [].forEach.call(document.querySelectorAll('.squig'), function (el) { el.insertAdjacentHTML('beforeend', SQUIG); });
+    [].forEach.call(document.querySelectorAll('.tear'), function (el) {
+      if (!el.firstElementChild) el.insertAdjacentHTML('beforeend', TEAR);
+    });
+    reveal();
     [].forEach.call(document.querySelectorAll('td.must-ring'), function (el) { el.insertAdjacentHTML('afterbegin', CALRING); });
 
     var more = document.querySelector('.more');

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Jomhuria&family=Yellowtail&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 /* ============================================================
    BAR SCENE SOCIALS — v3
@@ -60,7 +59,8 @@
 
   /* --- type -------------------------------------------- */
   /* --- type ---------------------------------------------------------
-     Jomhuria + Brush Script MT, the pairing from the Figma frame.
+     Jomhuria + Yellowtail. The Figma frame paired Jomhuria with Brush
+     Script MT; see --script below for why the script face changed.
 
      METRIC WARNING. Jomhuria is an Arabic-first display face: its Latin
      cap height is only .3907em, against Anton's .8594em. Every display
@@ -68,18 +68,25 @@
      every display line-height is ~/2.2, purely to hold the SAME optical
      size the site already had. Do not "tidy" these numbers back down.
 
-     Brush Script MT is a macOS/Office system font, not a webfont, so it
-     is absent on iOS, Android and stock Windows. Yellowtail (Google) is
-     the web fallback — same brush-script genre, cap .70em vs Brush's
-     .6494em, so it renders ~8% larger. See --script-cap below. */
+     Both faces are self-hosted from /fonts — see css/fonts.css. */
   --display: 'Jomhuria', 'Arial Narrow', sans-serif;
-  --script:  'Brush Script MT', 'Yellowtail', cursive;
+  /* Yellowtail, NOT Brush Script MT. Brush Script MT is a macOS system
+     font — it does not exist on iOS, Android or stock Windows, so the
+     stack used to render one face on a Mac and a different one on a
+     phone. It is Monotype-licensed and cannot legally be self-hosted,
+     so the fallback became the face: Yellowtail is the closest free
+     match (same slant, weight and stroke contrast) and it is what every
+     non-Mac visitor was already seeing. Now everyone sees it. */
+  --script:  'Yellowtail', cursive;
   --body:    'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 
   /* headline pairing, measured off the Figma frame (node 2072-5) */
   --hl-track:  .07em;   /* sans tracking; script keeps 0 */
   --hl-lead:   .46;     /* line-height in Jomhuria units */
-  --hl-script: .86em;   /* script size, relative to the headline size */
+  --hl-script: .775em;  /* script size, relative to the headline size.
+                           .86 was tuned to Brush Script MT (cap .6494em);
+                           Yellowtail's cap is .7207em, 11% larger, so the
+                           ratio drops to keep the same optical pairing. */
 
   /* --- motion (restrained on purpose) ------------------ */
   --ease: cubic-bezier(.16,1,.3,1);
@@ -141,18 +148,18 @@ img{max-width:100%; display:block}
 
 /* --- the script half of a headline pairing -------------------------
    <h1 class="d1">Haunted bar <em class="scr">Crawl</em></h1>
-   Smaller in font-size than the sans, but Brush Script's cap is 1.66x
+   Smaller in font-size than the sans, but Yellowtail's cap is 1.84x
    Jomhuria's, so it still reads slightly TALLER — which is the whole
    effect. Tracking stays at 0: this face connects, and any letter-
    spacing at all breaks the joins between glyphs. */
 .scr{
   font-family:var(--script); font-size:var(--hl-script);
   /* the script word is always set with a capital, whatever the source
-     copy does — Brush Script's capitals carry the swash that makes the
+     copy does — the script capitals carry the swash that makes the
      pairing read. Single words in practice, so capitalize == first letter. */
   letter-spacing:0; text-transform:capitalize; font-style:normal;
 }
-/* Brush Script overhangs its own advance box — the "C" reaches 4.8px left
+/* The script face overhangs its own advance box — the "C" reaches left
    of the origin and 3.4px above the line box at a 160px headline. A .fx
    headline paints its fill as a background clipped to the text, and a
    background only paints inside the element's box, so those overhangs get
@@ -163,7 +170,7 @@ img{max-width:100%; display:block}
 .fx .scr{
   /* display:inline-block is doing real work here, not layout work. A .fx
      headline paints its fill as a background clipped to its text, and a
-     background only paints inside the element's box — so Brush Script's
+     background only paints inside the element's box — so the script's
      overhangs (the C reaches above the line box, descenders reach below)
      were sliced flat. An inline-block is an atomic box the parent's text
      clip cannot reach, so the span is left to paint itself, with padding
@@ -174,15 +181,19 @@ img{max-width:100%; display:block}
      line box and the baseline are exactly where they were; the .04em left
      over on the right is the join spacing to the next word. */
   display:inline-block;
-  /* Vertical padding is tied to --hl-lead. The content box of an
-     inline-block IS its line box, so the baseline sits at
-     (lead - 1.23)/2 + .89 from the top (Brush Script MT is .89 ascent /
-     .34 descent). Tightening the lead pulls both box edges toward the
-     baseline by half the change — going .58 -> .46 cost .06em top and
-     bottom, which re-clipped the descenders. If --hl-lead moves again,
-     re-measure: the clip check is ink-vs-paint-box on every script word. */
-  padding:.19em .10em .33em .10em;
-  margin:-.19em -.06em -.33em -.10em;
+  /* Vertical padding is tied to --hl-lead AND to the script face's own
+     metrics. The content box of an inline-block IS its line box, so the
+     baseline sits at (lead - (asc+desc))/2 + asc from the top. Yellowtail
+     is .97 ascent / .30 descent, so at lead .46 the baseline lands .565em
+     down — below the box bottom — and the ink runs .174em above the top
+     and .406em below it across the words this site actually sets.
+     Padding is those numbers plus a little, cancelled by an equal
+     negative margin so layout does not move.
+     Re-measure whenever --hl-lead, --hl-script or the script FACE
+     changes; swapping Brush Script MT for Yellowtail moved every one of
+     these values. The check is ink-vs-paint-box on every script word. */
+  padding:.23em .13em .48em .13em;
+  margin:-.23em -.09em -.48em -.13em;
   background-image:inherit; background-blend-mode:multiply;
   -webkit-background-clip:text; background-clip:text;
 }
@@ -218,27 +229,60 @@ img{max-width:100%; display:block}
   --fx-g:   rgba(248,248,246,.42);      /* tight shadow */
   --fx-b:   rgba(248,248,246,.15);      /* wide bloom */
   --fx-n:   .25;                        /* noise strength — Figma: 000000 @ 25% */
-  --fx-blur:.003em;                     /* the layer blur — keep it tiny */
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
     linear-gradient(var(--fx-c),var(--fx-c));
   background-blend-mode:multiply;
   -webkit-background-clip:text; background-clip:text;
   color:transparent;
-  /* Blur FIRST, so the shadows are cast from the softened shape — the
-     order Figma stacks them (Noise, Drop shadow, Layer blur). Keep
-     --fx-blur tiny: this is softening an edge, not defocusing the
-     headline.
+  /* Figma stacks a Layer blur here, and it WAS implemented — removed
+     2026-09-04. At mobile headline sizes it resolved to a sub-pixel
+     radius (~0.3px on a 104px .d1), which browsers cannot render as a
+     blur; it just forced the glyphs onto a resampled raster layer and
+     read as a smear rather than a softened edge.
      Both shadows are offset 0 0 — Figma's Drop shadow panel reads
      Position X 0 / Y 0, Blur 5, Spread 0, i.e. an even halo, not a
-     directional shadow. The previous .016em downward offset made the
-     headline sit bottom-heavy. Two radii rather than Figma's one: a
-     single hard-edged halo bands visibly at these sizes, so a tight
-     core plus a wider bloom gives the same read with a smoother
-     falloff. */
-  filter:blur(var(--fx-blur))
-         drop-shadow(0 0 .034em var(--fx-g))
-         drop-shadow(0 0 .085em var(--fx-b));
+     directional shadow. Two radii rather than Figma's one: a single
+     hard-edged halo bands visibly at these sizes, so a tight core plus
+     a wider bloom gives the same read with a smoother falloff. */
+  --fx-filter:drop-shadow(0 0 .034em var(--fx-g))
+              drop-shadow(0 0 .085em var(--fx-b));
+  filter:var(--fx-filter);
+}
+
+/* ============================================================
+   NEON FLICKER  —  event heroes only
+   The glow already reads as a lit tube, so the headline behaves like
+   one: mostly steady, then a short stutter where it drops out and
+   catches again. Two things change on the dead frames — grayscale(1)
+   kills the colour and the filter drops the two drop-shadows, so the
+   glow goes with it.
+
+   Done entirely on `filter`, one animatable property. The alternative
+   was animating --fx-c, which needs @property to be interpolable and
+   forces every colourway to carry a second "lit colour" token. Filter
+   lists of different shapes cannot interpolate, so the frames snap on
+   their own — which is what a failing tube does anyway.
+
+   Deliberately scoped with a class, not `.hero .fx`: the event CARD
+   titles share the same colourways and must stay steady.
+   ============================================================ */
+@keyframes bss-neon{
+  0%, 86%, 100%          { filter:var(--fx-filter) }
+  86.8%                  { filter:grayscale(1) brightness(.66) }
+  87.6%                  { filter:var(--fx-filter) }
+  88.9%                  { filter:grayscale(1) brightness(.66) }
+  90.2%                  { filter:var(--fx-filter) }
+  90.9%                  { filter:grayscale(1) brightness(.66) }
+  92%                    { filter:var(--fx-filter) }
+}
+.fx--neon{ animation:bss-neon 5.5s var(--quart) infinite }
+/* stagger so two lit headlines on one screen never blink in unison */
+.fx--green.fx--neon{ animation-delay:-1.7s }
+.fx--red.fx--neon  { animation-delay:-3.1s }
+
+@media (prefers-reduced-motion: reduce){
+  .fx--neon{ animation:none }
 }
 /* per-event colourways — orange is the house accent, the other two
    belong to their event and are never used off it */
@@ -269,7 +313,6 @@ img{max-width:100%; display:block}
   font:500 11.5px/1.3 var(--body); text-transform:uppercase;
   letter-spacing:.24em; color:var(--text-3); margin:0;
 }
-.kicker--orange{color:var(--orange-on)}
 .kicker--paper{color:rgba(255,255,255,.72)}
 .lede{font-size:clamp(18px,1.55vw,22px); line-height:1.6; color:var(--text-2); max-width:34ch; margin:0}
 .body p{margin:0 0 1.05em; max-width:62ch}
@@ -301,9 +344,72 @@ img{max-width:100%; display:block}
 .grain--soft::after{opacity:.14}
 .grain--dark::after{mix-blend-mode:overlay; opacity:.3}
 
-/* torn / cut-paper divider, sits between two colour fields */
-.tear{display:block; width:100%; height:26px; line-height:0}
-.tear svg{display:block; width:100%; height:100%}
+/* ============================================================
+   TORN EDGE
+   Sits on the seam where a light field meets a dark one. The SVG is
+   filled with the colour of the field it belongs to, so the sheet reads
+   as torn and overlapping rather than as a decorative border.
+   --tear-fill says which field; .tear--up flips it for a bottom edge.
+   Negative margins pull the seam over the join so there is no hairline.
+   ============================================================ */
+.tear{
+  display:block; width:100%; height:clamp(14px,1.8vw,26px); line-height:0;
+  position:relative; z-index:1; pointer-events:none;
+  color:var(--tear-fill, var(--paper));
+}
+.tear svg{display:block; width:100%; height:100%; fill:currentColor}
+.tear--down{margin-bottom:-1px}
+.tear--up{margin-top:-1px; transform:rotate(180deg)}
+/* the fixed header tears into the page rather than ending on a straight
+   edge. It hangs below the bar, so it must not intercept clicks (it is
+   already pointer-events:none) and it hides while the header is
+   transparent over a hero — a torn edge with nothing behind it reads as
+   a stray shape rather than a torn sheet. */
+.tear--hdr{
+  position:absolute; left:0; right:0; top:100%;
+  height:clamp(9px,1.1vw,15px);
+  /* No shadow. The torn edge reads by contrast against whatever is
+     scrolling underneath — a photo, the white calendar, a card. Sitting
+     over a flat --paper section it is invisible, which is what a torn
+     sheet on matching paper actually looks like. */
+  z-index:1;
+  transition:opacity .3s var(--quart);
+}
+/* flat edge against the bar, torn edge hanging into the page */
+.tear--hdr svg{transform:scaleY(-1)}
+.hdr--over .tear--hdr{opacity:0}
+
+/* ============================================================
+   ENTRANCE REVEAL
+   Deliberately quiet — a 14px rise and a fade, once, on the way in. The
+   hidden state is scoped to html.has-js, which the script only adds when
+   it is actually going to run: no JS, or prefers-reduced-motion, and the
+   page renders fully visible with no transition at all.
+   Only transform and opacity animate, so this stays on the compositor.
+   ============================================================ */
+.has-js [data-reveal] > *,
+.has-js [data-reveal]:not(:has(> *)){
+  opacity:0; transform:translate3d(0,14px,0);
+  transition:opacity .62s var(--ease), transform .62s var(--ease);
+  will-change:opacity, transform;
+}
+.has-js [data-reveal] > .is-in,
+.has-js [data-reveal].is-in:not(:has(> *)){
+  opacity:1; transform:none;
+}
+/* once it has landed, stop advertising the layer */
+.has-js [data-reveal] > .is-in{will-change:auto}
+
+@media (prefers-reduced-motion: reduce){
+  .has-js [data-reveal] > *,
+  .has-js [data-reveal]:not(:has(> *)){
+    opacity:1 !important; transform:none !important; transition:none !important;
+  }
+  *,*::before,*::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;
+  }
+}
 
 /* thin ink rules — the collage grid lines */
 .rule{border:0; border-top:1px solid var(--rule-hard); margin:0; opacity:.9}
@@ -406,10 +512,6 @@ img{max-width:100%; display:block}
    this file. Any NEW rule that sets `color` on .d1/.d2/.d3 needs the same
    :not(.fx) guard, or the headline silently goes solid. */
 .hero__inner .d1:not(.fx),.hero__inner .d2:not(.fx){color:var(--ink)}
-.hero__sub{
-  font-size:clamp(15px,1.5vw,19px); line-height:1.55; color:rgba(255,255,255,.9);
-  max-width:46ch; margin:0;
-}
 .hero__meta{
   font:500 12px/1.5 var(--body); text-transform:uppercase; letter-spacing:.2em;
   color:rgba(255,255,255,.92); margin:0;
@@ -433,6 +535,18 @@ img{max-width:100%; display:block}
   gap:clamp(16px,3vw,44px);
 }
 .pagehead--slim > :first-child{margin:0}
+/* the head is now folded into the first content section rather than sitting
+   in a band of its own, so it owns the gap to the content below it */
+.pagehead--slim{margin-bottom:clamp(26px,3.4vw,52px)}
+/* Folding the head into whatever section came first meant it inherited that
+   section's top padding — .band--tight on two pages, the default .band on
+   three, which put the five menu headlines at two different heights (125px
+   vs 173px). Normalise on the section that actually hosts a head so the set
+   lines up whichever band it landed in. */
+.band:has(> .shell > .pagehead--slim),
+.band:has(> .shell--tight > .pagehead--slim){
+  padding-top:clamp(40px,4.6vw,72px);
+}
 .pagehead--slim .scrawl{margin:0 0 .35em; transform:rotate(-1.6deg)}
 .pagehead--slim .taped{flex:0 0 auto; width:clamp(124px,13vw,168px)}
 @media (max-width:640px){
@@ -556,7 +670,6 @@ section{position:relative}
 @media (max-width:560px){ .c-3,.c-4{grid-template-columns:minmax(0,1fr)} }
 
 .stack{display:grid; gap:18px; align-content:start}
-.stack--sm{gap:10px}
 .stack--lg{gap:30px}
 .row{display:flex; gap:16px; flex-wrap:wrap; align-items:center}
 .row--between{justify-content:space-between}
@@ -578,6 +691,8 @@ section{position:relative}
   background:var(--paper);
   transition:background .3s var(--quart);
 }
+/* .tear--hdr hangs below the bar, so the header cannot clip it */
+.hdr{overflow:visible}
 /* pages whose hero is a full-bleed image: the bar rides over the picture until
    you scroll, the way the Shamrock site does it */
 .hdr--over{background:transparent}
@@ -633,6 +748,9 @@ body.has-hero{padding-top:0}
 
 .more{position:relative}
 .more__menu{
+  /* above .tear--hdr, which hangs off the header at z-index 1 and was
+     painting across the top of this panel */
+  z-index:4;
   position:absolute; right:0; top:calc(100% + 9px); min-width:216px;
   background:var(--paper-2); border:1px solid var(--rule); border-radius:14px; padding:8px;
   opacity:0; visibility:hidden; transform:translateY(-5px);
@@ -648,11 +766,9 @@ body.has-hero{padding-top:0}
    padding leaves 339 — the ticket is sized to what is actually left over. */
 @media (max-width:760px){
   .hdr__in{gap:10px; padding-left:14px; padding-right:14px}
-  .hdr__cta .ticket{max-width:150px}
   .lockup svg{width:32px; height:32px}
 }
 @media (max-width:400px){
-  .hdr__cta .ticket{max-width:128px}
 }
 .burger{display:none}
 @media (max-width:1100px){
@@ -684,14 +800,17 @@ body.has-hero{padding-top:0}
    2:1 stock, so it reads as an object rather than a bar. The soft
    shadow and the tilt-on-hover come from the design's second variant.
    ============================================================ */
+/* No drop shadow. The ticket is printed stock lying on the page, not a
+   card floating above it — the shadow was the one glassy thing left on a
+   site whose whole register is flat print. The tilt still carries the
+   hover, so the affordance survives. */
 .ticket{
-  display:inline-block; width:100%; max-width:248px; border:0; padding:0;
+  display:inline-block; width:100%; max-width:clamp(170px,19vw,220px); border:0; padding:0;
   background:none; cursor:pointer; text-decoration:none; text-align:center;
-  transition:transform .34s var(--ease), filter .34s var(--ease);
-  filter:drop-shadow(0 6px 14px rgba(0,0,0,.55));
+  transition:transform .34s var(--ease);
 }
-.ticket:hover{transform:rotate(-3.2deg) translateY(-3px); filter:drop-shadow(0 12px 22px rgba(0,0,0,.62))}
-.ticket:active{transform:rotate(-1.4deg) translateY(0); filter:drop-shadow(0 4px 9px rgba(0,0,0,.55))}
+.ticket:hover{transform:rotate(-3.2deg) translateY(-3px)}
+.ticket:active{transform:rotate(-1.4deg) translateY(0)}
 .ticket svg{display:block; width:100%; height:auto; overflow:visible}
 .ticket__note{
   display:block; margin-top:11px; font:500 11px/1.4 var(--body);
@@ -700,13 +819,13 @@ body.has-hero{padding-top:0}
 .band--ink .ticket__note,.ftr .ticket__note,.hero .ticket__note,
 .drawer .ticket__note{color:rgba(255,255,255,.82)}
 .drawer .ticket__note{color:var(--text-3)}
-.ticket--sm{max-width:206px}
+.ticket--sm{max-width:clamp(150px,16vw,184px)}
 .ticket[data-state="sold"]{cursor:not-allowed; filter:none}
 .ticket[data-state="sold"]:hover{transform:none; filter:none}
 .ticket-row{display:flex; gap:26px; align-items:center; flex-wrap:wrap}
 
 /* the header needs the same object under 65px — one line, fewer scallops */
-.ticket--compact{max-width:196px; filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
+.ticket--compact{max-width:clamp(128px,13vw,168px)}
 .ticket--compact:hover{transform:rotate(-2.4deg) translateY(-2px)}
 
 /* ============================================================
@@ -805,12 +924,6 @@ body.has-hero{padding-top:0}
 /* ============================================================
    COLLAGE GRID — thin ink lines, unequal cells
    ============================================================ */
-.collage{
-  display:grid; gap:1px; background:var(--rule-hard);
-  border:1px solid var(--rule-hard);
-}
-.collage > :not(.photo){background:var(--paper)}
-.collage--4{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:700px){ .collage--4{grid-template-columns:repeat(2,minmax(0,1fr))} }
 
 /* underline squiggle */
@@ -880,6 +993,24 @@ a.card:hover{transform:translate(-3px,-3px); box-shadow:6px 7px 0 var(--ink)}
 /* Locked cards grey out the PICTURE, not the card. The filter used to sit
    on .photo, which also desaturated the coloured title inside it. */
 .event__shot::after{display:none}   /* no print-noise field on the thumbnails */
+
+/* Hover: the picture opens up and the name lifts a hair. Transform and
+   filter only, so it stays on the compositor. .photo already clips, so
+   the scale is contained. */
+.event__shot > img{transition:transform .55s var(--ease), filter .55s var(--ease)}
+.event:hover .event__shot > img,
+.event:focus-visible .event__shot > img{transform:scale(1.05)}
+.event__shot::before{transition:opacity .45s var(--ease)}
+.event:hover .event__shot::before,
+.event:focus-visible .event__shot::before{opacity:.82}
+.event__title{transition:transform .45s var(--ease)}
+.event:hover .event__title,
+.event:focus-visible .event__title{transform:translateY(-3px)}
+@media (prefers-reduced-motion: reduce){
+  .event__shot > img, .event__title, .event__shot::before{transition:none}
+  .event:hover .event__shot > img{transform:none}
+  .event:hover .event__title{transform:none}
+}
 .event--locked .event__shot > img{filter:grayscale(.72) contrast(.86) brightness(.7)}
 .event--locked .event__shot{background:var(--ink-2)}
 
