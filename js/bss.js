@@ -279,7 +279,7 @@
         '<div class="more__menu">' + moreLinks + '</div></div>' +
       '</nav>' +
       '<div class="hdr__cta" style="flex:none">' +
-        '<a class="btn btn--violet btn--sm" href="tickets.html">Get tickets</a>' +
+        '<a class="btn btn--white" href="tickets.html">Get tickets</a>' +
       '</div>' +
       '<button class="burger" type="button" data-burger>Menu</button>' +
     '</div>' +

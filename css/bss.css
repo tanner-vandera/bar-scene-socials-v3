@@ -363,7 +363,19 @@ img{max-width:100%; display:block}
      own fill — but it also means a multi-word run will not break. "See you
      on" set as one 620px box inside a 597px headline and hung 23px past it.
      max-width lets the run wrap internally again; the paint box still
-     surrounds every line it takes. */
+     surrounds every line it takes.
+
+     content-box is load-bearing, against the global border-box. These
+     headlines are grid items under justify-items:center, so most of them
+     are sized BY their own contents — the parent's width IS the span's
+     max-content, padding included. Measured against the border box, 100%
+     then hands the text less room than it needs by exactly the horizontal
+     padding, and it wraps for no reason: "12 BARS OF" broke to two lines
+     and the Christmas lockup went from two lines to three. Measured
+     against the content box, a self-sized parent leaves the run on one
+     line, and a parent with a real constraint of its own (the 9ch cap on
+     "See you on Brady") still forces the wrap. */
+  box-sizing:content-box;
   max-width:100%;
   /* Bottom padding is .14em, not the .08em it looks like it needs. The ink
      only descends .007em below the baseline, but --hl-lead is .46, so the
@@ -1083,11 +1095,13 @@ body.has-hero{padding-top:0}
 .btn:active{--ty:0px}
 .btn--orange{background:var(--orange); border-color:var(--orange); color:var(--on-accent)}
 .btn--orange:hover{background:var(--ink); border-color:var(--ink); color:var(--orange-d)}
-/* the header CTA. Filled violet with near-black type: --violet is a light
-   enough purple that white on it fails, and black gives 6.4:1. */
-.btn--violet{background:var(--violet); border-color:var(--violet); color:#141412}
-.btn--violet:hover{background:var(--ink); border-color:var(--ink); color:var(--violet)}
-.btn--sm{font-size:12px; padding:11px 20px}
+/* The header CTA. Solid white with near-black type, and NO size modifier:
+   .burger (the Menu button) is deliberately built on .btn's own metrics —
+   15px/26px padding, 13px/1 — so the two read as one button in two states.
+   A .btn--sm here made the pair mismatch. Hover drains the fill out to the
+   outlined state Menu already sits in. */
+.btn--white{background:var(--ink); border-color:var(--ink); color:#141412}
+.btn--white:hover{background:transparent; border-color:var(--ink); color:var(--ink)}
 .btn--red{background:var(--red-btn); border-color:var(--red-btn); color:#FFFFFF}
 .btn--red:hover{background:var(--ink); border-color:var(--ink); color:var(--red-on)}
 .btn--paper{border-color:rgba(255,255,255,.55); color:var(--ink)}
