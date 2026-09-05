@@ -913,12 +913,68 @@ section{position:relative}
    line as the last line of copy. The headline keeps the top-left corner,
    the ticket takes the bottom-right. */
 .cols--cta{align-items:end}
-.cols--cta > .ticket{justify-self:end}
-/* Stacked, a ticket shoved to the right edge under left-aligned copy reads
-   as unrelated to it. Once the columns collapse it goes back to the copy. */
+.cols--cta > .pitch{justify-self:end; width:100%}
+
+/* ── THE PITCH ───────────────────────────────────────────────
+   The right column used to be a lone ticket floating in a 260px
+   orphan of empty grid. It now carries the actual Haunted Bar Hop
+   card — the same component the homepage and About use, so the thing
+   being sold is SHOWN rather than described — and the ticket is
+   tucked into its bottom-right corner, overlapping the frame and
+   hanging off the edge like a stub pushed under a poster.
+
+   The overlap is the point: two flat elements side by side read as a
+   layout, one object sitting on another reads as a physical thing. */
+.pitch{position:relative; width:100%}
+.pitch__card{display:block; text-decoration:none}
+/* .pitch .pitch__ticket, not .pitch__ticket: .ticket sets width:100% and
+   its own max-width clamp, and it is declared LATER in this file, so a
+   single-class override here loses on source order regardless of intent. */
+.pitch .pitch__ticket{
+  position:absolute;
+  /* Hangs BELOW the card, not past its right edge. An absolutely
+     positioned child still counts toward document scrollWidth, and a
+     right-hang of 24-31px on a card already sitting on the shell's right
+     margin pushed the page 2-7px wide at some widths. Vertical overlap
+     plus the rotation carries the same "sitting on top of it" read with
+     no horizontal cost — the tilt itself only reaches ~4px past the
+     edge, which the shell padding absorbs. */
+  right:0; bottom:-11%;
+  width:min(46%, 200px); max-width:none;
+  --rot:-5deg;
+  z-index:3;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));
+}
+/* straightens and lifts further than a loose ticket does, because this
+   one is pinned under something and has to look like it is coming out */
+@media (hover:hover){
+  .pitch .pitch__ticket:hover{--rot:-1.5deg; --ty:-7px}
+}
+/* the stub slides out from under the card as the section arrives.
+   `backwards` and NOT `both`: the fill must not survive the animation,
+   or it would pin `transform` and the variable-driven hover above would
+   stop working — the end state is already the element's resting style. */
+@keyframes bss-tuck{
+  from{ opacity:0; transform:translate3d(0,26px,0) rotate(-12deg) }
+  to  { opacity:1; transform:translate3d(0,0,0) rotate(-5deg) }
+}
+.pitch.is-in .pitch__ticket{ animation:bss-tuck .74s var(--quart) .26s backwards }
+@media (prefers-reduced-motion: reduce){
+  .pitch.is-in .pitch__ticket{animation:none}
+}
+
 @media (max-width:900px){
   .cols--cta{align-items:start}
-  .cols--cta > .ticket{justify-self:start}
+  .cols--cta > .pitch{justify-self:stretch}
+}
+@media (max-width:520px){
+  /* at phone width the overlap crowds the meta row — the stub drops
+     below the card and sits square */
+  .pitch .pitch__ticket{
+    position:static; width:clamp(150px,52%,210px);
+    margin:14px 0 0 auto; display:block;
+    --rot:-3deg; filter:none;
+  }
 }
 @media (max-width:900px){
   .c-3,.c-4{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1362,6 +1418,15 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
      3.29:1 while keeping the photo as light as it can be. */
   background-image:radial-gradient(112% 92% at 50% 50%,
     rgba(8,8,7,.70) 0%, rgba(8,8,7,.50) 58%, rgba(8,8,7,.30) 100%);
+}
+
+/* #C13BFF is a darker violet than the one it replaced, and when it changed
+   only the HERO scrim was re-tuned for it — this one was not. Every Haunted
+   card sat at 2.86-2.96:1 against a 3.0 floor. Same fix, same reason, as
+   .hero--shot:has(.ink--violet). */
+.event:has(.ink--violet) .event__shot::before{
+  background-image:radial-gradient(112% 92% at 50% 50%,
+    rgba(8,8,7,.80) 0%, rgba(8,8,7,.64) 58%, rgba(8,8,7,.46) 100%);
 }
 .event__title{
   position:relative; z-index:3; text-align:center;
