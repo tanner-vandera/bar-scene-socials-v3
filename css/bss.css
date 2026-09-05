@@ -40,13 +40,14 @@
   --orange-lt:  #FF9152;   /* ticket stock */
   --green:      #00C24E;   /* electric — dark grounds and large elements */
   --green-d:    #00873A;   /* the deep green field on photo blocks */
-  --violet:     #BC63FF;   /* neon purple — the Halloween word and the
-                              header pill. #B24BFF was the first pick and
-                              measured 2.80:1 where "Haunted" crosses the
-                              blown-out sky in the Brady Street hero; this
-                              is the same hue lifted until it clears 3:1
-                              there (3.46) and still takes near-black type
-                              on the header pill (5.59). */
+  --violet:     #C13BFF;   /* neon purple — the Halloween words, "Brady",
+                              and the header pill. Specified by the
+                              designer. It measures 2.81:1 where the violet
+                              words cross the blown-out sky on the Brady
+                              Street hero, so the scrim under those two
+                              heroes is deepened to carry it rather than
+                              the colour being altered — see
+                              .hero--shot:has(.ink--violet). */
   --red:        #E8202A;
   --red-d:      #B8141C;
   --red-on:     #FF5A62;   /* small red type — --red is 4.20:1 on the page
@@ -358,8 +359,20 @@ img{max-width:100%; display:block}
    `background-image:inherit`, hence the .fx .scr.ink selector below. */
 .fx .ink{
   display:inline-block;
-  padding:.10em .06em .08em .06em;
-  margin:-.10em -.06em -.08em -.06em;
+  /* An inline-block is an atomic box, which is exactly why it can paint its
+     own fill — but it also means a multi-word run will not break. "See you
+     on" set as one 620px box inside a 597px headline and hung 23px past it.
+     max-width lets the run wrap internally again; the paint box still
+     surrounds every line it takes. */
+  max-width:100%;
+  /* Bottom padding is .14em, not the .08em it looks like it needs. The ink
+     only descends .007em below the baseline, but --hl-lead is .46, so the
+     line box is far shorter than the glyphs and the baseline sits within a
+     pixel of the box bottom before any padding at all. Measured at 190px
+     the fill was running 7px short. Cancelled by an equal negative margin,
+     so the line box and baseline do not move. */
+  padding:.10em .06em .14em .06em;
+  margin:-.10em -.06em -.14em -.06em;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
     linear-gradient(var(--ink-c),var(--ink-c));
   background-blend-mode:multiply;
@@ -380,7 +393,7 @@ img{max-width:100%; display:block}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
     linear-gradient(var(--ink-c),var(--ink-c));
 }
-.ink--violet{--ink-c:var(--violet); --ink-g:rgba(188,99,255,.9);  --ink-b:rgba(188,99,255,.4)}
+.ink--violet{--ink-c:var(--violet); --ink-g:rgba(193,59,255,.9);  --ink-b:rgba(193,59,255,.4)}
 .ink--green {--ink-c:var(--green);  --ink-g:rgba(0,194,78,.9);    --ink-b:rgba(0,194,78,.4)}
 .ink--orange{--ink-c:var(--orange); --ink-g:rgba(255,77,20,.9);   --ink-b:rgba(255,77,20,.4)}
 .ink--red   {--ink-c:var(--red);    --ink-g:rgba(232,32,42,.9);   --ink-b:rgba(232,32,42,.4)}
@@ -652,6 +665,17 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
    of lights under the headline (#bcc0c1 in the source frame). Only the
    red pages get the deeper plate — deepening it globally would flatten
    the Brady Street and Shamrock pictures for no gain. */
+/* #C13BFF is a richer, less light purple than the one it replaced, and it
+   lands at 2.81:1 against the brightest sky under "HAUNTED". The colour is
+   the designer's, so the plate moves instead: ~9% less luminance under the
+   headline takes it to 3.1+. Only the heroes that actually carry a violet
+   word. */
+.hero--shot:has(.ink--violet) > .hero__scrim{
+  background:
+    radial-gradient(125% 82% at 50% 42%,
+      rgba(8,8,7,.84) 0%, rgba(8,8,7,.68) 46%, rgba(8,8,7,0) 88%),
+    linear-gradient(180deg,rgba(10,10,9,.40) 0%,rgba(10,10,9,.14) 45%,rgba(10,10,9,.50) 100%);
+}
 .hero--shot:has(.fx--red) > .hero__scrim{
   background:
     radial-gradient(125% 82% at 50% 42%,
@@ -674,9 +698,17 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
    this file. Any NEW rule that sets `color` on .d1/.d2/.d3 needs the same
    :not(.fx) guard, or the headline silently goes solid. */
 .hero__inner .d1:not(.fx),.hero__inner .d2:not(.fx){color:var(--ink)}
+/* The date line used to be a 12px tracked-out body label — a caption under
+   a 190px headline, which made the one piece of hard information on the
+   page the smallest thing on it. It now takes the .h4 display face (the
+   "THREE DAYS A YEAR" setting), sans only: the script would fight the
+   lockup directly above it. Line-height is .95 rather than .464 because
+   this wraps to two lines on narrow screens and .h4's tight leading is
+   drawn for single-line headings. */
 .hero__meta{
-  font:500 12px/1.5 var(--body); text-transform:uppercase; letter-spacing:.2em;
-  color:rgba(255,255,255,.92); margin:0;
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(21px,2.3vw,31px); line-height:.95; letter-spacing:.05em;
+  color:rgba(255,255,255,.94); margin:0;
 }
 @media (max-width:640px){ .hero__inner{padding-left:18px; padding-right:18px} }
 
@@ -1449,13 +1481,6 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   color:var(--green);
 }
 .ledger__give .ledger__l{max-width:26ch}
-/* the hand-drawn mark under the amount */
-.ledger__mark{
-  display:block; width:100%; max-width:clamp(160px,20vw,300px);
-  height:clamp(10px,1.2vw,16px); color:var(--green); line-height:0;
-  margin-top:-.06em;
-}
-.ledger__mark svg{display:block; width:100%; height:100%; overflow:visible}
 .ledger .lede{max-width:44ch; margin:0}
 
 /* ── MOTION ─────────────────────────────────────────────────────
@@ -1465,20 +1490,16 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    · the numerals WIPE UP from the baseline, like ink meeting paper,
      instead of fading. clip-path only — stays on the compositor.
    · the notch above each number DRAWS OUT from the left.
-   · the hand mark under the give draws itself, stroke-dashoffset,
-     the way someone would actually underline it.
    The count-up itself is in js/bss.js. */
 @keyframes bss-ink-rise{
   from{ clip-path:inset(100% 0 0 0); transform:translate3d(0,.12em,0) }
   to  { clip-path:inset(-35% 0 -20% 0); transform:none }
 }
 @keyframes bss-notch{ from{ transform:scaleX(0) } to{ transform:scaleX(1) } }
-@keyframes bss-draw{ to{ stroke-dashoffset:0 } }
 
 .has-js .ledger__n,
 .has-js .ledger__amt{ clip-path:inset(100% 0 0 0) }
 .has-js .ledger__item::before{ transform:scaleX(0); transform-origin:left center }
-.has-js .ledger__mark svg path{ stroke-dasharray:240; stroke-dashoffset:240 }
 
 .ledger.is-in .ledger__n,
 .ledger.is-in .ledger__amt{
@@ -1487,9 +1508,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .ledger.is-in .ledger__item::before{
   animation:bss-notch .5s var(--quart) both;
 }
-.ledger.is-in .ledger__mark svg path{
-  animation:bss-draw .9s var(--quart) .5s both;
-}
+
 /* stagger along the row, then the payoff last */
 .ledger.is-in .ledger__item:nth-child(1) .ledger__n{animation-delay:.02s}
 .ledger.is-in .ledger__item:nth-child(2) .ledger__n{animation-delay:.10s}
@@ -1505,10 +1524,8 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   .has-js .ledger__n,
   .has-js .ledger__amt{clip-path:none}
   .has-js .ledger__item::before{transform:none}
-  .has-js .ledger__mark svg path{stroke-dasharray:none; stroke-dashoffset:0}
   .ledger.is-in .ledger__n,.ledger.is-in .ledger__amt,
-  .ledger.is-in .ledger__item::before,
-  .ledger.is-in .ledger__mark svg path{animation:none}
+  .ledger.is-in .ledger__item::before{animation:none}
 }
 
 /* ============================================================

@@ -76,17 +76,21 @@
   }
 
   // outline: straight top and bottom, scalloped left and right
-  function ticketOutline(W, H, n) {
-    var r = H / (2 * n), d = 'M0 0 H' + W, i;
-    for (i = 0; i < n; i++) {                       // right edge, downward
-      d += ' A' + r + ' ' + r + ' 0 0 1 ' + W + ' ' + ((i + 1) * 2 * r).toFixed(2);
-    }
-    d += ' H0';
-    for (i = n; i > 0; i--) {                       // left edge, upward
-      d += ' A' + r + ' ' + r + ' 0 0 1 0 ' + ((i - 1) * 2 * r).toFixed(2);
-    }
-    return d + ' Z';
-  }
+  /* The ticket silhouette, traced from the designer's TicketButtonEmpty.svg
+     rather than generated. The generated one was a plain rectangle with
+     equal semicircular bites down both edges; the drawn one is a different
+     object — the four corners are cut back with CONCAVE quarter arcs, and
+     the scallops are small half-circles that read as a perforation rather
+     than a gear.
+
+     Fixed geometry, 278x136, because the corner arcs and the scallop
+     rhythm are drawn proportions, not parameters — regenerating them at
+     another size is what lost the character last time. The <svg> scales
+     to whatever .ticket's max-width allows. */
+  var TICKET_W = 278, TICKET_H = 136;
+  var TICKET_PATH = 'M252 0C252 14.3594 263.641 26 278 26C274.686 26 272 28.6863 272 32C272 35.3137 274.686 38 278 38C274.686 38 272 40.6863 272 44C272 47.3137 274.686 50 278 50C274.686 50 272 52.6863 272 56C272 59.3137 274.686 62 278 62C274.686 62 272 64.6863 272 68C272 71.3137 274.686 74 278 74C274.686 74 272 76.6863 272 80C272 83.3137 274.686 86 278 86C274.686 86 272 88.6863 272 92C272 95.3137 274.686 98 278 98C274.686 98 272 100.686 272 104C272 107.314 274.686 110 278 110C263.641 110 252 121.641 252 136H26C26 121.641 14.3594 110 0 110C3.31371 110 6 107.314 6 104C6 100.686 3.31371 98 0 98C3.31371 98 6 95.3137 6 92C6 88.6863 3.31371 86 0 86C3.31371 86 6 83.3137 6 80C6 76.6863 3.31371 74 0 74C3.31371 74 6 71.3137 6 68C6 64.6863 3.31371 62 0 62C3.31371 62 6 59.3137 6 56C6 52.6863 3.31371 50 0 50C3.31371 50 6 47.3137 6 44C6 40.6863 3.31371 38 0 38C3.31371 38 6 35.3137 6 32C6 28.6863 3.31371 26 0 26C14.3594 26 26 14.3594 26 0H252Z';
+
+
 
   /* Jomhuria is ~1.5x wider than the old display face at the same cap
      height, so a fixed-width component like the ticket can no longer
@@ -113,90 +117,99 @@
   }
 
   function ticket(el) {
-    var compact = el.classList.contains('ticket--compact');
-    var sold    = el.getAttribute('data-state') === 'sold';
-    var label   = el.getAttribute('data-main') || 'Get tickets';
-    var note    = el.getAttribute('data-sub') || '';
-    var date    = el.getAttribute('data-date') || '10/31/26';
+    var sold  = el.getAttribute('data-state') === 'sold';
+    var label = el.getAttribute('data-main') || 'Get tickets';
+    var note  = el.getAttribute('data-sub') || '';
+    var date  = el.getAttribute('data-date') || '10/31/26';
+    var id    = 'tk' + (++TK);
 
-    var W = 356, H = compact ? 104 : 178, n = compact ? 4 : 7;
-    var r  = H / (2 * n);
-    var id = 'tk' + (++TK);
+    var W = TICKET_W, H = TICKET_H;
 
-    // Pastel paper stock in the --violet hue (274 deg), lightened and washed
-    // right out to sat .32 so it reads as coloured paper rather than a brand
-    // fill. Black on it measures 9.33:1, so the label ink stays near-black.
-    var fill = sold ? '#C9C8C3' : (el.getAttribute('data-fill') || '#D1A5F2');
-    // The keyline stays --orange against the purple stock — two inks, the
-    // way a riso ticket is actually printed. 1.64:1, which is fine for a
-    // KEYLINE: it is ornament inside the shape, not the boundary that makes
-    // the ticket readable as a ticket. The die cut against the page ground
-    // does that, and the label carries the meaning.
-    var line = sold ? '#8A8A85' : (el.getAttribute('data-line') || '#FF4D14');
-    // The stub date is SMALL TEXT and cannot take the keyline colour —
-    // --orange on this stock is 1.64:1 against a 4.5 requirement. A deep
-    // violet ties it to the paper instead, at 6.6:1.
-    var dateInk = sold ? '#6E6D69' : (el.getAttribute('data-date-ink') || '#4A1A6B');
-    // ticket stock is light by design; if a dark fill is ever set, flip the
-    // label rather than printing near-black on near-black
-    var ink  = sold ? '#5C5B57' : (luminance(fill) < .42 ? '#FFFFFF' : '#111110');
+    // The light purple is the artwork's own fill. Black on it measures
+    // 6.81:1, so every mark on the stock is simply black at an opacity.
+    var fill = sold ? '#C9C8C3' : (el.getAttribute('data-fill') || '#B78BCB');
+    var ink  = sold ? '#6E6D69' : '#000000';
 
-    var pad  = compact ? 11 : 15;          // keyline inset
-    var stub = compact ? 42 : 54;          // stub width inside the keyline
-    var rows = splitLabel(label, compact ? 1 : 2);
-    // fsA is the old display size, kept ONLY as the unit for the baseline
-    // maths below so the ticket geometry is unchanged. Jomhuria's Latin cap
-    // is .3907em against the old face's .8594em, so the size actually set on
-    // the <text> is 2.2x that, to print the same cap height.
-    var fsA  = compact ? 40 : 46;
-    var TRACK = 3;
-    var labelW = W - 2 * (pad + stub) - 12;            // room between the stubs
-    var fs = Math.round(fsA * 2.2);
+    // Keyline inset and stub rules come straight from the artwork:
+    // rect 20,20 238x96 r12, and a second rect at x=44 w=190 whose two
+    // vertical edges ARE the stub rules.
+    var pad = 20, stubX = 44, innerW = W - 2 * pad, innerH = H - 2 * pad;
+
+    // The label is large display type, so the artwork's 0.7 black holds at
+    // 4.86:1. The stub dates are small and 0.5 would be 3.02:1 against a
+    // 4.5 requirement — they go to 0.85 (6.45:1).
+    var labelOp = sold ? 1 : 0.7, dateOp = sold ? 1 : 0.85;
+
+    // Jomhuria's cap is .3907em and its em box is not centred on it, so the
+    // baselines below centre the CAP BAND inside the keyline (20..116),
+    // not the em box. Centring the em box sat the label ~3px high and put
+    // the first line's cap through the keyline.
+    var rows = splitLabel(label, 2);
+    var labelW = W - 2 * stubX - 18;
+    // 68 is measured off the artwork, not guessed. Its own label outline
+    // spans x 75.4..202.5, y 30.1..106.0 — a cap band 75.9 tall centred on
+    // (139, 68). The baselines below put the cap band at 1.1107 * fs, so
+    // 75.9 / 1.1107 = 68.3, and at 68 this reproduces the drawn label's
+    // size and position to within a tenth of a unit. fitFs still takes it
+    // down further when a longer word would not fit the width.
+    var fsMax = 68;
+    var fs = fsMax;
     for (var ri = 0; ri < rows.length; ri++) {
-      fs = Math.min(fs, fitFs(rows[ri], labelW, Math.round(fsA * 2.2), TRACK));
+      fs = Math.min(fs, fitFs(rows[ri], labelW, fsMax, 2.5));
     }
     var midY = H / 2;
 
     var text = rows.length === 1
-      ? '<text x="' + (W / 2) + '" y="' + (midY + fsA * 0.35) + '" text-anchor="middle" ' +
-          'fill="' + ink + '" font-family="Jomhuria, sans-serif" font-size="' + fs + '" ' +
-          'letter-spacing="3">' + esc(rows[0]) + '</text>'
-      : '<text x="' + (W / 2) + '" y="' + (midY - 4) + '" text-anchor="middle" fill="' + ink + '" ' +
-          'font-family="Jomhuria, sans-serif" font-size="' + fs + '" letter-spacing="3">' + esc(rows[0]) + '</text>' +
-        '<text x="' + (W / 2) + '" y="' + (midY + fsA - 2) + '" text-anchor="middle" fill="' + ink + '" ' +
-          'font-family="Jomhuria, sans-serif" font-size="' + fs + '" letter-spacing="3">' + esc(rows[1]) + '</text>';
+      ? '<text x="' + (W / 2) + '" y="' + (midY + fs * 0.195) + '" text-anchor="middle" ' +
+          'fill="' + ink + '" fill-opacity="' + labelOp + '" font-family="Jomhuria, sans-serif" ' +
+          'font-size="' + fs + '" letter-spacing="2.5">' + esc(rows[0]) + '</text>'
+      : '<text x="' + (W / 2) + '" y="' + (midY - fs * 0.165) + '" text-anchor="middle" fill="' + ink + '" ' +
+          'fill-opacity="' + labelOp + '" font-family="Jomhuria, sans-serif" font-size="' + fs + '" ' +
+          'letter-spacing="2.5">' + esc(rows[0]) + '</text>' +
+        '<text x="' + (W / 2) + '" y="' + (midY + fs * 0.555) + '" text-anchor="middle" fill="' + ink + '" ' +
+          'fill-opacity="' + labelOp + '" font-family="Jomhuria, sans-serif" font-size="' + fs + '" ' +
+          'letter-spacing="2.5">' + esc(rows[1]) + '</text>';
 
+    // Also measured: the artwork's stub dates are 13.1 units of cap (fs 33)
+    // running 62.1 long, centred at x 32.65 / 245.35. dy carries the
+    // rotated glyph column onto that centre. Opacity is the one deliberate
+    // departure from the drawing — see dateOp above.
     var stubDate = function (cx) {
       return '<text transform="translate(' + cx + ' ' + midY + ') rotate(-90)" text-anchor="middle" ' +
-        'fill="' + dateInk + '" font-family="Jomhuria, sans-serif" font-size="' + (compact ? 33 : 37) + '" ' +
-        'letter-spacing="2.4">' + esc(date) + '</text>';
+        'fill="' + ink + '" fill-opacity="' + dateOp + '" font-family="Jomhuria, sans-serif" ' +
+        'font-size="33" letter-spacing="1.8" dy="7.1">' + esc(date) + '</text>';
     };
 
     el.innerHTML =
-      '<svg viewBox="' + (-r - 1) + ' -1 ' + (W + 2 * r + 2) + ' ' + (H + 2) + '" ' +
-        'role="img" aria-label="' + esc(label) + (note ? ' — ' + esc(note) : '') + '">' +
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" ' +
+        'aria-label="' + esc(label) + (note ? ' \u2014 ' + esc(note) : '') + '">' +
         '<defs>' +
-          '<clipPath id="' + id + 'c"><path d="' + ticketOutline(W, H, n) + '"/></clipPath>' +
-          '<filter id="' + id + 'g"><feTurbulence type="fractalNoise" baseFrequency="1.1" ' +
-            'numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>' +
+          // the artwork's own grain: turbulence reduced to alpha, cut to a
+          // hard 50/50 dither, clipped to the shape and flooded 5% black
+          '<filter id="' + id + 'n" x="0" y="0" width="' + W + '" height="' + H + '" ' +
+            'filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">' +
+            '<feTurbulence type="fractalNoise" baseFrequency="1 1" stitchTiles="stitch" ' +
+              'numOctaves="3" result="noise" seed="4856"/>' +
+            '<feColorMatrix in="noise" type="luminanceToAlpha" result="a"/>' +
+            '<feComponentTransfer in="a" result="d"><feFuncA type="discrete" ' +
+              'tableValues="1 1 1 1 1 0 0 0 0 0"/></feComponentTransfer>' +
+            '<feComposite operator="in" in2="SourceGraphic" in="d" result="clipped"/>' +
+            '<feFlood flood-color="rgba(0,0,0,0.05)" result="f"/>' +
+            '<feComposite operator="in" in2="clipped" in="f" result="grain"/>' +
+            '<feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="grain"/></feMerge>' +
+          '</filter>' +
         '</defs>' +
-        '<path d="' + ticketOutline(W, H, n) + '" fill="' + fill + '"/>' +
-        // print grain across the stock
-        '<g clip-path="url(#' + id + 'c)"><rect x="' + (-r) + '" y="0" width="' + (W + 2 * r) + '" ' +
-          'height="' + H + '" filter="url(#' + id + 'g)" opacity=".2" ' +
-          'style="mix-blend-mode:multiply"/></g>' +
-        // inset keyline and the two stub rules
-        '<rect x="' + pad + '" y="' + pad + '" width="' + (W - pad * 2) + '" height="' + (H - pad * 2) + '" ' +
-          'rx="7" fill="none" stroke="' + line + '" stroke-width="2.4"/>' +
-        '<line x1="' + (pad + stub) + '" y1="' + pad + '" x2="' + (pad + stub) + '" y2="' + (H - pad) + '" ' +
-          'stroke="' + line + '" stroke-width="2.4"/>' +
-        '<line x1="' + (W - pad - stub) + '" y1="' + pad + '" x2="' + (W - pad - stub) + '" y2="' + (H - pad) + '" ' +
-          'stroke="' + line + '" stroke-width="2.4"/>' +
-        stubDate(pad + stub / 2) + stubDate(W - pad - stub / 2) +
+        '<path d="' + TICKET_PATH + '" fill="' + fill + '" filter="url(#' + id + 'n)"/>' +
+        '<rect x="' + pad + '" y="' + pad + '" width="' + innerW + '" height="' + innerH + '" ' +
+          'rx="12" fill="none" stroke="' + ink + '" stroke-opacity="' + labelOp + '" stroke-width="2"/>' +
+        '<rect x="' + stubX + '" y="' + pad + '" width="' + (W - 2 * stubX) + '" height="' + innerH + '" ' +
+          'fill="none" stroke="' + ink + '" stroke-opacity="' + labelOp + '" stroke-width="2"/>' +
+        stubDate(pad + (stubX - pad) / 2) + stubDate(W - pad - (stubX - pad) / 2) +
         text +
       '</svg>' +
       (note ? '<span class="ticket__note">' + esc(note) + '</span>' : '');
   }
+
 
   /* hand-drawn marks — 2 shapes reused everywhere, never regenerated
      per instance, so the "drawn by a person" feel stays consistent */
