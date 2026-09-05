@@ -8,3 +8,6 @@
 #   _fallback.html       Brush Script MT vs Yellowtail comparison
 #   _lead.html           headline line-height ladder
 _*.html
+
+# local dev helper — not part of the site
+bin-bump.sh

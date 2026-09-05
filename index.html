@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bar Scene Socials — Milwaukee's social events of the year</title>
 <meta name="description" content="Haunted Bar Hop, 12 Bars of Christmas and the Shamrock Shuffle. Milwaukee bar crawls run by people who actually go.">
-<script src="js/gate.js?v=1788559639"></script>
-<link rel="stylesheet" href="css/fonts.css?v=1788559639">
-<link rel="stylesheet" href="css/bss.css?v=1788559639">
+<script src="js/gate.js?v=1788592157"></script>
+<link rel="stylesheet" href="css/fonts.css?v=1788592157">
+<link rel="stylesheet" href="css/bss.css?v=1788592157">
 </head>
 <body data-page="home" class="has-hero">
 <div id="chrome-header"></div>
@@ -19,7 +19,7 @@
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
-      <h1 class="d1 fx fx--orange fx--neon">Haunted<br>Bar <em class="scr">Hop</em></h1>
+      <h1 class="d1 fx fx--orange fx--neon fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h1>
       <p class="hero__meta">Saturday 10/31/26 · 3pm until close · 21+</p>
       <a class="ticket ticket--flat" href="tickets.html" data-ticket data-main="Get tickets" data-sub="From $11.95 each"></a>
     </div>
@@ -54,7 +54,7 @@
             <span class="sticker sticker--ghost sticker--flat">Sat 10/31/26</span>
             <span class="sticker sticker--ghost sticker--flat">21+</span>
           </div>
-          <h2 class="d2 fx fx--orange">Haunted<br>Bar <em class="scr">Hop</em></h2>
+          <h2 class="d2 fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h2>
           <p class="lede" style="max-width:40ch">Sixteen bars, one street, and the only Halloween crawl that actually happens on Brady. Everyone else runs theirs on Water and 3rd.</p>
           <div class="incl" style="margin-top:6px">
             <div class="incl__row">
@@ -88,7 +88,7 @@
         <a class="event" href="haunted-bar-hop.html">
           <div class="photo event__shot ar-169">
             <img src="images/brady-street.webp" alt="">
-            <h3 class="event__title fx fx--orange">Haunted<br>Bar <em class="scr">Hop</em></h3>
+            <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h3>
           </div>
           <div class="event__meta">
             <span class="tiny">10/31/26 · Brady Street</span>
@@ -100,7 +100,7 @@
           <a class="event event--locked" href="christmas.html">
             <div class="photo event__shot ar-169">
               <img src="images/12bars-of-christmas-hero.webp" alt="">
-              <h3 class="event__title fx fx--red">12 Bars of<br><em class="scr">Christmas</em></h3>
+              <h3 class="event__title fx fx--red fx--split"><span class="ink ink--white">12 Bars of</span><br><em class="scr ink ink--red">Christmas</em></h3>
             </div>
             <div class="event__meta">
               <span class="tiny">December 2026 · date TBA</span>
@@ -110,7 +110,7 @@
           <a class="event event--locked" href="shamrock.html">
             <div class="photo event__shot ar-169">
               <img src="images/shamrock-shuffle-card.jpg" alt="">
-              <h3 class="event__title fx fx--green">Shamrock<br><em class="scr">Shuffle</em> 18</h3>
+              <h3 class="event__title fx fx--green fx--split"><span class="ink ink--green">Shamrock</span><br><em class="scr ink ink--orange">Shuffle</em> <span class="ink ink--white">18</span></h3>
             </div>
             <div class="event__meta">
               <span class="tiny">March 2027 · date TBA</span>
@@ -161,22 +161,42 @@
   <!-- ── 07 THE NUMBERS ──────────────────────────────────── -->
   <section class="band">
     <div class="shell">
-      <div class="cols c-offset" data-reveal>
-        <div class="stack stack--lg">
-          <div class="cols c-4" data-reveal>
-            <div class="stat"><span class="stat__n">24k</span><span class="stat__l">Crawlers</span></div>
-            <div class="stat"><span class="stat__n">60</span><span class="stat__l">Partner bars</span></div>
-            <div class="stat"><span class="stat__n">3</span><span class="stat__l">Events a year</span></div>
-            <div class="stat"><span class="stat__n">8</span><span class="stat__l">Years running</span></div>
-          </div>
-          <hr class="rule">
-          <div class="cols c-wide-right" data-reveal style="align-items:center">
-            <div class="stat"><span class="stat__n" style="color:var(--orange-on)">$41k</span>
-              <span class="stat__l">Returned to Milwaukee</span></div>
-            <p class="lede" style="max-width:46ch">A share of every wristband goes to Milwaukee food banks and youth programmes. Shuffle now, feel good about it later.</p>
-          </div>
-          <a class="btn" href="about.html" style="justify-self:start">About us</a>
+      <div class="ledger" data-reveal>
+        <ol class="ledger__row">
+          <li class="ledger__item">
+            <span class="ledger__n" data-count-to="24000" data-count-fmt="k">24k</span>
+            <span class="ledger__l">people have crawled with us</span>
+          </li>
+          <li class="ledger__item">
+            <span class="ledger__n" data-count-to="60">60</span>
+            <span class="ledger__l">bars on the routes</span>
+          </li>
+          <li class="ledger__item">
+            <span class="ledger__n" data-count-to="3">3</span>
+            <span class="ledger__l">events a year, no filler</span>
+          </li>
+          <li class="ledger__item">
+            <span class="ledger__n" data-count-to="8">8</span>
+            <span class="ledger__l">years of doing this</span>
+          </li>
+        </ol>
+
+        <div class="ledger__payoff">
+          <p class="ledger__give">
+            <span class="ledger__amt" data-count-to="41200" data-count-fmt="$k">$41k</span>
+            <span class="ledger__mark" aria-hidden="true">
+              <svg viewBox="0 0 220 16" preserveAspectRatio="none" fill="none">
+                <path d="M3 10.5c26-5 52-7.5 78-6.5s52 5.5 78 6 46-2 58-5.5"
+                      stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="ledger__l">of it went back to Milwaukee</span>
+          </p>
+          <p class="lede">A share of every wristband goes to Milwaukee food banks and youth
+            programmes. Shuffle now, feel good about it later.</p>
         </div>
+
+        <a class="btn" href="about.html">About us</a>
       </div>
     </div>
   </section>
@@ -193,6 +213,6 @@
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788559639"></script>
+<script src="js/bss.js?v=1788592157"></script>
 </body>
 </html>

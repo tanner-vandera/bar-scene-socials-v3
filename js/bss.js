@@ -123,16 +123,20 @@
     var r  = H / (2 * n);
     var id = 'tk' + (++TK);
 
-    // Burnt orange, not the old bright peach #FF9152 — closer in hue to
-    // --orange (#FF4D14) and noticeably less vibrant, which is also the
-    // rust/burnt-orange the brand style guide asks for. It stays above
-    // the .42 luminance gate below, so the label keeps its near-black ink
-    // rather than flipping to white on orange (3.3:1, fails AA).
-    var fill = sold ? '#C9C8C3' : (el.getAttribute('data-fill') || '#D9713F');
-    // Keyline + the vertical stub date. The old #B8141C measures 2.0:1 on
-    // the new stock and #5A1A10 only 4.0:1 — the stub date is small text and
-    // needs 4.5. #42110A gives 4.85:1.
-    var line = sold ? '#8A8A85' : (el.getAttribute('data-line') || '#42110A');
+    // Pastel paper stock in the --violet hue (274 deg), lightened and washed
+    // right out to sat .32 so it reads as coloured paper rather than a brand
+    // fill. Black on it measures 9.33:1, so the label ink stays near-black.
+    var fill = sold ? '#C9C8C3' : (el.getAttribute('data-fill') || '#D1A5F2');
+    // The keyline stays --orange against the purple stock — two inks, the
+    // way a riso ticket is actually printed. 1.64:1, which is fine for a
+    // KEYLINE: it is ornament inside the shape, not the boundary that makes
+    // the ticket readable as a ticket. The die cut against the page ground
+    // does that, and the label carries the meaning.
+    var line = sold ? '#8A8A85' : (el.getAttribute('data-line') || '#FF4D14');
+    // The stub date is SMALL TEXT and cannot take the keyline colour —
+    // --orange on this stock is 1.64:1 against a 4.5 requirement. A deep
+    // violet ties it to the paper instead, at 6.6:1.
+    var dateInk = sold ? '#6E6D69' : (el.getAttribute('data-date-ink') || '#4A1A6B');
     // ticket stock is light by design; if a dark fill is ever set, flip the
     // label rather than printing near-black on near-black
     var ink  = sold ? '#5C5B57' : (luminance(fill) < .42 ? '#FFFFFF' : '#111110');
@@ -164,7 +168,7 @@
 
     var stubDate = function (cx) {
       return '<text transform="translate(' + cx + ' ' + midY + ') rotate(-90)" text-anchor="middle" ' +
-        'fill="' + line + '" font-family="Jomhuria, sans-serif" font-size="' + (compact ? 33 : 37) + '" ' +
+        'fill="' + dateInk + '" font-family="Jomhuria, sans-serif" font-size="' + (compact ? 33 : 37) + '" ' +
         'letter-spacing="2.4">' + esc(date) + '</text>';
     };
 
@@ -262,7 +266,7 @@
         '<div class="more__menu">' + moreLinks + '</div></div>' +
       '</nav>' +
       '<div class="hdr__cta" style="flex:none">' +
-        '<a class="ticket ticket--compact" href="tickets.html" data-ticket data-main="Get tickets"></a>' +
+        '<a class="btn btn--violet btn--sm" href="tickets.html">Get tickets</a>' +
       '</div>' +
       '<button class="burger" type="button" data-burger>Menu</button>' +
     '</div>' +
@@ -294,7 +298,7 @@
         '<p class="small">Two emails a year, both of them a date.</p>' +
         '<form class="capture" onsubmit="return false">' +
           '<input class="field" type="email" placeholder="you@example.com" aria-label="Email address">' +
-          '<button class="btn btn--orange" type="submit">Notify me</button>' +
+          '<button class="btn btn--red" type="submit">Notify me</button>' +
         '</form>' +
       '</div>' +
     '</div></footer>';
@@ -345,6 +349,77 @@
       for (var i = pending.length - 1; i >= 0; i--) {
         if (pending[i].getBoundingClientRect().top < trigger) {
           show(pending[i]);
+          pending.splice(i, 1);
+        }
+      }
+      if (!pending.length) {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(check);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    check();
+  }
+
+  /* Count-up on the numbers section. The final value is already in the
+     markup, so with no JS (or reduced motion) the correct number is simply
+     there — this only ever replaces it for the ~1.1s it is animating and
+     then puts it back verbatim.
+
+     Same rAF-throttled scroll check as reveal() and ignite(). Delays are
+     matched to the CSS stagger on .ledger__n so the digits start moving as
+     each numeral finishes wiping up, not before it is visible. */
+  function counters() {
+    var els = [].slice.call(document.querySelectorAll('[data-count-to]'));
+    if (!els.length) return;
+
+    var reduced = window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    function format(v, fmt) {
+      if (fmt === 'k')  return Math.round(v / 1000) + 'k';
+      if (fmt === '$k') return '$' + Math.round(v / 1000) + 'k';
+      return String(Math.round(v));
+    }
+
+    function run(el, i) {
+      var to    = parseFloat(el.getAttribute('data-count-to'));
+      var fmt   = el.getAttribute('data-count-fmt') || '';
+      var final = el.textContent;
+      var dur   = 1100;
+      var delay = 120 + i * 80;
+      var t0    = null;
+
+      el.textContent = format(0, fmt);
+      setTimeout(function () {
+        requestAnimationFrame(function step(t) {
+          if (t0 === null) t0 = t;
+          var p = Math.min((t - t0) / dur, 1);
+          // easeOutExpo — fast out of the gate, long settle onto the value
+          var e = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+          el.textContent = format(to * e, fmt);
+          if (p < 1) requestAnimationFrame(step);
+          else el.textContent = final;   // land on the authored string exactly
+        });
+      }, delay);
+    }
+
+    var pending = els.slice();
+    var ticking = false;
+    function check() {
+      ticking = false;
+      var vh = window.innerHeight;
+      for (var i = pending.length - 1; i >= 0; i--) {
+        var r = pending[i].getBoundingClientRect();
+        if (r.top < vh * 0.92 && r.bottom > 0) {
+          run(pending[i], els.indexOf(pending[i]));
           pending.splice(i, 1);
         }
       }
@@ -459,6 +534,7 @@
     });
     reveal();
     ignite();
+    counters();
     [].forEach.call(document.querySelectorAll('td.must-ring'), function (el) { el.insertAdjacentHTML('afterbegin', CALRING); });
 
     var more = document.querySelector('.more');
