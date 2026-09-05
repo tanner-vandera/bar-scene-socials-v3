@@ -138,9 +138,23 @@ img{max-width:100%; display:block}
    needs 1505px of column and overflowed every container from 1440px up.
    380px is the largest that fits the widened hero, and 26.5vw keeps the
    narrow end fitting too. */
-.d1{font-size:clamp(64px, 13.25vw, 190px)}
-.d2{font-size:clamp(46px, 8.15vw, 130px)}
-.d3{font-size:clamp(33px, 4.6vw, 68px)}
+/* One continuous ramp from 320px to 1440px, rather than a desktop clamp
+   plus a much smaller mobile override. The two ramps met badly: .d1 was
+   74px at 561px wide and 51px at 560px, a 23px CLIFF at the breakpoint,
+   and the mobile arm was far more timid than it needed to be.
+
+   The real constraint was measured, not guessed. The widest unbreakable
+   line in any lockup is "MORE THAN", which costs 3.162px of width per 1px
+   of font-size once .04em of tracking is counted. On a 375px phone the
+   hero has 339px of room, so it fits up to 107px — the old ramp was
+   serving 51. These curves are set to land near 85% of that ceiling at
+   every width, then hit the same 190/130/68 maximums as before.
+
+     calc(A + B*vw) form, so the slope is continuous and there is no
+     breakpoint for the size to jump at. */
+.d1{font-size:clamp(72px, calc(54.8px + 9.39vw), 190px)}
+.d2{font-size:clamp(50px, calc(38px + 6.39vw), 130px)}
+.d3{font-size:clamp(34px, calc(30.1px + 2.63vw), 68px)}
 .h4{
   font-family:var(--display); font-weight:400; text-transform:uppercase;
   font-size:clamp(23px,2.55vw,33px); line-height:.464; letter-spacing:.03em; margin:0;
@@ -153,11 +167,10 @@ img{max-width:100%; display:block}
    matches the old cap height AND fits. Tracking eases to .04em to buy
    back some of the width rather than shrinking the type further. */
 @media (max-width:560px){
+  /* Tracking still eases here — it buys back width at the size the ramp
+     above now asks for. The font-size overrides are gone; the ramp is
+     continuous and does not need a second, smaller arm. */
   .d1,.d2,.d3{letter-spacing:.04em}
-  .d1{font-size:clamp(42px, 13.5vw, 52px)}
-  .d2{font-size:clamp(35px, 10vw, 46px)}
-  .d3{font-size:clamp(27px, 7.5vw, 35px)}
-  .h4{font-size:clamp(19px, 5.5vw, 24px)}
 }
 
 /* --- the script half of a headline pairing -------------------------
@@ -1543,13 +1556,150 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 }
 
 /* ============================================================
-   PRICE BLOCK
+   THE LISTING — what else is on this month
+   Was four identical bordered rectangles with identical internal
+   layouts and equal spacing: the SaaS card grid, and the one thing
+   the art direction is explicitly not. A gig guide torn out of a
+   zine has no boxes in it — it has a hairline between entries, a
+   big date in the margin, and one entry circled.
+
+   So: rules, not borders. The date becomes display type in the left
+   margin at ~7x the meta line, which is the hierarchy the boxes were
+   faking with a border. And the one that is OURS breaks the grid
+   instead of merely changing border colour — it bleeds past the
+   column edge and carries a wash that fades out across the row.
    ============================================================ */
-.price{border:1.5px solid var(--rule-hard); padding:clamp(20px,2.4vw,30px); background:var(--paper-2); position:relative}
-.price--hero{background:var(--paper-3)}
-.price__amt{font-family:var(--display); font-size:clamp(88px,11.9vw,163px); line-height:.382; letter-spacing:.02em}
-.price__amt sup{font-size:.36em; vertical-align:.9em; letter-spacing:0; margin-right:.06em}
-.price__ea{font:500 11px/1 var(--body); letter-spacing:.18em; text-transform:uppercase; color:var(--text-3)}
+.listing{
+  list-style:none; margin:0; padding:0;
+  border-top:1px solid var(--rule);
+}
+.listing__row{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(72px,9%) minmax(0,1fr) auto;
+  gap:clamp(16px,3vw,44px);
+  align-items:baseline;
+  padding:clamp(20px,2.8vw,34px) 0;
+  border-bottom:1px solid var(--rule);
+  /* the nudge is --tx, not a literal transform: these rows are direct
+     children of a [data-reveal] group, whose finished state owns
+     `transform` at (0,3,0) and would clobber a plain transform outright.
+     Same reason .taped and .ticket compose theirs from variables. */
+  transform:translate3d(var(--tx,0px),var(--ty,0px),0);
+}
+/* and the timing has to be reclaimed at matching specificity, or the
+   hover inherits the reveal's slow .62s entrance curve */
+.listing__row,
+.has-js [data-reveal] > .listing__row{
+  transition:opacity .62s var(--ease), transform .42s var(--quart);
+}
+/* the accent rule that wipes in under a hovered row. A second line laid
+   over the border rather than a colour change on it, so it can animate
+   from the left the way a pen would. */
+.listing__row::after{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px;
+  background:var(--orange); transform:scaleX(0); transform-origin:left center;
+  transition:transform .55s var(--quart);
+}
+@media (hover:hover){
+  .listing__row:hover{--tx:8px}
+  .listing__row:hover::after{transform:scaleX(1)}
+}
+.listing__day{
+  font-family:var(--display); font-weight:400;
+  font-size:clamp(52px,6.4vw,96px); line-height:.62; letter-spacing:.02em;
+  color:var(--text-3);
+  font-variant-numeric:tabular-nums;
+}
+.listing__body{display:grid; gap:6px; align-content:start}
+.listing__when{font:500 11px/1.4 var(--body); letter-spacing:.18em;
+  text-transform:uppercase; color:var(--text-3); margin:0}
+.listing__name{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(26px,2.9vw,40px); line-height:.62; letter-spacing:.03em;
+  margin:0; color:var(--text);
+}
+.listing__where{font:400 15px/1.5 var(--body); color:var(--text-2); margin:0}
+.listing__act{justify-self:end; align-self:center}
+
+/* ours: bleeds out of the column and takes the accent */
+.listing__row--ours{
+  margin-inline:calc(-1 * clamp(14px,2vw,30px));
+  padding-inline:clamp(14px,2vw,30px);
+  background:linear-gradient(90deg,
+    rgba(255,77,20,.13) 0%, rgba(255,77,20,.05) 42%, rgba(255,77,20,0) 78%);
+}
+.listing__row--ours .listing__day{color:var(--orange)}
+.listing__row--ours .listing__name{color:var(--text)}
+.listing__row--ours::after{transform:scaleX(1); opacity:.55}
+
+@media (max-width:720px){
+  /* the action drops under the entry rather than squeezing a third
+     column into a phone; the date keeps its margin position */
+  .listing__row{grid-template-columns:minmax(56px,auto) minmax(0,1fr); row-gap:16px}
+  .listing__act{grid-column:2; justify-self:start}
+  .listing__day{font-size:clamp(44px,13vw,64px)}
+}
+
+/* ============================================================
+   PRICE STUBS
+   Two bordered boxes of equal weight asked the reader to compare
+   two things that are not equal — one of them is the recommendation.
+   The border is gone (paper tone carries the surface), the grid is
+   asymmetric, and the pick sits lower and larger so the choice is
+   made by composition rather than by a "Save 20%" chip alone.
+   ============================================================ */
+.stubs{
+  display:grid; grid-template-columns:1fr 1.18fr;
+  gap:clamp(16px,2.2vw,30px); align-items:end;
+}
+.stub{
+  position:relative; background:var(--paper-2);
+  padding:clamp(22px,2.8vw,34px) clamp(18px,2.4vw,30px) clamp(24px,3vw,36px);
+  display:grid; gap:clamp(10px,1.2vw,16px); align-content:start;
+  transform:translate3d(0,var(--ty,0px),0);
+  transition:transform .34s var(--ease), background .34s var(--quart);
+}
+/* halftone along the top edge — the same print texture the photos and
+   the calendar use, so the stub reads as cut from that stock */
+.stub::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:clamp(20px,2.4vw,30px);
+  background-image:radial-gradient(rgba(17,17,16,.34) 1.3px, transparent 1.4px);
+  background-size:7px 7px;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent);
+  mask-image:linear-gradient(180deg,#000,transparent);
+  pointer-events:none; opacity:.5;
+}
+.stub__tier{font:500 11px/1 var(--body); letter-spacing:.2em;
+  text-transform:uppercase; color:var(--text-3); margin:0}
+.stub__head{display:flex; justify-content:space-between; align-items:center; gap:12px}
+.stub__amt{
+  font-family:var(--display); font-weight:400;
+  font-size:clamp(76px,10.4vw,142px); line-height:.38; letter-spacing:.02em;
+  margin:clamp(6px,1vw,12px) 0 0;
+  /* the dollar sign hangs into the padding — optical alignment, so the
+     numeral itself starts on the column edge rather than the currency */
+  margin-left:-.06em;
+}
+.stub__amt sup{font-size:.36em; vertical-align:.9em; letter-spacing:0; margin-right:.04em}
+.stub__ea{font:500 11px/1 var(--body); letter-spacing:.18em;
+  text-transform:uppercase; color:var(--text-3); margin-left:.5em; vertical-align:.42em}
+.stub__note{font:400 15px/1.5 var(--body); color:var(--text-2); margin:0}
+.stub .ticket{margin-top:clamp(6px,1vw,12px)}
+
+/* the recommendation: larger type, a warmer sheet, and a rule of accent
+   along the top edge instead of a box around everything */
+.stub--pick{background:var(--paper-3); padding-top:calc(clamp(22px,2.8vw,34px) + 6px)}
+.stub--pick::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:3px;
+  background:var(--orange);
+}
+.stub--pick .stub__amt{font-size:clamp(84px,11.6vw,158px)}
+@media (hover:hover){ .stub:hover{--ty:-4px} }
+
+@media (max-width:720px){
+  .stubs{grid-template-columns:minmax(0,1fr); align-items:stretch}
+}
 
 /* ============================================================
    RISO CALENDAR
