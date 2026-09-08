@@ -11,3 +11,6 @@ _*.html
 
 # local dev helper — not part of the site
 bin-bump.sh
+
+# local contrast-audit harness — never deployed
+_audit.js

@@ -5,6 +5,17 @@
 (function () {
   'use strict';
 
+  /* One place for the two real destinations, so a change to either does not
+     mean hunting through the footer and the contact page separately. */
+  var IG   = 'https://www.instagram.com/barscenesocials/';
+  var MAIL = 'barscenesocials@gmail.com';
+
+  /* The three events sit in the desktop nav at wordmark size, in the
+     display face — the closest thing the brand has to a per-event logo
+     without drawing a literal pumpkin/tree/shamrock, which the brand
+     notes explicitly rule out. They used to carry each event's identity
+     colour; they are now flat white on every page, so the only colour in
+     the header is the real logo and the ticket. */
   var NAV = [
     { href: 'haunted-bar-hop.html', label: 'Haunted Bar Hop',      key: 'halloween' },
     { href: 'christmas.html',       label: '12 Bars of Christmas', key: 'christmas', soon: true },
@@ -23,15 +34,18 @@
      homepage and Happening Now so the two can never drift apart.
      Oct 1 2026 falls on a Thursday, hence four leading blanks.
      --------------------------------------------------------- */
+  /* One event, deliberately. The other three were placeholder listings
+     for other people's shows and there is nothing real behind them yet;
+     an empty month with one thing circled is a better answer to "is
+     anything on?" than three invented ones. Add more here and they get
+     the plain treatment automatically — only `ours` takes the painted
+     cell. */
   var MONTH = {
     label: 'October 2026',
     lead: 4,
     days: 31,
     events: {
-      3:  { name: 'Concert of the year', where: 'The Rave · doors 7pm' },
-      17: { name: 'Festival name',       where: 'Third Ward · all day' },
-      24: { name: 'Big show',            where: 'Fiserv Forum · Deer District' },
-      31: { name: 'Haunted Bar Hop',     where: 'Brady Street · ours',
+      31: { name: 'Haunted Bar Hop',     where: 'Brady St · 3pm',
             ours: true, href: 'haunted-bar-hop.html' }
     }
   };
@@ -41,19 +55,23 @@
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
   /* ---------------------------------------------------------
-     BRAND MARK — placeholder, and deliberately not a letterform.
-     Three hand-drawn waves: a crowd moving as one, a soundwave,
-     the zigzag from the owners' own mood board. Reads in any
-     season, not literal about beer or shamrocks.
+     THE LOGO — the real one now (images/bss-logo.svg), a stacked
+     "BAR SCENE / SOCIALS" wordmark with the O and C of SOCIALS
+     fused into a single lozenge. It replaces the three-wave
+     placeholder that stood in here for the whole build.
+
+     It is painted as a CSS mask rather than an <img> or inline
+     markup, so one file serves every placement and takes its
+     colour from whatever it sits in — white in the header, white
+     over a hero, white in the footer, currentColor in the loader
+     — with no recoloured copies of the artwork to keep in sync.
+     See .logo in bss.css. Everything visual lives there; this
+     only emits the box and its accessible name.
      --------------------------------------------------------- */
-  function mark(size, color) {
-    return '<svg viewBox="0 0 48 48" width="' + size + '" height="' + size + '" aria-hidden="true">' +
-      '<g class="mark-stroke" fill="none" stroke="' + color + '" stroke-width="3.4" ' +
-      'stroke-linecap="round" stroke-linejoin="round">' +
-      '<path d="M4 16.5 L12.3 9.2 L20 16.8 L28.4 9 L36 16.4 L44 9.4"/>' +
-      '<path d="M4.3 26.8 L12 19.4 L20.4 27 L28 19.2 L36.3 26.6 L44 19.2"/>' +
-      '<path d="M4 37 L12.4 29.6 L20 37.2 L28.2 29.4 L36 36.8 L43.8 29.6"/>' +
-      '</g></svg>';
+  function logo(cls, label) {
+    return '<span class="logo ' + cls + '"' +
+      (label ? ' role="img" aria-label="' + esc(label) + '"' : ' aria-hidden="true"') +
+      '></span>';
   }
 
   /* ---------------------------------------------------------
@@ -114,6 +132,19 @@
     if (w.length === 2) return w;
     var mid = Math.ceil(w.length / 2);
     return [w.slice(0, mid).join(' '), w.slice(mid).join(' ')];
+  }
+
+  /* A resting slant and a drift period, assigned once per ticket so a wall
+     of them never moves in lockstep. Deterministic from the ticket's index
+     via the golden ratio rather than Math.random(): the angles spread
+     evenly and never clump, and a given ticket looks the same on every
+     load. A stub that sits at a different angle each refresh reads as a
+     glitch rather than as printed stock. */
+  function slant(el, i) {
+    var f = (i * 0.6180339887) % 1;
+    el.style.setProperty('--slant', (f * 5.2 - 2.6).toFixed(2) + 'deg');
+    el.style.setProperty('--sway-dur', (6.2 + f * 3.4).toFixed(2) + 's');
+    el.style.animationDelay = (-f * 7).toFixed(2) + 's';
   }
 
   function ticket(el) {
@@ -222,10 +253,27 @@
   var TEAR = '<svg viewBox="0 0 1200 26" preserveAspectRatio="none" aria-hidden="true">' +
     '<path d="M0,26.0 L0,15.9 L0.0,15.9 L8.7,16.1 L23.3,13.9 L36.8,14.1 L49.3,16.7 L57.5,15.7 L70.2,16.8 L78.2,16.1 L90.2,14.6 L104.7,16.5 L116.5,14.7 L130.2,14.1 L136.6,16.1 L143.8,16.3 L155.3,15.0 L164.4,15.4 L171.0,14.8 L182.0,14.8 L190.3,15.4 L198.0,14.9 L207.4,13.0 L221.7,15.0 L235.4,9.8 L244.6,12.8 L255.1,12.8 L261.9,14.2 L275.9,14.7 L283.3,15.5 L295.2,15.9 L307.5,15.8 L315.3,14.8 L322.5,15.3 L334.7,14.7 L343.6,13.9 L351.2,14.7 L359.7,15.2 L369.2,17.5 L378.5,16.4 L384.8,16.2 L399.1,11.4 L405.7,16.5 L419.3,17.7 L432.8,15.9 L446.1,14.9 L457.4,14.8 L464.0,9.4 L471.0,17.6 L483.7,16.3 L494.8,16.9 L508.0,13.5 L519.9,14.0 L526.9,15.5 L535.1,13.6 L544.5,15.1 L556.9,13.4 L570.2,12.7 L581.7,13.4 L593.6,12.3 L606.4,12.5 L620.8,8.7 L627.7,8.5 L637.3,8.9 L645.1,11.0 L656.9,10.6 L669.2,7.5 L681.0,8.1 L689.9,9.5 L701.0,7.7 L713.9,9.9 L727.4,6.8 L740.3,7.3 L748.3,9.5 L756.0,8.1 L764.5,9.5 L776.4,7.8 L789.7,10.0 L798.9,10.3 L811.6,11.0 L825.3,10.5 L839.1,11.1 L850.2,12.5 L861.5,13.1 L872.8,10.9 L887.4,13.4 L896.0,13.3 L905.3,10.8 L917.0,11.0 L924.6,12.2 L939.2,14.1 L948.2,14.0 L957.6,13.1 L967.9,13.1 L979.5,11.9 L991.7,12.6 L998.7,11.7 L1010.3,13.3 L1018.2,12.4 L1024.7,11.6 L1037.8,12.5 L1050.2,12.6 L1062.7,10.8 L1077.4,10.7 L1087.4,10.3 L1095.5,10.9 L1102.8,11.5 L1117.6,10.5 L1130.3,11.2 L1139.9,11.7 L1148.5,11.9 L1154.8,12.8 L1167.4,14.4 L1181.9,14.2 L1191.4,13.5 L1200.0,15.3 L1200.0,26.0 Z"/></svg>';
 
-  var SQUIG = '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="' +
-    'M3 8C28 2 46 11 72 6 98 1 116 10 142 5 165 1 182 8 197 4"/></svg>';
   var CALRING = '<svg class="must" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="' +
     'M84 19C72 7 33 3 15 14 -3 25 2 62 14 76 26 90 71 93 87 80 99 70 97 40 88 26"/></svg>';
+
+  /* Doodled arrows on our own date. Two of them, drawn as if someone had
+     gone at the printed calendar with a pen: one sweeping in from the
+     left edge of the cell, one short jab from above. Both hang slightly
+     outside the cell on purpose — a table cell is a box and the whole
+     point of the mark is that it ignores it.
+
+     Separate paths for the shaft and the head rather than a marker,
+     because a marker inherits stroke-width and the head then thickens
+     with it; drawn open, the head keeps its own weight. */
+  var CALARROWS =
+    '<svg class="cal__arrow cal__arrow--in" viewBox="0 0 120 70" aria-hidden="true">' +
+      '<path d="M3 58C22 30 54 12 104 22"/>' +
+      '<path d="M88 8 106 23 84 34"/>' +
+    '</svg>' +
+    '<svg class="cal__arrow cal__arrow--down" viewBox="0 0 60 90" aria-hidden="true">' +
+      '<path d="M30 3C40 26 33 50 22 78"/>' +
+      '<path d="M6 58 21 82 39 66"/>' +
+    '</svg>';
 
   function calendar() {
     var head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
@@ -256,7 +304,8 @@
      --------------------------------------------------------- */
   function header() {
     var links = NAV.map(function (n) {
-      return '<a href="' + n.href + '"' + (page === n.key ? ' class="is-active"' : '') + '>' +
+      var cls = 'nav__mark' + (page === n.key ? ' is-active' : '');
+      return '<a href="' + n.href + '" class="' + cls + '">' +
         esc(n.label) + (n.soon ? '<span class="soon">Soon</span>' : '') + '</a>';
     }).join('');
     var moreLinks = MORE.map(function (n) {
@@ -271,8 +320,7 @@
     return '' +
     '<header class="hdr"><div class="hdr__in">' +
       '<a class="lockup" href="index.html" aria-label="Bar Scene Socials — home">' +
-        mark(38, '#FF4D14') +
-        '<span class="lockup__wm"><b>Bar Scene</b><i>Socials</i></span>' +
+        logo('lockup__logo') +
       '</a>' +
       '<nav class="nav">' + links +
         '<div class="more"><button type="button" data-more aria-expanded="false">More</button>' +
@@ -302,9 +350,12 @@
         '<div><p class="ftr__h">Where</p><p class="small">Brady Street<br>Milwaukee, Wisconsin</p></div>' +
         '<div><p class="ftr__h">Who</p><p class="small">21 and over<br>Bring ID, they will check</p></div>' +
         '<div><p class="ftr__h">Find us</p><p class="small">' +
-          '<a href="#">@barscenesocials</a> — Instagram<br>' +
-          '<a href="#">@barscenesocials</a> — TikTok<br>' +
-          '<a href="#">hello@barscenesocials.com</a></p></div>' +
+          // rel on the external link: noopener closes the window.opener
+          // hole that target=_blank leaves open, noreferrer keeps the
+          // referrer off Instagram's analytics.
+          '<a href="' + IG + '" target="_blank" rel="noopener noreferrer">' +
+            '@barscenesocials</a> — Instagram<br>' +
+          '<a href="mailto:' + MAIL + '">' + MAIL + '</a></p></div>' +
       '</div>' +
       '<div class="ftr__signup">' +
         '<p class="h4">Know before everyone else</p>' +
@@ -313,6 +364,15 @@
           '<input class="field" type="email" placeholder="you@example.com" aria-label="Email address">' +
           '<button class="btn btn--red" type="submit">Notify me</button>' +
         '</form>' +
+      '</div>' +
+      /* The sign-off. The logo gets to be big down here — it is the last
+         thing on every page and has nothing to compete with, which is the
+         one place on the site it can run at wordmark scale rather than
+         chrome scale. "Setting the scene" sits under it in the script
+         face, the way a signature sits under a printed mark. */
+      '<div class="ftr__signoff">' +
+        logo('ftr__logo', 'Bar Scene Socials') +
+        '<p class="ftr__tag">Setting the scene</p>' +
       '</div>' +
     '</div></footer>';
   }
@@ -380,76 +440,6 @@
     check();
   }
 
-  /* Count-up on the numbers section. The final value is already in the
-     markup, so with no JS (or reduced motion) the correct number is simply
-     there — this only ever replaces it for the ~1.1s it is animating and
-     then puts it back verbatim.
-
-     Same rAF-throttled scroll check as reveal() and ignite(). Delays are
-     matched to the CSS stagger on .ledger__n so the digits start moving as
-     each numeral finishes wiping up, not before it is visible. */
-  function counters() {
-    var els = [].slice.call(document.querySelectorAll('[data-count-to]'));
-    if (!els.length) return;
-
-    var reduced = window.matchMedia &&
-                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return;
-
-    function format(v, fmt) {
-      if (fmt === 'k')  return Math.round(v / 1000) + 'k';
-      if (fmt === '$k') return '$' + Math.round(v / 1000) + 'k';
-      return String(Math.round(v));
-    }
-
-    function run(el, i) {
-      var to    = parseFloat(el.getAttribute('data-count-to'));
-      var fmt   = el.getAttribute('data-count-fmt') || '';
-      var final = el.textContent;
-      var dur   = 1100;
-      var delay = 120 + i * 80;
-      var t0    = null;
-
-      el.textContent = format(0, fmt);
-      setTimeout(function () {
-        requestAnimationFrame(function step(t) {
-          if (t0 === null) t0 = t;
-          var p = Math.min((t - t0) / dur, 1);
-          // easeOutExpo — fast out of the gate, long settle onto the value
-          var e = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
-          el.textContent = format(to * e, fmt);
-          if (p < 1) requestAnimationFrame(step);
-          else el.textContent = final;   // land on the authored string exactly
-        });
-      }, delay);
-    }
-
-    var pending = els.slice();
-    var ticking = false;
-    function check() {
-      ticking = false;
-      var vh = window.innerHeight;
-      for (var i = pending.length - 1; i >= 0; i--) {
-        var r = pending[i].getBoundingClientRect();
-        if (r.top < vh * 0.92 && r.bottom > 0) {
-          run(pending[i], els.indexOf(pending[i]));
-          pending.splice(i, 1);
-        }
-      }
-      if (!pending.length) {
-        window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('resize', onScroll);
-      }
-    }
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(check);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    check();
-  }
 
   /* Neon ignition. The ambient flicker in bss-neon puts its stutter at 86%
      of a 5.5s cycle, so a headline you have just landed on does nothing for
@@ -495,6 +485,267 @@
     check();
   }
 
+  /* ── THE DROP ─────────────────────────────────────────────
+     A short fall of tickets over the site on first load. It is a
+     flourish, so it is built to be impossible for it to become a
+     problem: the page underneath is already complete when this
+     appears, the curtain never takes pointer events once it starts
+     clearing, and removal is on a timer that cannot be blocked by a
+     slow image or a font. Skipped entirely for reduced-motion, and
+     once per session so moving around the site is not a series of
+     curtains. */
+  var DROP_INKS = ['#B78BCB', '#FC7C4E', '#91EC8E', '#E1566E', '#5DA4F0', '#F8D282'];
+
+  function drop() {
+    var reduced = window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+    // Homepage only, and only on a refresh or a fresh arrival — never when
+    // you reach it by clicking around the site. A curtain between every
+    // page turns a flourish into a toll booth.
+    //   'reload'  — the refresh the brief asks for
+    //   otherwise — only when the referrer is off-site, i.e. someone has
+    //               just arrived rather than navigated internally
+    var path = location.pathname.replace(/\/index\.html$/, '/');
+    if (path !== '/' && path !== '/index.html') return;
+
+    var navType = '';
+    try {
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      navType = nav ? nav.type : '';
+    } catch (e) {}
+    var cameFromSite = false;
+    try {
+      cameFromSite = !!document.referrer &&
+                     new URL(document.referrer).origin === location.origin;
+    } catch (e) {}
+    if (navType !== 'reload' && cameFromSite) return;
+
+    var host = document.createElement('div');
+    host.className = 'drop';
+    host.setAttribute('aria-hidden', 'true');
+
+    var n = window.innerWidth < 620 ? 16 : 26, html = '', i;
+    for (i = 0; i < n; i++) {
+      var f = (i * 0.6180339887) % 1;              // even spread, no clumps
+      var g = ((i * 7 + 3) * 0.6180339887) % 1;    // a second, decorrelated one
+      var fill = DROP_INKS[i % DROP_INKS.length];
+      html +=
+        '<span class="drop__t" style="' +
+          '--x:' + (2 + f * 92).toFixed(1) + 'vw;' +
+          '--w:' + (78 + g * 74).toFixed(0) + 'px;' +
+          '--drift:' + (g * 90 - 45).toFixed(0) + 'px;' +
+          '--r0:' + (f * 60 - 30).toFixed(0) + 'deg;' +
+          '--r1:' + (g * 220 - 110).toFixed(0) + 'deg;' +
+          '--dur:' + (1.05 + g * 0.7).toFixed(2) + 's;' +
+          // delays stay tight so a dozen are in the air at once rather
+          // than trickling past one at a time
+          '--delay:' + (f * 0.62).toFixed(2) + 's">' +
+          miniTicket(fill) +
+        '</span>';
+    }
+    host.innerHTML = html + '<span class="drop__mark">' + logo('drop__logo') + '</span>';
+    document.body.appendChild(host);
+
+    // Clear on a timer, not on animationend: one dropped frame or a
+    // backgrounded tab must never leave a curtain over the site.
+    // Driving the animations directly, the fall peaks with every ticket on
+    // screen at ~900ms and the last one is past the bottom by ~1500ms, so
+    // the fade starts there rather than holding an empty black frame.
+    setTimeout(function () { host.setAttribute('data-done', ''); }, 1480);
+    setTimeout(function () { if (host.parentNode) host.parentNode.removeChild(host); }, 2050);
+  }
+
+  /* ---------------------------------------------------------
+     HERO DRIFT
+     The one piece of scroll-linked motion on the site. The hero
+     photograph rises at about four fifths of the scroll rate, so
+     leaving a hero has a little depth to it instead of the whole
+     frame sliding off as one flat sheet.
+
+     Deliberately narrow in scope, because parallax is the easiest
+     way to make a site feel cheap:
+       · the PICTURE only. Never the type — moving a headline at a
+         different rate to its own meta line is the thing that
+         reads as broken rather than deep.
+       · it stops at the bottom of the hero. No work is done once
+         the section is off screen.
+       · 12% of the travel, which is felt and not seen.
+       · off entirely under prefers-reduced-motion.
+     Transform-only inside one rAF, same throttle as everything
+     else here.
+     --------------------------------------------------------- */
+  function drift() {
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var media = document.querySelector('.hero--shot .hero__media--shot');
+    if (!media) return;
+    var hero = media.closest('.hero');
+    /* The picture is scaled up by the drift distance so it can move
+       without exposing an edge. Set here rather than in the stylesheet:
+       a hero with no JS must not be left with a silently cropped image. */
+    media.style.willChange = 'transform';
+
+    var ticking = false;
+    function frame() {
+      ticking = false;
+      var h = hero.offsetHeight;
+      var y = window.pageYOffset || document.documentElement.scrollTop;
+      if (y > h) return;                       // past it — stop drawing
+      var shift = Math.min(y, h) * 0.12;
+      media.style.transform = 'translate3d(0,' + shift.toFixed(1) + 'px,0) scale(1.06)';
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    frame();
+  }
+
+  /* ---------------------------------------------------------
+     THE CURSOR
+     One drawn object per page, turning slowly, opening up on
+     anything you can click. It is a pointer, so three rules come
+     before the fun:
+
+       · FINE POINTERS ONLY. On touch there is no cursor to
+         replace and the native one must never be hidden.
+       · The page keeps working if this does nothing. Nothing here
+         removes the native cursor until the element is on screen,
+         and text fields keep their I-beam — an invisible caret in
+         a form is a real cost, a missing doodle is not.
+       · Position is transform-only inside one rAF, and the three
+         jobs (follow, scale, spin) are on three nested elements so
+         no two ever write the same transform.
+     --------------------------------------------------------- */
+  var CURSOR_ART = {
+    /* Ghost — the house shape. Dome, four-scallop hem, two eyes. */
+    ghost:
+      '<path d="M12 1.4c-4.5 0-8.1 3.6-8.1 8.1v10.4c0 .9 1.1 1.4 1.8.7l1.6-1.6 1.7 1.6c.4.4 1 .4 1.4 0l1.6-1.5 1.6 1.5c.4.4 1 .4 1.4 0l1.7-1.6 1.6 1.6c.7.7 1.8.2 1.8-.7V9.5c0-4.5-3.6-8.1-8.1-8.1Z"/>' +
+      '<circle cx="9.2" cy="9.6" r="1.45" fill="#111110"/><circle cx="14.8" cy="9.6" r="1.45" fill="#111110"/>',
+    /* Four-leaf clover. Four lobes on the diagonals plus a stem —
+       round lobes rather than hearts, which turn to mush at 30px. */
+    clover:
+      '<path d="M11.1 11.1C9.4 9.4 5.9 10 4.6 8.7 3.2 7.3 3.6 5 5 3.6c1.4-1.4 3.7-1.8 5.1-.4 1.3 1.3.7 4.8 2.4 6.5"/>' +
+      '<path d="M12.9 11.1c1.7-1.7 1.1-5.2 2.4-6.5 1.4-1.4 3.7-1 5.1.4 1.4 1.4 1.8 3.7.4 5.1-1.3 1.3-4.8.7-6.5 2.4"/>' +
+      '<path d="M12.9 12.9c1.7 1.7 5.2 1.1 6.5 2.4 1.4 1.4 1 3.7-.4 5.1-1.4 1.4-3.7 1.8-5.1.4-1.3-1.3-.7-4.8-2.4-6.5"/>' +
+      '<path d="M11.1 12.9c-1.7 1.7-1.1 5.2-2.4 6.5-1.4 1.4-3.7 1-5.1-.4-1.4-1.4-1.8-3.7-.4-5.1 1.3-1.3 4.8-.7 6.5-2.4"/>',
+    /* Snowflake — three spokes through the centre, barbed. */
+    snowflake:
+      '<g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/>' +
+      '<path d="M12 5.6 9.9 3.4M12 5.6l2.1-2.2M12 18.4l-2.1 2.2M12 18.4l2.1 2.2"/>' +
+      '<path d="m6.7 8.9-3-.5M6.7 8.9 6.2 5.9M17.3 15.1l3 .5M17.3 15.1l.5 3"/>' +
+      '<path d="m6.7 15.1-3 .5M6.7 15.1l-.5 3M17.3 8.9l3-.5M17.3 8.9l.5-3"/></g>',
+    /* The default: a four-point sparkle. Nothing seasonal, and the
+       only one of the four that is not a literal object. */
+    spark:
+      '<path d="M12 1.6c.9 5.4 3 7.5 8.4 8.4-5.4.9-7.5 3-8.4 8.4-.9-5.4-3-7.5-8.4-8.4 5.4-.9 7.5-3 8.4-8.4Z"/>'
+  };
+  var CURSOR_FOR = {
+    home:      'ghost',
+    halloween: 'ghost',
+    shamrock:  'clover',
+    christmas: 'snowflake'
+  };
+
+  function cursor() {
+    var mq = window.matchMedia;
+    if (!mq || !mq('(pointer: fine)').matches) return;
+
+    var art = CURSOR_ART[CURSOR_FOR[page] || 'spark'];
+    var el = document.createElement('div');
+    el.className = 'cur';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML =
+      '<span class="cur__scale"><span class="cur__spin">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor">' + art + '</svg>' +
+      '</span></span>';
+    document.body.appendChild(el);
+
+    /* Anything you can act on. Kept as one string so the hover rule and
+       the CSS that hides the native cursor cannot drift apart. */
+    var HOT = 'a,button,summary,[role="button"],[data-ticket],.ticket,' +
+              '.taped,.event,.card,input,textarea,select,label';
+    var FIELD = 'input,textarea,select';
+
+    var tx = 0, ty = 0, x = 0, y = 0, on = false, ticking = false;
+    /* Reduced motion snaps instead of gliding — see the matching CSS,
+       which also drops the spin and the hover growth. */
+    var EASE = mq('(prefers-reduced-motion: reduce)').matches ? 1 : 0.28;
+
+    function frame() {
+      ticking = false;
+      /* A little lag is the point — a cursor pinned exactly to the
+         pointer reads as a texture bug rather than an object. .28 is
+         fast enough that it never feels laggy on a flick. */
+      x += (tx - x) * EASE;
+      y += (ty - y) * EASE;
+      if (Math.abs(tx - x) > 0.1 || Math.abs(ty - y) > 0.1) queue();
+      el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+    }
+    function queue() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    }
+
+    function place(e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!on) {
+        /* First sighting: jump, do not glide in from the corner. The
+           native cursor is only hidden now, so a browser that never
+           reports a pointer never loses it. */
+        on = true; x = tx; y = ty;
+        document.documentElement.classList.add('has-cur');
+        el.classList.add('is-on');
+      }
+      queue();
+    }
+
+    document.addEventListener('mousemove', place, { passive: true });
+    /* mouseover as well, and this one is load-bearing on navigation: click
+       a link, hold the mouse still, and the new page would otherwise show
+       the native arrow until you happened to move — the drawn cursor
+       blinking out between every page. mouseover fires on the element
+       under a stationary pointer once the new document is live, so the
+       replacement is already in place by the time you see the page. */
+    document.addEventListener('mouseover', place, { passive: true });
+
+    /* Leaving the window hides it; re-entering brings it back on the
+       next move, already in the right place. */
+    document.addEventListener('mouseleave', function () { el.classList.remove('is-on'); });
+    document.addEventListener('mouseenter', function () { if (on) el.classList.add('is-on'); });
+    window.addEventListener('blur', function () { el.classList.remove('is-on'); });
+
+    /* Delegated, so it costs nothing per frame and works on anything
+       added later. mouseover/mouseout fire on every descendant, hence
+       the closest() on both sides. */
+    document.addEventListener('mouseover', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+      el.classList.toggle('is-hot', !!t.closest(HOT));
+      el.classList.toggle('is-field', !!t.closest(FIELD));
+    });
+    document.addEventListener('mouseout', function (e) {
+      var t = e.relatedTarget;
+      if (!t || !t.closest) { el.classList.remove('is-hot', 'is-field'); return; }
+      el.classList.toggle('is-hot', !!t.closest(HOT));
+      el.classList.toggle('is-field', !!t.closest(FIELD));
+    });
+  }
+
+  /* the ticket silhouette on its own, no keylines or type — at this size
+     they would only be noise */
+  function miniTicket(fill) {
+    return '<svg viewBox="0 0 ' + TICKET_W + ' ' + TICKET_H + '" aria-hidden="true">' +
+      '<path d="' + TICKET_PATH + '" fill="' + fill + '"/></svg>';
+  }
+
   function boot() {
     var h = document.getElementById('chrome-header');
     var f = document.getElementById('chrome-footer');
@@ -534,21 +785,40 @@
       el.textContent = MONTH.label;
     });
 
-    [].forEach.call(document.querySelectorAll('[data-ticket]'), ticket);
+    [].forEach.call(document.querySelectorAll('[data-ticket]'), function (el, i) {
+      ticket(el);
+      slant(el, i);
+    });
     // the first pass may have measured the fallback face; redraw on the real one
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () {
         [].forEach.call(document.querySelectorAll('[data-ticket]'), ticket);
       });
     }
-    [].forEach.call(document.querySelectorAll('.squig'), function (el) { el.insertAdjacentHTML('beforeend', SQUIG); });
     [].forEach.call(document.querySelectorAll('.tear'), function (el) {
       if (!el.firstElementChild) el.insertAdjacentHTML('beforeend', TEAR);
     });
+    /* Tells the pre-paint guard in every <head> that the script arrived, so
+       it does not strip .has-js and un-hide everything. Set before the
+       work below, not after — a throw further down must not look like a
+       failed load and re-show what is already mid-reveal. */
+    window.__bssBooted = 1;
+
     reveal();
+    drop();
     ignite();
-    counters();
-    [].forEach.call(document.querySelectorAll('td.must-ring'), function (el) { el.insertAdjacentHTML('afterbegin', CALRING); });
+    cursor();
+    drift();
+    /* The ring is for OTHER people's events — ours gets the painted cell
+       and the arrows instead, and a ring drawn on top of a solid orange
+       block would only read as a smudge. The mechanism stays for when
+       there are other events on the calendar again. */
+    [].forEach.call(document.querySelectorAll('td.must-ring:not(.ours)'), function (el) {
+      el.insertAdjacentHTML('afterbegin', CALRING);
+    });
+    [].forEach.call(document.querySelectorAll('td.ours'), function (el) {
+      el.insertAdjacentHTML('beforeend', CALARROWS);
+    });
 
     var more = document.querySelector('.more');
     if (more) {

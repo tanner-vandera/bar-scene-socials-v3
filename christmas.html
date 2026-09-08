@@ -5,22 +5,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>12 Bars of Christmas — coming soon</title>
 <meta name="description" content="12 Bars of Christmas, December 2026. Not on sale yet — join the list and hear first.">
-<script src="js/gate.js?v=1788615671"></script>
-<link rel="stylesheet" href="css/fonts.css?v=1788615671">
-<link rel="stylesheet" href="css/bss.css?v=1788615671">
+<script>/* Hide the reveal groups BEFORE first paint — see README, "The reveal flash".
+   Guarded twice: reduced motion never hides anything, and if bss.js has not
+   booted within 2.5s the class is pulled back off so a failed script can
+   never leave a page blank. */
+(function(d,w){var r=d.documentElement;
+if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+r.className+=(r.className?' ':'')+'has-js';
+w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+})(document,window);</script>
+<link rel="stylesheet" href="css/fonts.css?v=1788876527">
+<link rel="stylesheet" href="css/bss.css?v=1788876527">
 </head>
 <body data-page="christmas" class="has-hero">
 <div id="chrome-header"></div>
 <main>
   <!-- ── HERO — full bleed, centred, locked ──────────────── -->
-  <section class="hero hero--shot grain">
+  <!-- --hero-b: this frame is flash-lit and much brighter than the street
+       shots the .93 default was set for. See the note on
+       .hero--shot:has(.fx--red) > .hero__scrim — the two were measured
+       together and only work as a pair. -->
+  <section class="hero hero--shot grain" style="--hero-b:.7">
     <div class="hero__media hero__media--shot">
-      <img src="images/12bars-of-christmas-hero.webp" alt="Downtown Milwaukee at night under strings of Christmas lights, shot through falling snow">
+      <img src="images/12bars-of-christmas-hero.jpg" alt="Five people crowded together in a Milwaukee bar on the 12 Bars of Christmas, all in Christmas jumpers, holding green souvenir steins under strings of lights" decoding="async" fetchpriority="high">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
       <h1 class="d1 fx fx--red fx--neon fx--split"><span class="ink ink--white">12 Bars of</span><br><em class="scr ink ink--red">Christmas</em></h1>
-      <p class="hero__meta">December 2026 · 21+ · date to be announced</p>
+      <p class="hero__meta">December 2026<span class="sep">·</span>21+<span class="sep">·</span>date to be announced</p>
       <span class="sticker sticker--ghost-paper sticker--flat">Not on sale yet</span>
     </div>
   </section>
@@ -28,9 +40,9 @@
   <!-- ── THE ONLY INTERACTION ON THIS PAGE ───────────────── -->
   <section class="band band--paper2">
     <div class="shell">
-      <div class="cols c-wide-left" data-reveal style="align-items:center">
+      <div class="cols c-wide-left wash wash--red wash--rtl wash--bleed wash--pad" data-reveal style="align-items:center">
         <div class="stack">
-          <h2 class="d2 fx" style="max-width:12ch">Be first<br>through<br>the <em class="scr">door</em></h2>
+          <h2 class="d2 fx" style="max-width:12ch">Stay up<br>to <em class="scr">date</em></h2>
           <p class="lede" style="max-width:36ch">This one sells out on the list before it ever hits the site. Two emails a year, both of them a date.</p>
         </div>
         <form class="stack" onsubmit="return false">
@@ -49,28 +61,40 @@
           <h2 class="d3 fx">What it'll <em class="scr">be</em></h2></div>
         <p class="scrawl" style="max-width:18ch">the jumpers get worse every year</p>
       </div>
-      <div class="cols c-3" data-reveal>
-        <div class="taped tilt-1"><div class="photo photo--green ar-43"><span class="photo__cap">The kit</span></div>
+      <!-- Two real photographs now, not three placeholders. They are
+           deliberately unequal (1.62fr / 1fr) and each keeps its own
+           orientation — a landscape crop and a portrait one — so the pair
+           reads as two prints pinned to a wall rather than a two-up grid.
+           On phones .c-wide-left collapses to a single column and they
+           stack in this order. -->
+      <div class="cols c-wide-left" data-reveal style="align-items:start">
+        <div class="taped tilt-1">
+          <div class="photo ar-43">
+            <img src="images/12bars-of-christmas-hero.jpg"
+                 alt="Five people in Christmas jumpers packed together at the bar, holding green souvenir steins" loading="lazy" decoding="async">
+          </div>
           <span class="taped__cap">last year</span></div>
-        <div class="taped tilt-3"><div class="photo photo--orange ar-43"><span class="photo__cap">The bars</span></div>
-          <span class="taped__cap">last year</span></div>
-        <div class="taped tilt-2"><div class="photo photo--ink ar-43"><span class="photo__cap">The night</span></div>
-          <span class="taped__cap">last year</span></div>
+        <div class="taped tilt-3">
+          <div class="photo ar-34">
+            <img src="images/12bars-of-christmas-polaroid.jpg"
+                 alt="Someone dancing in the middle of the bar in Christmas pyjamas, arms up, the room going with them" loading="lazy" decoding="async">
+          </div>
+          <span class="taped__cap">also last year</span></div>
       </div>
     </div>
   </section>
   <!-- ── NEVER A DEAD END ────────────────────────────────── -->
   <section class="band band--ink grain grain--dark">
     <div class="shell">
-      <div class="cols c-wide-left cols--cta" data-reveal>
+      <div class="cols c-wide-left cols--cta wash wash--red wash--bleed wash--pad" data-reveal>
         <div class="stack">
-          <h2 class="d2 fx" style="max-width:14ch">There's one you can actually <em class="scr">buy</em></h2>
-          <p class="lede" style="max-width:38ch">Haunted Bar Hop — 10/31/26, Brady Street. Sixteen bars and the only Halloween crawl on the street.</p>
+          <h2 class="d2 fx" style="max-width:14ch">One you can<br><em class="scr">buy</em> now</h2>
+          <p class="lede" style="max-width:38ch">Haunted Bar Hop — 10/31/26, Brady Street. Ten bars and the only Halloween crawl on the street.</p>
         </div>
         <div class="pitch">
           <a class="event pitch__card" href="haunted-bar-hop.html">
             <div class="photo event__shot ar-169">
-              <img src="images/brady-street.webp" alt="">
+              <img src="images/brady-street.webp" alt="" loading="lazy" decoding="async">
               <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h3>
             </div>
           </a>
@@ -82,6 +106,6 @@
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788615671"></script>
+<script src="js/bss.js?v=1788876527"></script>
 </body>
 </html>

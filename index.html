@@ -5,9 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bar Scene Socials — Milwaukee's social events of the year</title>
 <meta name="description" content="Haunted Bar Hop, 12 Bars of Christmas and the Shamrock Shuffle. Milwaukee bar crawls run by people who actually go.">
-<script src="js/gate.js?v=1788615671"></script>
-<link rel="stylesheet" href="css/fonts.css?v=1788615671">
-<link rel="stylesheet" href="css/bss.css?v=1788615671">
+<script>/* Hide the reveal groups BEFORE first paint — see README, "The reveal flash".
+   Guarded twice: reduced motion never hides anything, and if bss.js has not
+   booted within 2.5s the class is pulled back off so a failed script can
+   never leave a page blank. */
+(function(d,w){var r=d.documentElement;
+if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+r.className+=(r.className?' ':'')+'has-js';
+w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+})(document,window);</script>
+<link rel="stylesheet" href="css/fonts.css?v=1788876527">
+<link rel="stylesheet" href="css/bss.css?v=1788876527">
 </head>
 <body data-page="home" class="has-hero">
 <div id="chrome-header"></div>
@@ -15,12 +23,12 @@
   <!-- ── 01 HERO — full bleed, centred ──────────────────── -->
   <section class="hero hero--shot grain">
     <div class="hero__media hero__media--shot">
-      <img src="images/brady-street.webp" alt="Brady Street, Milwaukee — a row of bar and restaurant signs down both sides of the street, cars parked at the meters">
+      <img src="images/brady-street.webp" alt="Brady Street, Milwaukee — a row of bar and restaurant signs down both sides of the street, cars parked at the meters" decoding="async" fetchpriority="high">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
-      <h1 class="d1 fx fx--orange fx--neon fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h1>
-      <p class="hero__meta">Saturday 10/31/26 · 3pm until close · 21+</p>
+      <h1 class="d1 fx fx--orange fx--neon fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em><span class="hl__on-line"><span class="scr hl__on">On Brady</span></span></h1>
+      <p class="hero__meta">Saturday 10/31/26<span class="sep">·</span>3pm until close<span class="sep">·</span>21+</p>
       <a class="ticket ticket--flat" href="tickets.html" data-ticket data-main="Get tickets" data-sub="From $11.95 each"></a>
     </div>
   </section>
@@ -31,7 +39,7 @@
       <div class="cols c-offset" data-reveal>
         <div class="stack stack--lg">
           <h2 class="d2 fx" style="max-width:14ch">More than<br>a bar <em class="scr">crawl</em></h2>
-          <div class="body" style="font-size:18px">
+          <div class="body">
             <p>We started this because the bar crawls we went to were run by companies three states away who had never set foot on Brady Street. Ours are put together by people who drink here.</p>
             <p>Three days a year, a few thousand of us take over a street, wear something stupid, and hand a chunk of the money to a Milwaukee charity. That is the entire business plan and it has worked for eight years.</p>
           </div>
@@ -41,12 +49,18 @@
     </div>
   </section>
   <!-- ── 03 NEXT UP ──────────────────────────────────────── -->
-  <section class="band band--grey grain grain--soft">
+  <section class="band band--shot grain grain--soft">
+    <div class="band__bg" aria-hidden="true">
+      <img src="images/brady-street.webp" alt="" loading="lazy" decoding="async">
+    </div>
     <div class="shell">
       <div class="cols c-wide-right" data-reveal style="align-items:start">
         <div class="taped tilt-1">
-          <div class="photo photo--orange ar-1"><span class="photo__cap">Haunted Bar Hop<br>event poster</span></div>
-          <span class="taped__cap">poster, still being drawn</span>
+          <div class="photo ar-1">
+            <img src="images/haunted-bar-hop-shot.jpg"
+                 alt="A mummy at the bar seen through a Brady Street window on Halloween night, cobweb across the glass" loading="lazy" decoding="async">
+          </div>
+          <span class="taped__cap">Coming to Brady</span>
         </div>
         <div class="stack stack--lg">
           <div class="row" style="gap:10px">
@@ -54,8 +68,8 @@
             <span class="sticker sticker--ghost sticker--flat">Sat 10/31/26</span>
             <span class="sticker sticker--ghost sticker--flat">21+</span>
           </div>
-          <h2 class="d2 fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h2>
-          <p class="lede" style="max-width:40ch">Sixteen bars, one street, and the only Halloween crawl that actually happens on Brady. Everyone else runs theirs on Water and 3rd.</p>
+          <h2 class="d2 fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em><span class="hl__on-line"><span class="scr hl__on">On Brady</span></span></h2>
+          <p class="lede" style="max-width:40ch">Ten bars, one street, and the only Halloween crawl that actually happens on Brady. Everyone else runs theirs on Water and 3rd.</p>
           <div class="incl" style="margin-top:6px">
             <div class="incl__row">
               <div><h3 class="h4">The kit</h3>
@@ -87,33 +101,33 @@
       <div class="cols c-wide-left" data-reveal style="align-items:start">
         <a class="event" href="haunted-bar-hop.html">
           <div class="photo event__shot ar-169">
-            <img src="images/brady-street.webp" alt="">
+            <img src="images/brady-street.webp" alt="" loading="lazy" decoding="async">
             <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h3>
           </div>
           <div class="event__meta">
             <span class="tiny">10/31/26 · Brady Street</span>
             <span class="sticker sticker--flat">On sale</span>
           </div>
-          <p class="small" style="margin:10px 0 0; max-width:48ch">Sixteen bars, costume prizes, an afterparty and a bingo card you will lose by four o'clock.</p>
+          <p class="small" style="margin:10px 0 0; max-width:48ch">Ten bars, costume prizes, an afterparty and a bingo card you will lose by four o'clock.</p>
         </a>
         <div class="stack">
           <a class="event event--locked" href="christmas.html">
             <div class="photo event__shot ar-169">
-              <img src="images/12bars-of-christmas-hero.webp" alt="">
+              <img src="images/12bars-of-christmas-hero.jpg" alt="" loading="lazy" decoding="async">
               <h3 class="event__title fx fx--red fx--split"><span class="ink ink--white">12 Bars of</span><br><em class="scr ink ink--red">Christmas</em></h3>
             </div>
             <div class="event__meta">
-              <span class="tiny">December 2026 · date TBA</span>
+              <span class="tiny">December · date TBA</span>
               <span class="sticker sticker--ghost sticker--flat">Coming soon</span>
             </div>
           </a>
           <a class="event event--locked" href="shamrock.html">
             <div class="photo event__shot ar-169">
-              <img src="images/shamrock-shuffle-card.jpg" alt="">
+              <img src="images/shamrock-shuffle-card.jpg" alt="" loading="lazy" decoding="async">
               <h3 class="event__title fx fx--green fx--split"><span class="ink ink--green">Shamrock</span><br><em class="scr ink ink--orange">Shuffle</em> <span class="ink ink--white">18</span></h3>
             </div>
             <div class="event__meta">
-              <span class="tiny">March 2027 · date TBA</span>
+              <span class="tiny">March · date TBA</span>
               <span class="sticker sticker--ghost sticker--flat">Coming soon</span>
             </div>
           </a>
@@ -129,14 +143,14 @@
         <div>
           <h2 class="d3 fx" style="max-width:15ch">What's worth<br><em class="scr">leaving</em> for</h2>
         </div>
-        <p class="scrawl scrawl--paper" style="max-width:15ch">if it's circled, go.</p>
+        <p class="scrawl scrawl--paper" style="max-width:15ch">if it's orange, go.</p>
       </div>
       <div class="sheet" data-reveal>
         <p class="kicker" style="margin-bottom:14px" data-month-label>October 2026</p>
         <div data-calendar></div>
       </div>
       <div class="row row--between" style="margin-top:clamp(24px,3vw,38px); align-items:center">
-        <p class="small" style="max-width:44ch">Two to four things a month. Not a listings site — a very short answer to "is anything on?"</p>
+        <p class="small" style="max-width:44ch">Not a listings site — a very short answer to "is anything on?"</p>
         <a class="btn btn--paper" href="happening-now.html">See more</a>
       </div>
     </div>
@@ -151,50 +165,26 @@
         <a class="btn" href="featured-bars.html">All the bars</a>
       </div>
       <div class="cols c-4" data-reveal>
-        <div class="taped tilt-1"><div class="photo photo--red ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Brady St</span></div>
-        <div class="taped tilt-2"><div class="photo photo--grey ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Water St</span></div>
-        <div class="taped tilt-3"><div class="photo photo--orange ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">Third Ward</span></div>
-        <div class="taped tilt-4"><div class="photo photo--green ar-1"><span class="photo__cap">Bar name</span></div><span class="taped__cap">East Side</span></div>
+        <a class="taped tilt-1" href="featured-bars.html">
+          <div class="photo ar-1"><img src="images/bar-water-street-brewery.jpg"
+            alt="Inside Water Street Brewery — brick arches, neon beer signs, a pool table and a long bar of pink stools" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">Water Street Brewery</span></a>
+        <a class="taped tilt-2" href="featured-bars.html">
+          <div class="photo ar-1"><img src="images/bar-jacks-american-pub.jpg"
+            alt="The long dark bar at Jacks American Pub, green walls covered in framed photos" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">Jacks American Pub</span></a>
+        <a class="taped tilt-3" href="featured-bars.html">
+          <div class="photo ar-1"><img src="images/bar-jo-cats.jpg"
+            alt="Jo-Cats at night from across the street, neon in the windows and string lights over the patio" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">Jo-Cats</span></a>
+        <a class="taped tilt-4" href="featured-bars.html">
+          <div class="photo ar-1"><img src="images/bar-deer-camp.jpg"
+            alt="Deer Camp — antler chandeliers, a stone fireplace and orange-topped stools" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">Deer Camp</span></a>
       </div>
     </div>
   </section>
-  <!-- ── 07 THE NUMBERS ──────────────────────────────────── -->
-  <section class="band">
-    <div class="shell">
-      <div class="ledger" data-reveal>
-        <ol class="ledger__row">
-          <li class="ledger__item">
-            <span class="ledger__n" data-count-to="24000" data-count-fmt="k">24k</span>
-            <span class="ledger__l">people have crawled with us</span>
-          </li>
-          <li class="ledger__item">
-            <span class="ledger__n" data-count-to="60">60</span>
-            <span class="ledger__l">bars on the routes</span>
-          </li>
-          <li class="ledger__item">
-            <span class="ledger__n" data-count-to="3">3</span>
-            <span class="ledger__l">events a year, no filler</span>
-          </li>
-          <li class="ledger__item">
-            <span class="ledger__n" data-count-to="8">8</span>
-            <span class="ledger__l">years of doing this</span>
-          </li>
-        </ol>
-        <div class="ledger__payoff">
-          <p class="ledger__give">
-            <span class="ledger__amt" data-count-to="41200" data-count-fmt="$k">$41k</span>
-            
-            <span class="ledger__l">of it went back to Milwaukee</span>
-          </p>
-          <p class="lede">A share of every wristband goes to Milwaukee food banks and youth
-            programmes. Shuffle now, feel good about it later.</p>
-        </div>
-
-        <a class="btn" href="about.html">About us</a>
-      </div>
-    </div>
-  </section>
-  <!-- ── 08 CLOSING ──────────────────────────────────────── -->
+  <!-- ── 07 CLOSING ──────────────────────────────────────── -->
   <section class="band band--ink grain grain--dark" style="text-align:center">
     <div class="shell shell--tight">
       <h2 class="d1 fx fx--neon fx--split" style="max-width:11ch; margin-inline:auto"><span class="ink ink--white">So, are we</span> <em class="scr ink ink--orange">crawling</em><span class="ink ink--orange">?</span></h2>
@@ -207,6 +197,6 @@
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788615671"></script>
+<script src="js/bss.js?v=1788876527"></script>
 </body>
 </html>

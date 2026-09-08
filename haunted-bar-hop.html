@@ -4,10 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Haunted Bar Hop — 10/31/26, Brady Street</title>
-<meta name="description" content="The only Halloween bar crawl on Brady Street. Sixteen bars, costume prizes, an afterparty and a bingo card. 10/31/26.">
-<script src="js/gate.js?v=1788615671"></script>
-<link rel="stylesheet" href="css/fonts.css?v=1788615671">
-<link rel="stylesheet" href="css/bss.css?v=1788615671">
+<meta name="description" content="The only Halloween bar crawl on Brady Street. Ten bars, costume prizes, an afterparty and a bingo card. 10/31/26.">
+<script>/* Hide the reveal groups BEFORE first paint — see README, "The reveal flash".
+   Guarded twice: reduced motion never hides anything, and if bss.js has not
+   booted within 2.5s the class is pulled back off so a failed script can
+   never leave a page blank. */
+(function(d,w){var r=d.documentElement;
+if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+r.className+=(r.className?' ':'')+'has-js';
+w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+})(document,window);</script>
+<link rel="stylesheet" href="css/fonts.css?v=1788876527">
+<link rel="stylesheet" href="css/bss.css?v=1788876527">
 </head>
 <body data-page="halloween" class="has-hero">
 <div id="chrome-header"></div>
@@ -15,12 +23,12 @@
   <!-- ── HERO — full bleed, centred ──────────────────────── -->
   <section class="hero hero--shot grain">
     <div class="hero__media hero__media--shot">
-      <img src="images/brady-street.webp" alt="Brady Street, Milwaukee — a row of bar and restaurant signs down both sides of the street, cars parked at the meters">
+      <img src="images/haunted-bar-hop-shot.jpg" alt="Looking in through a Brady Street bar window on Halloween night — a mummy at the bar, a cobweb strung across the glass, red string lights around the frame" decoding="async" fetchpriority="high">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
-      <h1 class="d1 fx fx--orange fx--neon fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h1>
-      <p class="hero__meta">Saturday 10/31/26 · 3pm until close · 21+</p>
+      <h1 class="d1 fx fx--orange fx--neon fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em><span class="hl__on-line"><span class="scr hl__on">On Brady</span></span></h1>
+      <p class="hero__meta">Saturday 10/31/26<span class="sep">·</span>3pm until close<span class="sep">·</span>21+</p>
       <a class="ticket ticket--flat" href="tickets.html" data-ticket data-main="Get tickets" data-sub="From $11.95 each"></a>
       <span class="sticker sticker--live">Going fast — 640 left</span>
     </div>
@@ -31,8 +39,8 @@
     <div class="shell">
       <div class="cols c-offset" data-reveal>
         <div class="stack stack--lg">
-          <h2 class="d2 fx" style="max-width:13ch">Brady Street.<br>Sixteen bars.<br>One stupid <em class="scr">afternoon</em>.</h2>
-          <div class="body" style="font-size:18px">
+          <h2 class="d2 fx" style="max-width:13ch">Only Halloween<br>crawl on <em class="scr">Brady</em></h2>
+          <div class="body">
             <p>Every other Halloween crawl in this city runs on Water Street or 3rd, which is fine if you enjoy queueing behind four hundred people in the same nurse costume. We do ours on Brady, because Brady is where the bars have character and the bartenders know your name by the third stop.</p>
             <p>Doors at three in the afternoon. It is a long, silly, well-organised day, and it ends at an afterparty you did not plan for.</p>
           </div>
@@ -41,7 +49,10 @@
     </div>
   </section>
   <!-- ── 02 WHAT YOU GET ─────────────────────────────────── -->
-  <section class="band band--paper2">
+  <section class="band band--shot">
+    <div class="band__bg" aria-hidden="true">
+      <img src="images/brady-street.webp" alt="" loading="lazy" decoding="async">
+    </div>
     <div class="shell">
       <div class="row row--between" style="align-items:baseline; margin-bottom:clamp(26px,3vw,44px)">
         <div>
@@ -80,54 +91,63 @@
       </div>
     </div>
   </section>
-  <!-- ── 03 THE ROUTE ────────────────────────────────────── -->
-  <section class="band">
+  <!-- ── 03 THE BARS ─────────────────────────────────────── -->
+  <section class="band band--paper2">
     <div class="shell">
-      <div class="cols c-wide-left" data-reveal style="align-items:start">
-        <div class="stack">
-          <h2 class="d3 fx">Sixteen stops,<br>one <em class="scr">street</em></h2>
-          <div class="map" style="margin-top:14px">
-            <span class="map__line"></span>
-            <span class="map__cap">Brady Street route map<br>numbered stops, east to west</span>
-          </div>
-        </div>
-        <div class="stack">
-          <p class="tiny">Participating bars</p>
-          <ol class="stops">
-            <li><b>01</b><span>Bar name<em>Where it starts</em></span></li>
-            <li><b>02</b><span>Bar name<em>Shots and a jukebox</em></span></li>
-            <li><b>03</b><span>Bar name<em>Patio, if it holds</em></span></li>
-            <li><b>04</b><span>Bar name<em>DJ 4–7pm</em></span></li>
-            <li><b>05</b><span>Bar name<em>The dive one</em></span></li>
-            <li><b>06</b><span>Bar name<em>Actually good cocktails</em></span></li>
-            <li><b>07</b><span>Bar name<em>Bingo stamp here</em></span></li>
-            <li><b>08</b><span>Bar name<em>Pool table</em></span></li>
-            <li><b>…</b><span>Through sixteen<em>Full list at check-in</em></span></li>
-          </ol>
-          <p class="small">Bar names link through to <a href="featured-bars.html" style="color:var(--orange-on)">Featured Bars</a> where we have written one up.</p>
-        </div>
+      <div class="row row--between" style="align-items:baseline; margin-bottom:clamp(24px,3vw,42px)">
+        <div>
+          <h2 class="d3 fx">Ten stops,<br>one <em class="scr">street</em></h2></div>
+        <p class="scrawl scrawl--orange" style="max-width:16ch">east to west. take your time.</p>
       </div>
+      <!-- Real names, and nothing else. The old rows carried a one-line
+           caption each ("Bingo stamp here", "DJ 4-7pm") which was invented
+           colour under a placeholder name; with the real route in, a
+           caption per stop would be ten more things to keep true. The
+           .stops rule still styles <em> if a note ever earns its place
+           back. -->
+      <ol class="stops" data-reveal>
+        <li><span>Nomad World Pub</span></li>
+        <li><span>Club Brady</span></li>
+        <li><span>Saint Bibiana</span></li>
+        <li><span>Jack's American Pub</span></li>
+        <li><span>Jo-Cats Pub</span></li>
+        <li><span>Pete's Pub</span></li>
+        <li><span>Sticky Rice</span></li>
+        <li><span>Famous Smokeshop</span></li>
+        <li><span>The Garage</span></li>
+        <li><span>HiHat Lounge</span></li>
+      </ol>
+      <p class="small" style="margin-top:24px; max-width:56ch">Bar names link through to <a href="featured-bars.html" style="color:var(--orange-on)">Featured Bars</a> where we have written one up.</p>
     </div>
   </section>
   <!-- ── 04 COSTUME PRIZES ───────────────────────────────── -->
-  <section class="band band--grey grain grain--soft">
+  <section class="band">
     <div class="shell">
       <div class="row row--between" style="align-items:baseline; margin-bottom:clamp(24px,3vw,42px)">
         <div>
           <h2 class="d3 fx">Three ways<br>to <em class="scr">win</em></h2></div>
         <p class="scrawl scrawl--orange" style="max-width:17ch">this is why your group chat exists</p>
       </div>
-      <div class="cols c-3" data-reveal>
-        <div class="card card--pad"><span class="secno">01</span>
-          <h3 class="h4" style="margin-top:12px">Best solo</h3>
-          <p class="small" style="margin-top:8px">For the one who started building it in August.</p></div>
-        <div class="card card--pad"><span class="secno">02</span>
-          <h3 class="h4" style="margin-top:12px">Best duo</h3>
-          <p class="small" style="margin-top:8px">Two people, one idea, committed all the way.</p></div>
-        <div class="card card--pad"><span class="secno">03</span>
-          <h3 class="h4" style="margin-top:12px">Best group</h3>
-          <p class="small" style="margin-top:8px">Five or more. Coordination counts. Effort counts more.</p></div>
-      </div>
+      <ol class="listing" data-reveal>
+        <li class="listing__row">
+          <div class="listing__body">
+            <h3 class="listing__name">Best solo</h3>
+            <p class="listing__where">For the one who started building it in August.</p>
+          </div>
+        </li>
+        <li class="listing__row">
+          <div class="listing__body">
+            <h3 class="listing__name">Best duo</h3>
+            <p class="listing__where">Two people, one idea, committed all the way.</p>
+          </div>
+        </li>
+        <li class="listing__row">
+          <div class="listing__body">
+            <h3 class="listing__name">Best group</h3>
+            <p class="listing__where">Five or more. Coordination counts. Effort counts more.</p>
+          </div>
+        </li>
+      </ol>
       <p class="small" style="margin-top:26px; max-width:56ch">Judged at the afterparty, announced before ten so nobody has to stay out for it. Prizes are being sorted — they will be worth carrying home.</p>
     </div>
   </section>
@@ -135,7 +155,8 @@
   <span class="tear tear--down" style="--tear-fill:#F8F8F6"></span>
   <section class="band on-white">
     <div class="shell shell--tight" style="text-align:center">
-      <p class="stat__n" style="font-family:var(--display); color:var(--ink); margin:22px 0 0">$41,200</p>
+      <h2 class="d3 fx" style="margin-bottom:clamp(18px,2.2vw,30px)">Where the<br>money <em class="scr">goes</em></h2>
+      <p class="stat__n" style="font-family:var(--display); color:var(--green-on); margin:0">$41,200</p>
       <p class="kicker kicker--paper" style="margin-top:10px">Returned to Milwaukee since 2018</p>
       <p class="lede" style="max-width:52ch; margin:26px auto 0">Food banks and youth programmes, from a share of every wristband. Named charities and what the money actually paid for are on the <a href="about.html">about page</a> — we would rather show receipts than a percentage.</p>
     </div>
@@ -150,22 +171,22 @@
         <span class="sticker sticker--live">On sale — 640 left</span>
       </div>
       <div class="stubs" data-reveal>
-        <div class="stub">
+        <a class="stub on-white" href="#">
           <p class="stub__tier">Single</p>
           <p class="stub__amt"><sup>$</sup>14.95</p>
           <p class="stub__note">One person, one pin, one bingo card.</p>
-          <a class="ticket ticket--sm" href="#" data-ticket data-main="Buy one" data-sub="$14.95"></a>
-        </div>
-        <div class="stub stub--pick">
+          <span class="ticket ticket--sm" data-ticket data-main="Buy one" data-sub="$14.95"></span>
+        </a>
+        <a class="stub stub--pick on-white" href="#">
           <div class="stub__head">
             <p class="stub__tier">Group of five</p>
             <span class="sticker sticker--flat">Save 20%</span>
           </div>
           <p class="stub__amt"><sup>$</sup>11.95<span class="stub__ea">each</span></p>
           <p class="stub__note">$59.75 for the five of you. You were going together anyway.</p>
-          <a class="ticket ticket--sm" href="#" data-ticket data-main="Buy five"
-             data-sub="$59.75 total" data-fill="#FC7C4E"></a>
-        </div>
+          <span class="ticket ticket--sm" data-ticket data-main="Buy five"
+             data-sub="$59.75 total" data-fill="#FC7C4E"></span>
+        </a>
       </div>
       <p class="small" style="margin-top:22px">Ticket states, and the other two events, live on the <a href="tickets.html" style="color:var(--orange-on)">tickets page</a>.</p>
     </div>
@@ -173,13 +194,18 @@
   <!-- ── 07 KNOW BEFORE YOU GO ───────────────────────────── -->
   <section class="band">
     <div class="shell">
+      <div class="row row--between" style="align-items:baseline; margin-bottom:clamp(24px,3vw,42px)">
+        <div>
+          <h2 class="d3 fx">Know before<br>you <em class="scr">go</em></h2></div>
+        <p class="scrawl scrawl--orange" style="max-width:16ch">read it once, forget it, have fun</p>
+      </div>
       <div class="cols c-offset" data-reveal>
         <ul class="facts">
-          <li><b>01</b><span>21 and over. Bring ID — they will check, every stop.</span></li>
-          <li><b>02</b><span>Rain or shine. It is Wisconsin in October; dress for it under the costume.</span></li>
-          <li><b>03</b><span>No refunds. The pins and bingo cards get ordered the moment you buy, so the money is already spent.</span></li>
-          <li><b>04</b><span>Check-in opens at 2:30pm at the first bar. Come early, it takes two minutes.</span></li>
-          <li><b>05</b><span>Getting home: rideshare pick-up is off Brady on Farwell. Please use it.</span></li>
+          <li>21 and over. Bring ID — they will check, every stop.</li>
+          <li>Rain or shine. It is Wisconsin in October; dress for it under the costume.</li>
+          <li>No refunds. The pins and bingo cards get ordered the moment you buy, so the money is already spent.</li>
+          <li>Check-in opens at 2:30pm at the first bar. Come early, it takes two minutes.</li>
+          <li>Getting home: rideshare pick-up is off Brady on Farwell. Please use it.</li>
         </ul>
       </div>
     </div>
@@ -196,6 +222,6 @@
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788615671"></script>
+<script src="js/bss.js?v=1788876527"></script>
 </body>
 </html>

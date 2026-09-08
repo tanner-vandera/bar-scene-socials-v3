@@ -5,90 +5,71 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Featured Bars — Milwaukee, picked by us</title>
 <meta name="description" content="Milwaukee bars worth your night, chosen by the people who run the crawls.">
-<script src="js/gate.js?v=1788615671"></script>
-<link rel="stylesheet" href="css/fonts.css?v=1788615671">
-<link rel="stylesheet" href="css/bss.css?v=1788615671">
+<script>/* Hide the reveal groups BEFORE first paint — see README, "The reveal flash".
+   Guarded twice: reduced motion never hides anything, and if bss.js has not
+   booted within 2.5s the class is pulled back off so a failed script can
+   never leave a page blank. */
+(function(d,w){var r=d.documentElement;
+if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+r.className+=(r.className?' ':'')+'has-js';
+w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+})(document,window);</script>
+<link rel="stylesheet" href="css/fonts.css?v=1788876527">
+<link rel="stylesheet" href="css/bss.css?v=1788876527">
 </head>
 <body data-page="bars">
 <div id="chrome-header"></div>
 <main>
+  <!-- The page head used to sit in its own .band--tight above a second
+       .band, with the category tabs and neighbourhood chips filling the
+       space between them. With the filters gone that was two lots of band
+       padding around nothing, so the head moved into the grid's own
+       section — same pattern as Happening Now. -->
   <section class="band band--tight">
     <div class="shell">
       <div class="pagehead pagehead--slim">
         <h1 class="d3 fx">Featured <em class="scr">bars</em></h1>
       </div>
-
-      <nav class="tabs" style="margin-bottom:22px">
-        <a href="#" class="is-active">MKE Bars</a>
-        <a href="#" class="is-soon">MKE Venues</a>
-        <a href="#" class="is-soon">MKE DJs</a>
-        <a href="#" class="is-soon">MKE Photographers</a>
-        <a href="#" class="is-soon">MKE Artists</a>
-        <a href="#" class="is-soon">Stay in MKE</a>
-      </nav>
-      <div class="row">
-        <span class="sticker sticker--flat">All</span>
-        <span class="sticker sticker--ghost sticker--flat">Brady St</span>
-        <span class="sticker sticker--ghost sticker--flat">Water St</span>
-        <span class="sticker sticker--ghost sticker--flat">Third Ward</span>
-        <span class="sticker sticker--ghost sticker--flat">Walker's Point</span>
-        <span class="sticker sticker--ghost sticker--flat">East Side</span>
-        <span class="sticker sticker--ghost sticker--flat">On a crawl route</span>
-      </div>
-    </div>
-  </section>
-  <section class="band">
-    <div class="shell">
+      <!-- Photo and name only. The neighbourhood line, the write-up and the
+           route chip all came off — there is nothing written up yet, and a
+           card carrying three lines of invented copy under a real photograph
+           is worse than one carrying none. They go back in per bar as the
+           owners write them. -->
       <div class="cols c-3" data-reveal>
         <a class="card" href="#">
-          <div class="photo photo--orange ar-43"><span class="photo__cap">Bar photo</span></div>
-          <div class="card__body">
-            <p class="tiny">Brady St · dive · open late</p>
-            <h3 class="h4" style="margin-top:8px">Bar name</h3>
-            <p class="small" style="margin-top:8px">Cheap, loud, and the jukebox has not been updated since 2011. We mean that as praise.</p>
-            <span class="sticker sticker--flat" style="margin-top:14px">On the Haunted route</span>
-          </div>
+          <div class="photo ar-43"><img src="images/bar-water-street-brewery.jpg"
+            alt="Inside Water Street Brewery — brick arches, neon beer signs, a pool table and a long bar of pink stools" loading="lazy" decoding="async"></div>
+          <div class="card__body"><h3 class="h4">Water Street Brewery</h3></div>
         </a>
         <a class="card" href="#">
-          <div class="photo photo--red ar-43"><span class="photo__cap">Bar photo</span></div>
-          <div class="card__body">
-            <p class="tiny">Water St · cocktails</p>
-            <h3 class="h4" style="margin-top:8px">Bar name</h3>
-            <p class="small" style="margin-top:8px">Where you go when someone's parents are in town and paying.</p>
-          </div>
+          <div class="photo ar-43"><img src="images/bar-jacks-american-pub.jpg"
+            alt="The long dark bar at Jacks American Pub, green walls covered in framed photos" loading="lazy" decoding="async"></div>
+          <div class="card__body"><h3 class="h4">Jacks American Pub</h3></div>
         </a>
         <a class="card" href="#">
-          <div class="photo photo--green ar-43"><span class="photo__cap">Bar photo</span></div>
-          <div class="card__body">
-            <p class="tiny">Third Ward · patio</p>
-            <h3 class="h4" style="margin-top:8px">Bar name</h3>
-            <p class="small" style="margin-top:8px">Four good months a year and they make every one of them count.</p>
-          </div>
+          <div class="photo ar-43"><img src="images/bar-jo-cats.jpg"
+            alt="Jo-Cats at night from across the street, neon in the windows and string lights over the patio" loading="lazy" decoding="async"></div>
+          <div class="card__body"><h3 class="h4">Jo-Cats</h3></div>
         </a>
         <a class="card" href="#">
-          <div class="photo photo--ink ar-43"><span class="photo__cap">Bar photo</span></div>
-          <div class="card__body">
-            <p class="tiny">East Side · DJs Fri &amp; Sat</p>
-            <h3 class="h4" style="margin-top:8px">Bar name</h3>
-            <p class="small" style="margin-top:8px">Nothing happens before eleven. Everything happens after.</p>
-          </div>
+          <div class="photo ar-43"><img src="images/bar-deer-camp.jpg"
+            alt="Deer Camp — antler chandeliers, a stone fireplace and orange-topped stools" loading="lazy" decoding="async"></div>
+          <div class="card__body"><h3 class="h4">Deer Camp</h3></div>
         </a>
         <a class="card" href="#">
-          <div class="photo photo--grey ar-43"><span class="photo__cap">Bar photo</span></div>
-          <div class="card__body">
-            <p class="tiny">Walker's Point · late</p>
-            <h3 class="h4" style="margin-top:8px">Bar name</h3>
-            <p class="small" style="margin-top:8px">The last one still open, and they are fine about it.</p>
-          </div>
+          <div class="photo ar-43"><img src="images/bar-burnhearts.jpg"
+            alt="Burnhearts from the pavement, the script sign across the front and wicker chairs lined up under it" loading="lazy" decoding="async"></div>
+          <div class="card__body"><h3 class="h4">Burnhearts</h3></div>
         </a>
         <a class="card" href="#">
-          <div class="photo photo--orange ar-43"><span class="photo__cap">Bar photo</span></div>
-          <div class="card__body">
-            <p class="tiny">Brady St · shots · jukebox</p>
-            <h3 class="h4" style="margin-top:8px">Bar name</h3>
-            <p class="small" style="margin-top:8px">Stop four on the crawl, and the one people remember least.</p>
-            <span class="sticker sticker--flat" style="margin-top:14px">On the Haunted route</span>
-          </div>
+          <div class="photo ar-43"><img src="images/bar-finks.jpg"
+            alt="The pergola over the patio at Finks, strung with festoon lights" loading="lazy" decoding="async"></div>
+          <div class="card__body"><h3 class="h4">Finks</h3></div>
+        </a>
+        <a class="card" href="#">
+          <div class="photo ar-43"><img src="images/bar-the-sofie.jpg"
+            alt="The Sofie — leather chesterfields down both walls, a long gas fire at the far end" loading="lazy" decoding="async"></div>
+          <div class="card__body"><h3 class="h4">The Sofie</h3></div>
         </a>
       </div>
     </div>
@@ -99,7 +80,7 @@
       <div class="cols c-wide-left" data-reveal style="align-items:center">
         <div class="stack">
           <h2 class="d2 fx" style="max-width:13ch">Want on<br>a <em class="scr">route</em>?</h2>
-          <p class="lede" style="max-width:40ch">Sixteen bars have to say yes before a crawl exists. If yours should be one of them, tell us — it is a short email, not a pitch deck.</p>
+          <p class="lede" style="max-width:40ch">Ten bars have to say yes before a crawl exists. If yours should be one of them, tell us — it is a short email, not a pitch deck.</p>
         </div>
         <div class="row row--end"><a class="btn" href="contact.html">Get in touch</a></div>
       </div>
@@ -108,6 +89,6 @@
   <span class="tear tear--up" style="--tear-fill:#F8F8F6"></span>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788615671"></script>
+<script src="js/bss.js?v=1788876527"></script>
 </body>
 </html>

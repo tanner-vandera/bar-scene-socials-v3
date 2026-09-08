@@ -40,14 +40,25 @@
   --orange-lt:  #FF9152;   /* ticket stock */
   --green:      #00C24E;   /* electric — dark grounds and large elements */
   --green-d:    #00873A;   /* the deep green field on photo blocks */
+  --green-on:   var(--green);  /* green type. Swapped to --green-d inside
+                                  .on-white, where --green is 2.24:1 and
+                                  --green-d is 4.36. Same pattern as
+                                  --orange-on. */
   --violet:     #C13BFF;   /* neon purple — the Halloween words, "Brady",
                               and the header pill. Specified by the
-                              designer. It measures 2.81:1 where the violet
-                              words cross the blown-out sky on the Brady
-                              Street hero, so the scrim under those two
-                              heroes is deepened to carry it rather than
-                              the colour being altered — see
-                              .hero--shot:has(.ink--violet). */
+                              designer, so it never moves; whatever it
+                              sits on moves instead.
+                              It is the hardest ink here because its
+                              luminance is .19 — the MIDDLE of the range.
+                              White only has to out-run the
+                              bright end and --ink-deep only the dark one,
+                              but violet is squeezed from both, and there
+                              is no plate strength that darkens a
+                              highlight past it without the ground
+                              passing through its own value on the way.
+                              When violet fails over a picture the fix is
+                              the crop or the plate GEOMETRY, not more
+                              alpha. See --hero-pos on haunted-bar-hop. */
   --red:        #E8202A;
   --red-d:      #B8141C;
   --red-on:     #FF5A62;   /* small red type — --red is 4.20:1 on the page
@@ -107,16 +118,45 @@
   --quart: cubic-bezier(.25,1,.5,1);
 
   --shell: 1360px;
-  --hdr-h: 65px;
+  /* The header's real rendered height, not a round number — it is driven
+     by whatever its tallest child is at each width (the CTA pill, then
+     the nav marks once they show up), so it has to track that exactly or
+     content sits under a gap or gets clipped by the fixed bar above it.
+     Measured, not guessed, at the same 640px/1100px breakpoints the
+     header's own padding rules already use:
+       <=640px   68px  (.hdr__in gets 11px vertical padding here)
+       641-1100  72px  (default 13px padding, nav hidden behind Menu)
+       >=1101px  80px  (the nav marks are the tallest child)
+     This was 65px flat before — already 7px short of the 68-72px real
+     height pre-existing this change, which the nav marks would only
+     have made worse. */
+  --hdr-h: 68px;
 }
+@media (min-width:641px){  :root{ --hdr-h: 72px; } }
+@media (min-width:1101px){ :root{ --hdr-h: 80px; } }
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
 body{
-  margin:0; background:var(--paper); color:var(--text);
-  font:400 17px/1.65 var(--body);
+  margin:0; background:var(--paper); color:var(--text-2);
+  /* THE DEFAULT READING SIZE, and it is the same value .lede uses — one
+     size and one colour for running copy everywhere instead of the 14 /
+     15 / 15.5 / 16-19 / 17 / 18 / 20px spread this had. Everything that
+     is NOT running copy (captions, chips, kickers, ticket notes, the
+     nav) declares its own size and is unaffected; the audit before this
+     change found exactly nine elements on the whole site inheriting the
+     old 17px, all of them list items.
+
+     --text-2 rather than --text: prose sits a step back from the
+     headings and labels, which is what makes a heading read as a
+     heading without needing more size. */
+  font:400 clamp(18px,1.55vw,22px)/1.6 var(--body);
   -webkit-font-smoothing:antialiased;
 }
+/* …which means anything that used to rely on inheriting the BRIGHT ink
+   has to say so now. These are labels and names, not prose. */
+.h4{color:var(--text)}
+.stops span{color:var(--text)}
 ::selection{background:var(--orange); color:var(--on-accent)}
 a{color:inherit}
 img{max-width:100%; display:block}
@@ -153,8 +193,13 @@ img{max-width:100%; display:block}
      calc(A + B*vw) form, so the slope is continuous and there is no
      breakpoint for the size to jump at. */
 .d1{font-size:clamp(72px, calc(54.8px + 9.39vw), 190px)}
-.d2{font-size:clamp(50px, calc(38px + 6.39vw), 130px)}
-.d3{font-size:clamp(34px, calc(30.1px + 2.63vw), 68px)}
+/* .d2 and .d3 are one step now. They had grown apart — .d3 topped out at
+   68px against .d2's 130 — which meant a section head like "THREE DAYS A
+   YEAR" read as a caption next to "MORE THAN A BAR CRAWL" on the same
+   page. Two display sizes below the hero was one more than the site
+   actually needs. The class names both stay because 40-odd headlines use
+   them, but there is only one size to maintain. */
+.d2,.d3{font-size:clamp(50px, calc(38px + 6.39vw), 130px)}
 .h4{
   font-family:var(--display); font-weight:400; text-transform:uppercase;
   font-size:clamp(23px,2.55vw,33px); line-height:.464; letter-spacing:.03em; margin:0;
@@ -261,8 +306,6 @@ img{max-width:100%; display:block}
   margin-top:calc(-1 * var(--fx-pt)); margin-bottom:calc(-1 * var(--fx-pb));
 
   --fx-c:   var(--ink);                 /* the fill */
-  --fx-g:   rgba(248,248,246,.42);      /* tight shadow */
-  --fx-b:   rgba(248,248,246,.15);      /* wide bloom */
   --fx-n:   .25;                        /* noise strength — Figma: 000000 @ 25% */
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
@@ -275,13 +318,12 @@ img{max-width:100%; display:block}
      radius (~0.3px on a 104px .d1), which browsers cannot render as a
      blur; it just forced the glyphs onto a resampled raster layer and
      read as a smear rather than a softened edge.
-     Both shadows are offset 0 0 — Figma's Drop shadow panel reads
-     Position X 0 / Y 0, Blur 5, Spread 0, i.e. an even halo, not a
-     directional shadow. Two radii rather than Figma's one: a single
-     hard-edged halo bands visibly at these sizes, so a tight core plus
-     a wider bloom gives the same read with a smoother falloff. */
-  --fx-filter:drop-shadow(0 0 .034em var(--fx-g))
-              drop-shadow(0 0 .085em var(--fx-b));
+
+     The halo itself is --neon now (see the block by .ink--white), shared
+     with the inked runs so a split headline and a plain one light the
+     same way. It stays wrapped in --fx-filter because the neon keyframes
+     animate that variable, and .fx--split empties it. */
+  --fx-filter:var(--neon);
   filter:var(--fx-filter);
 }
 
@@ -331,25 +373,20 @@ img{max-width:100%; display:block}
    list wins, so the loop's .92s delay is what hands over cleanly at the
    moment the strike ends on its settled state. If JS never runs, nothing
    gets .fx--lit and the ambient loop alone is the (working) fallback. */
+/* Two misfires, then it holds. This was six — three fast and three slow —
+   which read as a fault rather than a tube striking. The duration comes
+   down with the count so the strike still lands inside the first second. */
 @keyframes bss-neon-on{
   0%    { filter:grayscale(1) brightness(.32) }
-  6%    { filter:var(--fx-filter) }
-  11%   { filter:grayscale(1) brightness(.32) }
-  19%   { filter:var(--fx-filter) }
-  24%   { filter:grayscale(1) brightness(.32) }
-  28%   { filter:var(--fx-filter) }
-  37%   { filter:grayscale(1) brightness(.44) }
-  45%   { filter:var(--fx-filter) }
-  53%   { filter:grayscale(1) brightness(.44) }
-  59%   { filter:var(--fx-filter) }
-  68%   { filter:grayscale(1) brightness(.6) }
-  74%   { filter:var(--fx-filter) }
+  14%   { filter:var(--fx-filter) }
+  27%   { filter:grayscale(1) brightness(.42) }
+  46%   { filter:var(--fx-filter) }
   100%  { filter:var(--fx-filter) }
 }
 .fx--lit{
   animation:
-    bss-neon-on .92s var(--quart) both,
-    bss-neon 5.5s var(--quart) .92s infinite;
+    bss-neon-on .62s var(--quart) both,
+    bss-neon 5.5s var(--quart) .62s infinite;
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -403,7 +440,7 @@ img{max-width:100%; display:block}
   background-blend-mode:multiply;
   -webkit-background-clip:text; background-clip:text;
   color:transparent;
-  filter:drop-shadow(0 0 .034em var(--ink-g)) drop-shadow(0 0 .085em var(--ink-b));
+  filter:var(--neon);
 }
 /* When .ink lands ON a script word, .fx .ink and .fx .scr are both (0,2,0)
    and whichever is declared later wins the padding — which meant "Shuffle"
@@ -418,16 +455,250 @@ img{max-width:100%; display:block}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
     linear-gradient(var(--ink-c),var(--ink-c));
 }
-.ink--violet{--ink-c:var(--violet); --ink-g:rgba(193,59,255,.9);  --ink-b:rgba(193,59,255,.4)}
-.ink--green {--ink-c:var(--green);  --ink-g:rgba(0,194,78,.9);    --ink-b:rgba(0,194,78,.4)}
-.ink--orange{--ink-c:var(--orange); --ink-g:rgba(255,77,20,.9);   --ink-b:rgba(255,77,20,.4)}
-.ink--red   {--ink-c:var(--red);    --ink-g:rgba(232,32,42,.9);   --ink-b:rgba(232,32,42,.4)}
-/* white matches the .fx default halo exactly, so an un-inked headline and a
-   white-inked word glow identically */
-.ink--white {--ink-c:var(--ink);    --ink-g:rgba(248,248,246,.42); --ink-b:rgba(248,248,246,.15)}
+/* Every colourway is now ONE value. The glow derives from it — see --neon
+   below — so a new ink is a single line and can never have a halo that
+   disagrees with its fill. */
+.ink--violet{--ink-c:var(--violet)}
+.ink--green {--ink-c:var(--green)}
+.ink--orange{--ink-c:var(--orange)}
+.ink--red   {--ink-c:var(--red)}
+.ink--white {--ink-c:var(--ink); --neon-lift:.55}
+
+/* ── THE NEON ────────────────────────────────────────────────────────
+   This was two drop-shadows — one at 90% alpha, one at 40%, and nothing
+   in between. Two stops is a step, not a falloff: it read as a sticker
+   with a coloured outline rather than as a lit tube, because a real sign
+   does not have an edge where its glow stops.
+
+   Four stops, on a roughly geometric radius progression (.006 / .011 /
+   .025 / .053em) with alpha falling away much faster than radius grows.
+   That ratio is the whole trick — light falls off with distance, so a
+   glow that keeps its density as it widens looks like fog, and one that
+   loses it looks like light.
+
+   The three bloom radii were halved from .022/.05/.105. The ALPHAS did
+   not move with them, deliberately: radius is how much glow there is,
+   alpha is how dense it is, and only the first was too much — halving
+   both would have taken the sign out altogether. The hot core stayed
+   put; at .003em it would be sub-pixel below hero sizes, and it is the
+   tube rather than the glow.
+
+   The first stop is the tube itself: a LIGHTENED tint of the ink, one
+   pixel wide at a hero size. Real neon blows its core out toward white
+   and saturates outward from there, and that single hot line is most of
+   what separates "glowing" from "coloured". --neon-lift tunes how far
+   toward white it goes; white ink lifts less, having less room.
+
+   saturate/brightness lead the chain so they act on the FILL only —
+   filters apply in order, so anything after a drop-shadow would grade
+   the shadows too and muddy the falloff.
+
+   Derived from --ink-c with color-mix, so the five colourways above are
+   one line each and a sixth is free. The @supports below keeps the old
+   two-stop version for anything without color-mix. */
+.fx .ink, .fx{
+  --neon:
+    saturate(1.14) brightness(1.03)
+    drop-shadow(0 0 calc(.006em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) calc(100% - var(--neon-lift,.72) * 100%), #FFFFFF))
+    drop-shadow(0 0 calc(.011em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) 90%, transparent))
+    drop-shadow(0 0 calc(.025em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) 48%, transparent))
+    drop-shadow(0 0 calc(.053em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) 20%, transparent));
+}
+@supports not (color: color-mix(in srgb, red, blue)){
+  .fx .ink, .fx{
+    --neon:drop-shadow(0 0 .017em var(--ink-c,var(--fx-c)))
+           drop-shadow(0 0 .043em var(--ink-c,var(--fx-c)));
+  }
+}
+
+/* ── "ON BRADY" — the tagline under the Haunted Bar Hop mark ─────────
+   Part of the mark, not a caption: it ships inside every Haunted lockup
+   on the site, so it is inside the heading element rather than a
+   sibling, and it inherits whatever alignment that lockup has (centred
+   in the heroes and on the cards, left in the section headlines).
+
+   Sized in em, not vw, because it has to hold its proportion to the
+   word above it across a 190px hero and a 61px card thumbnail — a vw
+   clamp would make it near-equal to the card title and a third the
+   hero's. The clamp's floor and ceiling are the two ends of that range:
+   below 15px this face stops being readable, above 34px it starts
+   competing with "Hop" rather than sitting under it.
+
+   display:block (beating .fx .ink's inline-block, same specificity,
+   declared later) puts it on its own line without a <br> — a <br> would
+   have opened a full line box at the headline's own 190px strut. It
+   restates its own paint box instead of inheriting the script one,
+   because those paddings are in em of the SCRIPT's size, and this runs
+   at a fifth of it. */
+/* TWO elements, and both are load-bearing.
+
+   .hl__on-line is a plain block that carries no text of its own. It
+   exists to open a line and to zero the STRUT: a line box is at least as
+   tall as its block container's font-size x line-height, and inside a
+   headline that is .46 x 190px = 87px of empty height under a 34px
+   tagline. line-height:0 on the container removes it, so the line box
+   is exactly the inline-block inside it. Its margin is in the PARENT's
+   em, which is the point — the gap then scales with the lockup, from a
+   190px hero down to a 61px card thumbnail, instead of with the
+   tagline's own clamped size.
+
+   .hl__on stays an ATOMIC INLINE. A .fx headline paints its fill as a
+   background clipped to text, and that clip reaches every glyph in the
+   subtree except inside an atomic inline. That is the whole reason
+   .fx .ink and .fx .scr are inline-block. Set to display:block this
+   briefly stopped being atomic and the parent painted "On Brady" in the
+   headline's orange, unrotated, while the span painted it again in its
+   own colour at -2deg on top — two copies, slightly offset. Anything
+   carrying its own .ink must stay an atomic inline. */
+.fx .hl__on-line{display:block; line-height:0; margin-top:.22em}
+/* The heroes set the lockup at .d1, where .22em of the parent is ~42px and
+   the tagline drifts away from the mark it belongs to. It reads as a
+   separate line of copy rather than the bottom of the sign, so on a hero
+   only it tucks up under the script word and runs bigger.
+
+   Hero-scoped on purpose. The section lockups are the reference the
+   heroes were asked to match, so they keep the ratio they already have;
+   this only closes the gap that opens at .d1's much larger em. */
+.hero__inner .fx .hl__on-line{margin-top:-.055em}
+.hero__inner .fx .hl__on{font-size:clamp(19px, .265em, 48px)}
+/* PLAIN PAINTED TEXT, not an .ink. Every other run in a headline paints
+   itself as a background clipped to its own glyphs; this one paints its
+   colour directly and takes a text-shadow instead of a drop-shadow halo.
+
+   That is not a simplification for its own sake — it is the fix for a
+   ghosting bug. This is the only run on the site that is both
+   background-clip:text AND transformed (the -2deg tilt), and the two do
+   not survive a parent transform together: hovering an event card, which
+   animates translateY on .event__title, repainted the clipped fill from
+   the element's untransformed origin and left a second "On Brady" lying
+   across "HAUNTED". The stylesheet already carried the warning — "keep
+   the headline out of transforms" — and this run was breaking it.
+
+   Dropping the clip costs nothing here. The paint box padding existed to
+   stop the fill slicing the script's overhangs, and painted text has no
+   fill box to slice; the noise texture is invisible below ~40px; and
+   card titles already switch their glow off at this size.
+
+   display:inline-block is still load-bearing. It keeps the run atomic so
+   the PARENT's clip cannot reach in and paint these glyphs a second time
+   in the headline's own colour — which is a different double-render, and
+   the one that shipped when this was display:block. */
+.fx .hl__on{
+  display:inline-block;
+  background-image:none;
+  -webkit-background-clip:border-box; background-clip:border-box;
+  color:var(--orange); -webkit-text-fill-color:var(--orange);
+  font-size:clamp(15px, .22em, 34px);
+  line-height:1;
+  margin:0;
+  padding:.16em .1em .3em .1em;
+  text-transform:none;
+  /* NO TRANSFORM. It carried a -2deg tilt and that is what put a second
+     copy of "On Brady" across "HAUNTED" on the heroes — and only on the
+     heroes, which is the tell: .fx--neon animates `filter` on the parent
+     continuously, and a transformed child inside an animating-filter
+     subtree gets rasterised from the wrong origin. The section lockups,
+     which carry no .fx--neon, never showed it.
+
+     Dropping the clip (below) was not enough on its own, because the
+     hazard is the transform, not the clip. The stylesheet's own rule
+     says it: keep the headline out of transforms. A 2deg tilt is not
+     worth a ghost. */
+  /* the halo, same argument as .hero--shot .fx .ink — a tight near-opaque
+     core that IS the background at the stroke edge, then two softer
+     radii. Flat px, because this run is clamped to 15-34px and an em
+     radius at the bottom of that range is sub-pixel. */
+  text-shadow:
+    0 0 3px  rgba(6,6,5,1),
+    0 0 7px  rgba(6,6,5,.95),
+    0 0 16px rgba(6,6,5,.8);
+}
 /* the card titles are small and sit on a scrimmed photo — the glow at
    that size is just a smudge */
 .event__title .ink{filter:none}
+
+/* ── THE DARK HALO — legibility that lives on the type ───────────────
+   The heroes carry no scrim at all now, so a neon word can land on a
+   blown-out highlight with nothing between them. Rather than dim the
+   photograph to fix that, each glyph gets its own dark backing: two
+   tight shadows at 0 offset, drawn BEFORE the colour glows so the bloom
+   still reads outside them rather than being ringed by black.
+
+   This is not a trick — it is how a neon sign photographs. The tube is
+   bright, its backing board is dark, and the bloom sits outside both.
+   Measured as an effective background (the halo is what actually
+   surrounds each stroke), it holds the violet lockup over the brightest
+   part of a frame, which no plate could do without greying the picture.
+
+   TWO RULES ON THE SHAPE OF IT, both learned by shipping it wrong:
+   · NOTHING FULLY OPAQUE. A tight shadow at alpha 1 is a crisp dark rim,
+     and it reads as a black keyline drawn around the letters rather than
+     as a shadow behind them. Every layer here is sub-opaque so the
+     falloff is a gradient with no edge in it.
+   · THE DARK MUST STAY INSIDE THE COLOUR. Chained drop-shadows each cast
+     from the RESULT of the last, so a wide dark layer pushes the colour
+     bloom outward and leaves a black band sitting between the glyph and
+     its own glow — which is what "the glow looks off" was. The dark now
+     totals ~10px at a 175px lockup and the neon blooms to ~19px past it,
+     so the tube reads lit again.
+
+   Only on .hero--shot: the cards and bands still have real scrims,
+   where a halo would only muddy already-passing type.
+
+   Every radius carries a px floor via max(). Pure em radii scale with
+   the word, which is right for the glow and wrong for the halo: on a
+   175px lockup .012em is 2.1px and does its job, but on the 34px "On
+   Brady" line it is 0.4px — invisible, and that line sits on the same
+   photograph. The floor is what the small type needs; the em term is
+   what keeps the big type from wearing a hard outline. */
+/* ONE dark layer, and the colour glow left at the site default.
+
+   A hero lockup and a section lockup are the same object and have to look
+   like it. They did not: the hero was carrying two dark layers plus a
+   widened bloom (.04em/.105em against the standard .034em/.085em), and
+   because chained drop-shadows each cast from the RESULT of the last, the
+   dark was pushing the neon outward into a soft purple cloud while the
+   section headline beside it stayed tight. Two lockups, two different
+   signs.
+
+   So the colour radii are now exactly `.fx .ink`'s — restated rather than
+   inherited, because a filter list replaces wholesale — and the dark is a
+   single 4.5px/.024em layer, which at a 190px lockup sits well inside the
+   16px bloom and cannot be seen. It is there purely as the effective
+   background at the stroke edge.
+
+   That makes the DARKNESS THE OVERLAY'S JOB. The two are coupled and
+   there is no third option: at the 50% the brief asks for, the worst
+   painted edge on the homepage lockup reads 1.99:1; at 62% it reads
+   2.65 and every other hero clears 3:1. The number to move is the
+   overlay on .hero--shot > .hero__scrim, not this. */
+/* THE DARK BACKING GOES LAST. This is the whole reason a hero lockup
+   used to look like a different sign from the section headline below it,
+   and it took three passes to find because the glow itself was never the
+   problem — the ORDER was.
+
+   Chained drop-shadows each cast from the RESULT of the last. With the
+   dark layer first, every colour stop after it was pushed outward by the
+   dark's own radius, so the bloom stopped hugging the glyph and became a
+   detached ring floating 6px off it. A ring reads as a big soft halo; a
+   bloom that starts at the letter reads as a lit tube. The hero's colour
+   radii were actually SMALLER than the section's by then and it still
+   looked like more glow, which is what finally gave it away.
+
+   Moved to the end, the dark casts from (glyph + finished glow) and
+   paints behind all of it: the neon is now pixel-identical to every
+   other lockup on the site, and the dark is a soft aura on the
+   photograph rather than a spacer inside the type. That is also how a
+   real sign sits on a wall.
+
+   No --neon-k here any more either. Halving the radii was compensating
+   for the offset, and with the offset gone the heroes just use the same
+   glow as everything else. */
+.hero--shot .fx .ink{
+  filter:
+    var(--neon)
+    drop-shadow(0 0 max(10px, .055em) rgba(6,6,5,.92));
+}
 
 /* A .fx headline's drop-shadow is ONE filter over its whole subtree, so it
    cannot be scoped away from a differently-inked word: "Haunted" in violet
@@ -445,19 +716,19 @@ img{max-width:100%; display:block}
 /* per-event colourways — orange is the house accent, the other two
    belong to their event and are never used off it */
 .fx--orange{
-  --fx-c:var(--orange); --fx-g:rgba(255,77,20,.9); --fx-b:rgba(255,77,20,.4);
+  --fx-c:var(--orange);
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
     linear-gradient(var(--fx-c),var(--fx-c));
 }
 .fx--green{
-  --fx-c:var(--green); --fx-g:rgba(0,194,78,.9); --fx-b:rgba(0,194,78,.36);
+  --fx-c:var(--green);
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
     linear-gradient(var(--fx-c),var(--fx-c));
 }
 .fx--red{
-  --fx-c:var(--red); --fx-g:rgba(232,32,42,.9); --fx-b:rgba(232,32,42,.36);
+  --fx-c:var(--red);
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E"),
     linear-gradient(var(--fx-c),var(--fx-c));
@@ -595,9 +866,6 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
   }
 }
 
-/* thin ink rules — the collage grid lines */
-.rule{border:0; border-top:1px solid var(--rule-hard); margin:0; opacity:.9}
-
 /* ============================================================
    FULL-BLEED HERO
    Picture edge to edge, header riding over it, everything centred.
@@ -630,25 +898,56 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
    declared later. Keep it after that rule. */
 .hero > .hero__media--shot{
   overflow:hidden;
-  background:linear-gradient(152deg,var(--orange) 0%,var(--red) 46%,var(--ink-deep) 100%);
+  /* THE THING BEHIND THE PHOTOGRAPH, and it is on screen more often than
+     it looks. This was the full orange -> red -> black gradient, written
+     when the heroes had no pictures and that gradient WAS the hero. Now
+     every one of them carries a 300-500KB photograph, and this paints for
+     the frame or two before it decodes — so navigating between pages
+     flashed bright orange and then cut to a dark photo. That is the page
+     flicker.
+
+     Kept as a gradient rather than flat, because a genuinely missing
+     image should still look composed, but pulled down to the page's own
+     ground: any gap now reads as the site continuing, not as a flash. */
+  background:linear-gradient(152deg,#231009 0%,#170c0a 46%,var(--ink-deep) 100%);
 }
 .hero__media--shot img{
   width:100%; height:100%; object-fit:cover; display:block;
-  /* Fully desaturated, matching the card thumbnails. This was saturate(.86)
-     — nearly monochrome but not quite, which read as a colour photograph on
-     the Shamrock hero specifically (a room full of green shirts). The warm
-     dusk wash on ::before is what puts the colour back, subtly, and stays. */
-  filter:grayscale(1) contrast(1.04) brightness(.93);
+  /* IN COLOUR. These were fully desaturated and pulled down two stops;
+     the pictures are good enough to run as pictures, so the grade is now
+     barely there — a touch of saturation and contrast, nothing else.
+
+     Everything the old grade was secretly doing for legibility has moved
+     onto the TYPE — see the dark halo on .hero--shot .fx .ink. That is
+     the whole trade: give the letterforms their own backing and leave
+     the photograph alone.
+
+     --hero-b is still exposed because exposure belongs to the PICTURE,
+     not the component. It now defaults to 1 (untouched) and a frame that
+     is genuinely over-bright can dial itself back without every other
+     hero being pulled down to suit it. */
+  filter:saturate(1.06) contrast(1.03) brightness(var(--hero-b, 1));
+  /* --hero-pos is the crop. It matters far more now than it did when
+     every hero was desaturated and two stops down, because WHERE the
+     bright part of a picture lands is now the whole legibility argument:
+     the plate can only be so strong before the photograph is grey again,
+     so the honest fix for a hot subject is to crop it out from under the
+     words rather than to bury it. Portrait sources especially — a 2:3
+     frame in a 16:10 hero throws away 60% of its height, and which 40%
+     you keep is a composition decision, not a default. */
+  object-position:50% var(--hero-pos, 50%);
   /* if the file is missing or still loading, the browser paints the alt
      text across the hero. Hide it visually — the gradient underneath is
      the intended fallback. Screen readers still get the alt attribute. */
   color:transparent; font-size:0;
 }
-/* warm dusk wash — marries the frame to the palette without hiding it */
+/* warm dusk wash — marries the frame to the palette without hiding it.
+   Halved now that the picture is in colour: at the old strength it was
+   tinting a colour photograph orange rather than warming a grey one. */
 .hero__media--shot::before{
   content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
   background:linear-gradient(158deg,
-    rgba(255,77,20,.12) 0%, rgba(232,32,42,.08) 45%, rgba(17,17,16,.26) 100%);
+    rgba(255,77,20,.06) 0%, rgba(232,32,42,.04) 45%, rgba(17,17,16,.10) 100%);
   mix-blend-mode:multiply;
 }
 /* print texture over photography, low (style guide calls for 8-15%) */
@@ -671,42 +970,47 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
       rgba(8,8,7,.78) 0%, rgba(8,8,7,.60) 46%, rgba(8,8,7,0) 88%),
     linear-gradient(180deg,rgba(10,10,9,.44) 0%,rgba(10,10,9,.24) 42%,rgba(10,10,9,.58) 100%);
 }
-/* a hero carrying a real picture wants less of a scrim — the dusk wash
-   on the image is already doing part of the legibility work */
+/* ── NO OVERLAY ON A HERO CARRYING A REAL PICTURE ────────────────────
+   This element used to be the whole legibility system: a 125%x82%
+   radial at .77 over a full-height wash, on top of a desaturated,
+   two-stops-down image. It came down in stages — first to a 13% wash
+   plus a plate cut to the type — and is now off entirely. The picture
+   is the picture.
+
+   Legibility moved onto the TYPE instead. See .hero--shot .fx .ink: a
+   tight dark halo is drawn behind each glyph's own colour, which is how
+   a neon tube reads against its own backing board in a real photograph.
+   That protects the letterforms without touching a single pixel of the
+   photograph, which no amount of scrim tuning can do.
+
+   What is left is two flat layers and no plate:
+
+   · a flat 50% black across the whole frame. Even, deliberately — it is
+     an exposure decision applied to the picture, not a shape cut around
+     the words, so the photograph reads the same in the corners as it
+     does behind the lockup.
+   · a shallow gradient over the top of that. Not a photo treatment but
+     chrome: the fixed header floats transparently over the first 60px
+     of every hero and its links have to sit on something predictable.
+
+   THIS IS A HERO-ONLY NUMBER. The event cards carry their own scrim on
+   .event__shot::before and are tuned separately — they have no room to
+   plate only the type, so the two were never the same instrument and
+   must not be changed together.
+
+   The halo on the type stays regardless. At 20% it was carrying most of
+   the load on its own (worst painted edge 2.17-2.71 across the four
+   heroes); at 50% every hero clears 3:1 outright with the halo now the
+   belt rather than the braces. */
 .hero--shot > .hero__scrim{
-  /* Two jobs, tuned separately. The linear wash is what makes the picture
-     read dark, so it comes down hard — the photo should be legible as a
-     photo. The radial is the only thing holding the orange headline above
-     3:1 against a near-white sky, so it barely moves. Re-measure after any
-     change here: the brightest pixels under the headline are #f8f8f8. */
   background:
-    radial-gradient(125% 82% at 50% 42%,
-      rgba(8,8,7,.77) 0%, rgba(8,8,7,.59) 46%, rgba(8,8,7,0) 88%),
-    linear-gradient(180deg,rgba(10,10,9,.34) 0%,rgba(10,10,9,.06) 45%,rgba(10,10,9,.46) 100%);
+    linear-gradient(180deg,
+      rgba(8,8,7,.34) 0%, rgba(8,8,7,.14) 9%, rgba(8,8,7,0) 18%),
+    linear-gradient(rgba(8,8,7,.50), rgba(8,8,7,.50));
 }
-/* --red is a darker ink than --orange or --green, so it needs a darker
-   plate to clear the same 3:1. Measured on the Christmas hero: the shared
-   .hero--shot scrim above lands it at 2.85:1 against the brightest string
-   of lights under the headline (#bcc0c1 in the source frame). Only the
-   red pages get the deeper plate — deepening it globally would flatten
-   the Brady Street and Shamrock pictures for no gain. */
-/* #C13BFF is a richer, less light purple than the one it replaced, and it
-   lands at 2.81:1 against the brightest sky under "HAUNTED". The colour is
-   the designer's, so the plate moves instead: ~9% less luminance under the
-   headline takes it to 3.1+. Only the heroes that actually carry a violet
-   word. */
-.hero--shot:has(.ink--violet) > .hero__scrim{
-  background:
-    radial-gradient(125% 82% at 50% 42%,
-      rgba(8,8,7,.84) 0%, rgba(8,8,7,.68) 46%, rgba(8,8,7,0) 88%),
-    linear-gradient(180deg,rgba(10,10,9,.40) 0%,rgba(10,10,9,.14) 45%,rgba(10,10,9,.50) 100%);
-}
-.hero--shot:has(.fx--red) > .hero__scrim{
-  background:
-    radial-gradient(125% 82% at 50% 42%,
-      rgba(8,8,7,.84) 0%, rgba(8,8,7,.70) 46%, rgba(8,8,7,0) 88%),
-    linear-gradient(180deg,rgba(10,10,9,.44) 0%,rgba(10,10,9,.20) 45%,rgba(10,10,9,.52) 100%);
-}
+/* No per-ink variants any more. --red and --violet each needed their own
+   deeper scrim when the scrim was the only protection; the halo on the
+   ink is per-word by construction, which is a far smaller instrument. */
 .hero__inner{
   /* 1000px was an Anton-era measure. Jomhuria is ~1.5x wider at the same
      cap height, so "SHAMROCK" ran 541px past the old column. The sub-copy
@@ -732,8 +1036,42 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
    drawn for single-line headings. */
 .hero__meta{
   font-family:var(--display); font-weight:400; text-transform:uppercase;
-  font-size:clamp(21px,2.3vw,31px); line-height:.95; letter-spacing:.05em;
+  font-size:clamp(26px,2.9vw,40px); line-height:.95; letter-spacing:.05em;
   color:rgba(255,255,255,.94); margin:0;
+}
+/* The separators get their own element because Jomhuria's middle dot is
+   wrong for this job twice over: the face has a very small cap height
+   relative to its em (~.39), so a dot positioned for a normal x-height
+   floats well above the cap band — and at 40px it comes out as a heavy
+   blob. Set in the body face at a fraction of the size and nudged to the
+   optical centre of the caps, it reads as punctuation rather than as a
+   fourth word. */
+.hero__meta .sep{
+  font-family:var(--body); font-size:.34em; letter-spacing:0;
+  /* Measured, not guessed: at a 37px meta the cap band's optical centre
+     sits 7.2px above the baseline and this dot's ink centre sits 3.65px,
+     so it needs .0957em of the META size lifting — which is .28em of its
+     own. Both terms are proportional, so it holds at every clamp step. */
+  vertical-align:.28em;
+  margin:0 .5em;
+  opacity:.62;
+}
+/* The plain text on a photographic hero gets the same treatment the
+   headline does, by the only means available to it: a text-shadow.
+   .hero__meta and the ticket's note are ordinary text, not
+   background-clip fills, so a shadow works where a drop-shadow filter
+   would also blur the glyphs. Three radii — a tight near-opaque core
+   that IS the effective background at the stroke edge, then two softer
+   ones so it reads as a glow rather than an outline.
+
+   Only inside .hero--shot. On the paper heroes there is no picture and
+   this would just be a smudge. */
+.hero--shot .hero__meta,
+.hero--shot .hero__inner .ticket__note{
+  text-shadow:
+    0 0 4px rgba(6,6,5,.98),
+    0 0 10px rgba(6,6,5,.92),
+    0 0 22px rgba(6,6,5,.75);
 }
 @media (max-width:640px){ .hero__inner{padding-left:18px; padding-right:18px} }
 
@@ -754,6 +1092,11 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
   gap:clamp(16px,3vw,44px);
 }
 .pagehead--slim > :first-child{margin:0}
+/* The exception to the merge above. These five heads were deliberately
+   dropped to a smaller scale so the calendar, ticket list and form start
+   near the top of the page instead of a viewport down; they keep the old
+   .d3 ramp while every other headline moves up. */
+.pagehead--slim .d3{font-size:clamp(34px, calc(30.1px + 2.63vw), 68px)}
 /* the head is now folded into the first content section rather than sitting
    in a band of its own, so it owns the gap to the content below it */
 .pagehead--slim{margin-bottom:clamp(26px,3.4vw,52px)}
@@ -804,9 +1147,7 @@ section{position:relative}
    .band--orange rule below, which meant every small label on a dark band
    was silently painted with an orange background — a full-width orange
    stripe behind the block-level ones. They only ever wanted a colour. */
-.band--ink .tiny,.ftr .tiny{color:rgba(255,255,255,.72)}
-.band--orange{background:var(--orange); color:var(--on-accent)}
-.band--orange .lede{color:rgba(17,17,16,.86)}
+.band--ink .tiny,.ftr .tiny{color:rgba(255,255,255,.72)}.band--orange .lede{color:rgba(17,17,16,.86)}
 .band--orange .kicker{color:rgba(17,17,16,.84)}
 .band--orange .btn{border-color:var(--on-accent); color:var(--on-accent)}
 .band--orange .btn:hover{background:var(--on-accent); color:var(--orange)}
@@ -840,6 +1181,7 @@ section{position:relative}
   --rule:       rgba(17,17,16,.16);
   --rule-hard:  rgba(17,17,16,.72);
   --orange-on:  var(--orange-d);
+  --green-on:   var(--green-d);
   background:var(--paper); color:var(--text);
 }
 /* the grain is tuned to lift a near-black ground; on white it only muddies */
@@ -849,15 +1191,23 @@ section{position:relative}
 .on-white .btn:hover{background:var(--ink); color:var(--paper)}
 .on-white .btn--paper{border-color:rgba(17,17,16,.5); color:var(--ink)}
 .on-white .btn--paper:hover{background:var(--ink); border-color:var(--ink); color:var(--paper)}
-.on-white .tabs a.is-active{background:var(--ink); border-color:var(--ink); color:var(--paper)}
-.on-white .sheet .tabs a.is-active{color:var(--paper)}
 
 /* the sheet is redundant once the whole band is white — keep its spacing,
    drop the panel so it does not read as a black box (--ink is now black) */
 .on-white .sheet{background:transparent; color:inherit; padding:0}
 
 /* a white headline glow is invisible on white; invert the halo */
-.on-white .fx{--fx-g:rgba(17,17,16,.26); --fx-b:rgba(17,17,16,.10)}
+/* NO GLOW ON A WHITE GROUND. Inside .on-white the ink token has already
+   inverted to near-black, so --neon was deriving a dark halo from it —
+   technically consistent, and wrong. The glow is a neon-sign device: a
+   tube emits light onto a dark surround. Black type on white emits
+   nothing, and a dark halo under it just reads as a printing fault.
+
+   `none` rather than a tuned-down version, because there is no correct
+   amount of glow here — the effect does not belong on this ground at
+   all. Setting --neon empties both users of it: .fx's own --fx-filter
+   and the filter on each .ink run. */
+.on-white .fx,.on-white .fx .ink{--neon:none}
 .on-white .scrawl--paper,.on-white .scrawl--orange{color:var(--orange-d)}
 /* --orange-lt (#FF8A4D) is tuned for small type on black and measures
    2.3:1 on white. --orange-d is 4.9:1. Body links inside a white band take
@@ -868,7 +1218,6 @@ section{position:relative}
   text-underline-offset:.16em; text-decoration-thickness:1px;
 }
 .on-white .kicker--paper{color:rgba(17,17,16,.62)}
-.on-white .secno{color:var(--orange-d)}   /* --orange @.9 is 2.88:1 on white */
 /* defensive: if a band--ink ever lands inside an on-white scope, its
    hardcoded rgba(255,255,255,…) text would go white-on-white */
 .on-white .band--ink .lede,.on-white .band--ink .small{color:var(--text-2)}
@@ -988,17 +1337,25 @@ section{position:relative}
 .row--between{justify-content:space-between}
 .row--end{justify-content:flex-end}
 
-/* section number — the riso listing tic */
-.secno{
-  font-family:var(--display); font-size:clamp(75px,8.8vw,128px); line-height:.364;
-  letter-spacing:.03em; color:var(--orange); opacity:.9;
-}
-.band--ink .secno{color:var(--ink); opacity:.4}
-.band--orange .secno{color:var(--on-accent); opacity:.42}
 
 /* ============================================================
    HEADER — sticky, paper, one hairline
    ============================================================ */
+/* The header is injected by JS, so between first paint and boot the bar is
+   simply absent — on a fast refresh you see the hero slide up under nothing
+   and then the bar drop in. body already reserves the height, so this is
+   not a layout shift, it is a missing surface. Painting the empty holder as
+   the bar means the correct block of colour is there on the very first
+   frame and the real header replaces it in place.
+
+   :empty stops applying the moment innerHTML lands, so there is nothing to
+   clean up and no risk of a stray bar if boot never runs. */
+#chrome-header:empty{
+  position:fixed; top:0; left:0; right:0; z-index:80;
+  height:var(--hdr-h); background:var(--paper);
+}
+body.has-hero #chrome-header:empty{background:transparent}
+
 .hdr{
   position:fixed; top:0; left:0; right:0; z-index:80;
   background:var(--paper);
@@ -1009,17 +1366,22 @@ section{position:relative}
 /* pages whose hero is a full-bleed image: the bar rides over the picture until
    you scroll, the way the Shamrock site does it */
 .hdr--over{background:transparent}
-.hdr--over .lockup__wm{color:var(--ink)}
-.hdr--over .lockup__wm i{color:var(--ink)}
 .hdr--over .nav > a,.hdr--over .nav button{color:rgba(255,255,255,.85)}
 .hdr--over .nav > a:hover,.hdr--over .nav button:hover{color:var(--ink)}
 .hdr--over .nav > a.is-active{color:var(--ink)}
+/* Floating over a hero the three marks lose their glow — a white
+   drop-shadow on white type over a photograph is a smudge, not a lift —
+   and drop a step in opacity so they read as chrome sitting on the
+   picture rather than type printed into it. */
+.hdr--over .nav a.nav__mark{color:rgba(255,255,255,.85); filter:none}
+.hdr--over .nav a.nav__mark:hover,
+.hdr--over .nav a.nav__mark.is-active{color:var(--ink); filter:none}
+.hdr--over .nav a.nav__mark::after{background:var(--ink)}
 /* the dropdown is its own white panel — it never inherits the over-hero colours */
 .hdr--over .more__menu a{color:var(--ink)}
 .hdr--over .nav .soon{color:rgba(255,255,255,.6)}
 .hdr--over .burger{border-color:var(--ink); color:var(--ink)}
 .hdr--over .burger:hover{background:var(--ink); color:var(--on-accent)}
-.hdr--over .mark-stroke{stroke:var(--ink)}
 /* everything below the header needs the height back, except full-bleed heroes
    which deliberately run underneath it */
 body{padding-top:var(--hdr-h)}
@@ -1030,15 +1392,36 @@ body.has-hero{padding-top:0}
 }
 @media (max-width:640px){ .hdr__in{padding:11px 18px; gap:14px} }
 
-.lockup{display:flex; align-items:center; gap:11px; text-decoration:none; flex:none}
-.lockup svg{display:block; width:38px; height:38px; overflow:visible}
-.lockup__wm{
-  font-family:var(--display); text-transform:uppercase; line-height:.382;
-  font-size:33px; letter-spacing:.04em; color:var(--ink);
+/* ── THE LOGO ────────────────────────────────────────────────────────
+   images/bss-logo.svg is a single-colour "BAR SCENE / SOCIALS" wordmark.
+   It is painted as a MASK with the colour supplied by the element, not
+   as an <img>, for one reason: the same artwork has to be white in the
+   header, white floating over a hero photo, white in the footer, and
+   currentColor inside the loader. A mask gives all four from one file
+   with no recoloured copies to keep in step, and `color` is inherited,
+   so any container can retint it without touching this rule.
+
+   Sized by width alone — aspect-ratio holds the height, so no placement
+   can squash the mark by getting one of the two numbers wrong. The
+   mask is centred and `contain`, which means an element wider or taller
+   than 592:197 letterboxes the artwork rather than distorting it. */
+.logo{
+  display:block; width:100%; aspect-ratio:592 / 197;
+  background-color:currentColor;
+  -webkit-mask:url("../images/bss-logo.svg") center / contain no-repeat;
+          mask:url("../images/bss-logo.svg") center / contain no-repeat;
 }
-.lockup__wm b{display:block; font-weight:400}
-.lockup__wm i{display:block; font-style:normal; color:var(--orange)}
-@media (max-width:860px){ .lockup__wm{display:none} }
+
+/* The header mark. 126px wide reads as ~42px tall, which fits inside the
+   80px bar with its 13px padding and still sits taller than the 33px
+   wordmark it replaces. It steps down with --hdr-h rather than scaling
+   with the viewport: chrome holds its size while content scales. */
+.lockup{display:flex; align-items:center; text-decoration:none; flex:none; color:var(--ink)}
+.lockup__logo{width:126px}
+.lockup:hover{color:var(--orange)}
+@media (max-width:1100px){ .lockup__logo{width:116px} }
+@media (max-width:640px){  .lockup__logo{width:104px} }
+@media (max-width:380px){  .lockup__logo{width:92px} }
 
 .nav{display:flex; align-items:center; gap:2px; margin-left:auto; flex-wrap:wrap}
 .nav a,.nav button{
@@ -1057,6 +1440,53 @@ body.has-hero{padding-top:0}
 .nav a.is-active{color:var(--ink); font-weight:700}
 .nav a.is-active::after{transform:scaleX(1)}
 .nav .soon{font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); margin-left:6px; vertical-align:1px}
+
+/* ── THE THREE EVENT LINKS — a wordmark, not a menu item ─────────────
+   The brand notes rule out a literal per-event icon (no pumpkin, no
+   tree, no shamrock), so these three read as marks by TYPE: the display
+   face, uppercase, at wordmark size next to 13.5px nav items.
+
+   All three are flat white. They previously carried each event's
+   identity colour, which put three more hues in a bar that now also
+   holds the real logo — the header was doing the colour work the pages
+   are supposed to do. White also settles the contrast question for
+   good: --red measured 4.20:1 on this ground, clearing the 3:1
+   large-text bar but nothing more, whereas white is 17.9:1 and stays
+   legal at any size the header is ever set at.
+
+   Sized in EM terms 28px looks modest, but Jomhuria's cap is only
+   ~.39em — it reads as roughly a 15-16px cap height, about 1.3x the
+   plain nav item's own cap, which is the honest amount of "larger"
+   available before the header outgrows itself.
+
+   Fixed, not vw-clamped: nothing else in this header scales with
+   viewport width, so a clamp here would make --hdr-h correct at some
+   widths and short at others, instead of the one constant every page
+   relies on. */
+.nav a.nav__mark{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:28px; line-height:1; letter-spacing:var(--hl-track);
+  color:var(--ink); padding:11px 14px;
+}
+/* No colour change on hover — discolouring is the opposite of a logo
+   staying recognisable. The lift is a soft white glow instead, cheap
+   and layout-safe since drop-shadow never touches box size. Higher
+   specificity than the plain-link rules above (three classes vs two)
+   so it wins without `!important`. */
+.nav a.nav__mark:hover,
+.nav a.nav__mark.is-active{
+  color:var(--ink);
+  filter:drop-shadow(0 0 7px rgba(248,248,246,.55));
+}
+.nav a.nav__mark::after{background:var(--ink)}
+/* The "Soon" tag sat on the text baseline, which worked next to 13.5px
+   body type and reads as a stray fragment next to a 28px cap. Pinned to
+   the corner instead, like a sticker on a printed mark. */
+.nav a.nav__mark{padding-top:15px}
+.nav a.nav__mark .soon{
+  position:absolute; top:2px; right:8px;
+  font-size:8.5px; letter-spacing:.09em; margin-left:0; vertical-align:0;
+}
 @media (max-width:1100px){ .nav{display:none} .hdr__cta{margin-left:auto} }
 
 .more{position:relative}
@@ -1122,9 +1552,33 @@ body.has-hero{padding-top:0}
   background:none; cursor:pointer; text-decoration:none; text-align:center;
   /* Same three interaction variables the reveal composes, so a ticket
      tilts identically whether or not it sits inside a [data-reveal]. */
-  transform:translate3d(0,var(--ty,0px),0) rotate(var(--rot,0deg)) scale(var(--sc,1));
+  /* Same interaction variables the reveal composes, so a ticket tilts
+     identically whether or not it sits inside a [data-reveal].
+     --slant is a per-ticket resting angle assigned once in JS; --sway is
+     the continuous drift, registered with @property below so it can
+     actually animate. Adding them inside one rotate() keeps hover, reveal
+     and the idle motion on the same transform instead of three rules
+     fighting over it. */
+  transform:translate3d(var(--tx,0px),var(--ty,0px),0)
+            rotate(calc(var(--rot,0deg) + var(--slant,0deg) + var(--sway,0deg)))
+            scale(var(--sc,1));
   transition:transform .34s var(--ease);
 }
+/* @property is what makes --sway animatable at all: a plain custom
+   property jumps between keyframes instead of interpolating. Unsupported
+   browsers simply never move the ticket, which is the correct fallback for
+   an idle flourish. */
+@property --sway{ syntax:'<angle>'; inherits:false; initial-value:0deg }
+@keyframes bss-sway{
+  0%,100% { --sway:-0.9deg }
+  50%     { --sway: 0.9deg }
+}
+.ticket{ animation:bss-sway var(--sway-dur,7s) var(--quart) infinite; }
+/* the tucked stub already has a strong resting angle and a job to do on
+   reveal — leave it still rather than stacking a second motion on it */
+.pitch .pitch__ticket{animation:none}
+@media (prefers-reduced-motion: reduce){ .ticket{animation:none} }
+
 .ticket:hover{--rot:-3.2deg; --ty:-3px}
 .ticket:active{--rot:-1.4deg; --ty:0px}
 .ticket svg{display:block; width:100%; height:auto; overflow:visible}
@@ -1139,10 +1593,6 @@ body.has-hero{padding-top:0}
 .ticket[data-state="sold"]{cursor:not-allowed; filter:none}
 .ticket[data-state="sold"]:hover{--rot:0deg; --ty:0px; filter:none}
 .ticket-row{display:flex; gap:26px; align-items:center; flex-wrap:wrap}
-
-/* the header needs the same object under 65px — one line, fewer scallops */
-.ticket--compact{max-width:clamp(128px,13vw,168px)}
-.ticket--compact:hover{--rot:-2.4deg; --ty:-2px}
 
 /* ============================================================
    BUTTONS, CHIPS, LABELS
@@ -1201,6 +1651,25 @@ body.has-hero{padding-top:0}
 @media (prefers-reduced-motion:reduce){
   .sticker--live::before{animation:none}
 }
+/* A chip standing ON a photograph gets a SOLID fill. The default is
+   rgba(248,248,246,.12) — a translucent white, which is fine over a known
+   page ground and a liability over an unknown picture: it lifts whatever
+   is behind it 12% toward white, so a bright frame pushes the chip up
+   into --orange-on's own luminance instead of away from it. Measured on
+   the Haunted hero, "Going fast — 640 left" read 3.08:1 against a 4.5
+   floor for 11px type, and the chip's own fill was what put it there.
+   #2A2A28 is exactly what the translucent version composites to over
+   --paper, so nothing changes anywhere it already looked right; it just
+   stops depending on the picture. */
+.hero__inner .sticker,
+.band--shot .shell .sticker{background:#2A2A28}
+/* The ghost variants keep their keyline but NOT their transparency here.
+   "Not on sale yet" is a hollow chip with a white hairline, which was
+   fine over a scrimmed photo and is not fine over an unscrimmed one:
+   measured 1.48:1 on the Shamrock hero and 2.44 on the Christmas one,
+   against a 4.5 floor for 11px. The fill is the same #2A2A28; the
+   keyline is what still says "ghost". */
+.band--shot .shell .sticker--ghost{background:transparent}
 .sticker--ghost{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--rule-hard)}
 .sticker--ghost-paper{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
 
@@ -1241,6 +1710,30 @@ body.has-hero{padding-top:0}
    #FFFFFF inside .on-white: dropped into a white band the gradient ran
    orange → red → white and the white .photo__cap on top measured 1.06:1. */
 .photo--night{background:linear-gradient(152deg,#FF4D14 0%,#E8202A 46%,#080807 100%)}
+
+/* A real photograph inside a .photo frame. Same monochrome grade the
+   event cards and the section backgrounds already use, so a printed
+   snapshot pinned to the wall belongs to the same set as everything
+   else — the colour budget on this site is spent on ink, never on
+   photography. Kept a touch brighter than the card grade (.82 vs .66)
+   because nothing is printed on top of a polaroid; the picture is the
+   whole content, and there is no headline that needs a floor.
+   Sits under .photo::before (the halftone) and ::after (the print
+   noise), which is what keeps it in the same material as its
+   colour-field siblings rather than reading as a pasted-in JPEG. */
+.photo > img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  z-index:0; display:block; color:transparent; font-size:0;
+  filter:saturate(1.04) contrast(1.02);
+}
+/* A photo frame carrying a real picture must not also paint a colour
+   field behind it — a slow or failed image would flash the wrong hue,
+   and the halftone reads differently over grey than over the picture.
+   Two selectors, not one: .taped .photo further down sets its own grey
+   at the same (0,2,0) specificity and is declared later, so the plain
+   rule alone loses inside a polaroid. Same value both times. */
+.photo:has(> img),
+.taped .photo:has(> img){background:#141412}
 .ar-1,.ar-43,.ar-34,.ar-169{min-height:0}
 .ar-1{aspect-ratio:1/1}
 .ar-43{aspect-ratio:4/3}
@@ -1267,9 +1760,23 @@ body.has-hero{padding-top:0}
   transform:translateX(-50%) rotate(-3.5deg);
   background:rgba(207,227,238,.72); border-left:1px dashed rgba(17,17,16,.16); border-right:1px dashed rgba(17,17,16,.16);
 }
+/* A polaroid can be a link — the Featured Bars strip on the homepage is
+   four of them. Nothing about the object changes; it just stops being
+   inert. */
+a.taped{display:block; text-decoration:none; cursor:pointer}
+a.taped:focus-visible{outline:3px solid var(--orange); outline-offset:4px}
+
+/* The caption is the bar's name now, not a two-word neighbourhood, and
+   "Water Street Brewery" is three times the length the 18px flat size
+   was set for. Sized against the polaroid instead of fixed: 8.2cqw on a
+   ~290px card is ~24px, and it steps down as the strip narrows rather
+   than wrapping into the frame. The bottom padding grows to match, and
+   the whole run is capped at two lines. */
+.taped{container-type:inline-size}
 .taped__cap{
-  position:absolute; left:0; right:0; bottom:11px; text-align:center;
-  font-family:var(--script); font-weight:400; font-size:18px; color:rgba(17,17,16,.72);
+  position:absolute; left:7px; right:7px; bottom:9px; text-align:center;
+  font-family:var(--script); font-weight:400; color:rgba(17,17,16,.78);
+  font-size:clamp(13px, 6.4cqw, 22px); line-height:1.05;
 }
 /* Every polaroid prints on one mid-grey field. They were four different
    accent colours, which sat four more hues next to the event photography
@@ -1345,20 +1852,6 @@ body.has-hero{padding-top:0}
 /* ============================================================
    COLLAGE GRID — thin ink lines, unequal cells
    ============================================================ */
-@media (max-width:700px){ .collage--4{grid-template-columns:repeat(2,minmax(0,1fr))} }
-
-/* underline squiggle */
-.squig{position:relative; display:inline-block}
-/* An inline-block is an atomic box, so a .fx headline's background-clip:text
-   never reaches the text inside it and the words render invisible. Re-apply
-   the same clipped fill on the span itself. Any other inline-block dropped
-   inside a headline needs this too. */
-.fx .squig{
-  background-image:inherit; background-blend-mode:multiply;
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-}
-.squig > svg{position:absolute; left:-2%; bottom:-.22em; width:104%; height:.3em; overflow:visible}
-.squig > svg path{fill:none; stroke:var(--orange); stroke-width:5; stroke-linecap:round}
 
 /* ============================================================
    CARDS
@@ -1388,18 +1881,17 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .event__shot > img{
   position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   z-index:0; display:block;
-  /* Every card picture is graded to one monochrome. Three different
-     photographs sat side by side in the same row — a grey street, a warm
-     night scene and a room full of green shirts — and read as three
-     unrelated pictures. Stripping the colour makes the row a set, and it
-     hands the whole colour budget of the card to the event's own ink:
-     the only colour in the thumbnail is the name. It also lifts the green
-     title off the Shamrock frame, which was green on green.
-     Brightness is set by measurement, not taste: the Brady Street frame
-     blows out to near-white sky in the top of the card crop, and --orange
-     needs 3:1 against it. .74 measured 2.79:1 at 375px, .66 gives 3.1+.
-     Re-measure if this grade or the ::before scrim moves. */
-  filter:grayscale(1) contrast(1.06) brightness(.66);
+  /* IN COLOUR, like every other picture on the site now. The cards used
+     to be the strictest case: fully desaturated and down to brightness
+     .66, set by measurement because the title sits directly on the
+     picture with nowhere else to go.
+
+     A card cannot use the hero's trick of plating only the type — the
+     title is centred on a 16:9 thumbnail and its box IS most of the
+     card. So the card keeps a real scrim (::before, below) and the
+     picture keeps its colour: the same total darkness, arriving as one
+     neutral wash instead of as a desaturation plus two stops. */
+  filter:saturate(1.05) contrast(1.03);
 }
 /* .photo::before normally carries the halftone; on a shot thumbnail it is
    the scrim instead, because a coloured name over a photograph needs a
@@ -1412,41 +1904,74 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
      the scrim gradient tiles into a 7px grid instead of covering, which
      reads as a checkered pattern over the photo. */
   background-size:100% 100%;
-  /* Centre stop is set by measurement, not taste: the brightest pixels
-     under the title on the Brady Street shot are pure white sky, and
-     --orange needs 3:1 against them. .62 measured 2.70:1; .70 gives
-     3.29:1 while keeping the photo as light as it can be. */
+  /* Set by measurement, and re-set when the pictures went back to colour.
+     It used to lean on the image grade — brightness(.66) did roughly half
+     the work and this scrim the rest. With the grade gone the scrim has
+     to carry all of it, so the alphas rose by about what the grade gave
+     up: the composited card now sits at mean luminance .025, a hair off
+     the .028 it measured while it was greyscale. The same darkness,
+     arriving as a neutral wash over a colour photograph instead of as a
+     desaturation plus two stops.
+
+     Unlike a hero, a card cannot plate only its type. The title is
+     centred on a 16:9 thumbnail and its box IS most of the card; there
+     is nowhere for a tighter ellipse to be tighter. */
   background-image:radial-gradient(112% 92% at 50% 50%,
-    rgba(8,8,7,.70) 0%, rgba(8,8,7,.50) 58%, rgba(8,8,7,.30) 100%);
+    rgba(8,8,7,.86) 0%, rgba(8,8,7,.74) 58%, rgba(8,8,7,.60) 100%);
 }
 
-/* #C13BFF is a darker violet than the one it replaced, and when it changed
-   only the HERO scrim was re-tuned for it — this one was not. Every Haunted
-   card sat at 2.86-2.96:1 against a 3.0 floor. Same fix, same reason, as
-   .hero--shot:has(.ink--violet). */
+/* Violet and red take one step deeper again, and for the same underlying
+   reason: both are MID-luminance inks (.19 and .18), so unlike white or
+   neon yellow they are squeezed from both ends — a blown highlight and a
+   lit mid-tone are equally fatal, and there is no plate strength that
+   fixes one without the ground passing through the other on the way.
+   Green and orange sit far enough from the middle to live on the base.
+
+   Measured on the base scrim above with the pictures in colour:
+   "Haunted" 2.98:1 and "Christmas" 2.89:1, both under the 3.0 floor.
+   Here they read 3.70 and 3.45 with no painted pixel under 3. */
 .event:has(.ink--violet) .event__shot::before{
   background-image:radial-gradient(112% 92% at 50% 50%,
-    rgba(8,8,7,.80) 0%, rgba(8,8,7,.64) 58%, rgba(8,8,7,.46) 100%);
+    rgba(8,8,7,.91) 0%, rgba(8,8,7,.82) 58%, rgba(8,8,7,.70) 100%);
+}
+/* Red sits a step lighter than violet. It was on the same values, but the
+   Christmas photograph is the warmest and most colourful on the site and
+   was the one paying most for the shared setting — this is the lightest
+   plate that still holds the script word, measured at 3.14:1 against a
+   3.0 floor with no painted pixel below it. There is no room left to
+   lighten it further without the word going under. */
+.event:has(.ink--red) .event__shot::before{
+  background-image:radial-gradient(112% 92% at 50% 50%,
+    rgba(8,8,7,.85) 0%, rgba(8,8,7,.74) 58%, rgba(8,8,7,.60) 100%);
 }
 .event__title{
   position:relative; z-index:3; text-align:center;
   padding-left:.4em; padding-right:.4em;
-  font-size:clamp(22px, 11cqw, 60px);
+  /* sized against the CARD, not the viewport, so the two very different
+     card widths in the homepage row set the same optical size. Raised from
+     11cqw/60 — the name is the card's headline and was reading as a label
+     on it. */
+  font-size:clamp(26px, 13.5cqw, 78px);
 }
 
 /* Locked cards grey out the PICTURE, not the card. The filter used to sit
    on .photo, which also desaturated the coloured title inside it. */
 .event__shot::after{display:none}   /* no print-noise field on the thumbnails */
 
-/* Hover: the picture opens up and the name lifts a hair. Transform and
-   filter only, so it stays on the compositor. .photo already clips, so
-   the scale is contained. */
+/* Hover: the picture pushes in a hair and the name lifts. Transform only,
+   so it stays on the compositor. .photo already clips, so the scale is
+   contained.
+
+   The scrim used to lift to opacity .82 on hover as well — "the picture
+   opens up". Measured over the glyphs, that took every card title below
+   its floor while the pointer was on it: Haunted 3.31 -> 2.36 with 13.7%
+   of painted pixels under 3:1, Shamrock's "Shuffle" 3.48 -> 2.84,
+   Christmas 2.57 -> 2.00. A hover state is exactly when someone is
+   reading the card, so it is the worst moment to thin the plate. The
+   scale and the title lift carry the interaction on their own. */
 .event__shot > img{transition:transform .55s var(--ease), filter .55s var(--ease)}
 .event:hover .event__shot > img,
 .event:focus-visible .event__shot > img{transform:scale(1.05)}
-.event__shot::before{transition:opacity .45s var(--ease)}
-.event:hover .event__shot::before,
-.event:focus-visible .event__shot::before{opacity:.82}
 .event__title{transition:transform .45s var(--ease)}
 .event:hover .event__title,
 .event:focus-visible .event__title{transform:translateY(-3px)}
@@ -1459,7 +1984,9 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    was the only one carrying colour. Now every card is monochrome, so the
    difference has to be light, not saturation — a locked picture is simply
    further down. The hatch overlay and the ghost chip carry the rest. */
-.event--locked .event__shot > img{filter:grayscale(1) contrast(.98) brightness(.58)}
+/* A locked card greys out the PICTURE by a touch of desaturation only —
+   enough to read as "not yet", not enough to undo the colour. */
+.event--locked .event__shot > img{filter:saturate(.72) contrast(1.02) brightness(.92)}
 .event--locked .event__shot{background:var(--ink-2)}
 
 
@@ -1469,30 +1996,134 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 /* The numerals and the rules are gone — with them removed the group reads
    as two headed lists rather than a numbered table, so the heading has to
    carry the hierarchy instead. Spacing does the separating now. */
-.incl{display:grid; gap:clamp(26px,3.4vw,46px)}
-.incl__row{display:block}
-.incl__row > div > .h4{
-  font-size:clamp(62px,7vw,92px);
-  margin-bottom:clamp(4px,.6vw,10px);
+/* ============================================================
+   SECTION PHOTOGRAPHY — a picture behind a whole band
+   A photograph as the ground for a section, rather than as a card
+   or a hero. Same monochrome-plus-scrim discipline the event cards
+   use, because the same problem applies: coloured type over a
+   photograph needs a floor it can rely on, whatever the picture is.
+   The band's own tone shows through the sides so the section still
+   belongs to the page rather than floating on an image.
+   ============================================================ */
+/* --shot-b is the exposure, exposed as a variable because exposure is a
+   property of the PICTURE, not of the component. It now defaults to 1 —
+   untouched — and a frame that is genuinely over-bright dials itself
+   back inline rather than every band being dimmed to suit it. */
+.band--shot{position:relative; isolation:isolate; overflow:hidden; --shot-b:1}
+.band--shot > .band__bg{
+  position:absolute; inset:0; z-index:0; pointer-events:none;
 }
-.incl ul{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:7px}
-.incl li{position:relative; padding-left:22px; color:var(--text-2); font-size:15.5px}
-.incl li::before{
-  content:""; position:absolute; left:0; top:.62em; width:11px; height:2px; background:var(--orange);
+.band--shot > .band__bg img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:saturate(1.05) contrast(1.03) brightness(var(--shot-b));
+  color:transparent; font-size:0;
+}
+/* THE PLATE, and the one place on the site it is still heavy.
+
+   A band is not a hero. The hero could drop to a 13% wash because its
+   type occupies a fixed box in the middle of the frame that a plate can be
+   cut to. Here a whole section of 16px body copy sits edge to edge, and
+   body copy needs 4.5:1, not 3:1 — there is no sub-region to plate,
+   because the type IS the region.
+
+   So the picture keeps its colour (that is the part the grade above gave
+   back) but not its brightness. Read it as a dark colour photograph
+   behind the copy rather than a photograph you are meant to look at;
+   the heroes, cards and polaroids are where the pictures get to speak. */
+.band--shot > .band__bg::after{
+  content:""; position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(17,17,16,.86) 0%, rgba(17,17,16,.76) 42%, rgba(17,17,16,.90) 100%),
+    radial-gradient(120% 90% at 50% 45%, rgba(17,17,16,.20) 0%, rgba(17,17,16,.52) 100%);
+}
+/* --violet is the least forgiving ink over a picture — mid-luminance, so
+   both ends of the range close on it. Only bands that actually carry a
+   violet word take the deeper plate. */
+.band--shot:has(.ink--violet) > .band__bg::after{
+  background:
+    linear-gradient(180deg, rgba(17,17,16,.90) 0%, rgba(17,17,16,.84) 42%, rgba(17,17,16,.93) 100%),
+    radial-gradient(120% 90% at 50% 45%, rgba(17,17,16,.32) 0%, rgba(17,17,16,.60) 100%);
+}
+/* print texture over the picture, same 7px screen as everywhere else */
+.band--shot > .band__bg::before{
+  content:""; position:absolute; inset:0; z-index:1;
+  background-image:radial-gradient(rgba(17,17,16,.34) 1.4px, transparent 1.5px);
+  background-size:7px 7px; mix-blend-mode:multiply; opacity:.5;
+}
+.band--shot > .shell{position:relative; z-index:1}
+
+/* A 2x2 quadrant, not a column. Four headed groups of three stacked
+   vertically ran nearly 1,900px on desktop — the reader scrolled past four
+   near-identical blocks and the fact that they are FOUR PARTS OF ONE THING
+   never landed. Side by side, the whole offer is one glance, and the
+   headings stop competing with each other for the same vertical axis.
+
+   The heading also comes down hard. At 92px it was the same size as the
+   page's own section headline, so "THE KIT" read as a new chapter rather
+   than a column label; the list under it is the content. A hairline over
+   each cell gives the quadrant its structure without drawing a box. */
+.incl{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:clamp(30px,4vw,58px) clamp(28px,4vw,64px);
+}
+.incl__row{
+  display:block;
+  /* The orange rule above each group and the orange dash before each item
+     are both gone. Between them they put six orange marks into a block
+     whose only real content is four headings and twelve lines — the
+     colour was doing structural work the headings already do, and on a
+     photographic band it read as scaffolding rather than design.
+     Spacing separates the groups now, which is what the rest of the site
+     does. */
+  padding-top:clamp(10px,1.2vw,16px);
+}
+.incl__row > div > .h4{
+  font-size:clamp(34px,3.8vw,54px);
+  margin-bottom:clamp(14px,1.5vw,20px);
+}
+.incl ul{margin:0; padding:0; list-style:none; display:grid; gap:clamp(11px,1.2vw,15px)}
+/* The items are the thing people actually scan, so they are set at reading
+   size rather than caption size — 15.5px was a footnote under a 44px
+   heading. With the dash gone they sit flush; the indent went with it. */
+/* Size inherits the default; the COLOUR is restated. .on-white sets its
+   own `color`, so anything relying on inheritance picks up that solid
+   near-black instead of the prose tone — --text-2 is the same token in
+   both grounds and inverts with them. */
+.incl li{color:var(--text-2); max-width:46ch}
+@media (max-width:720px){
+  .incl{grid-template-columns:minmax(0,1fr); gap:clamp(24px,5vw,34px)}
 }
 
 /* numbered fact list */
-.facts{list-style:none; margin:0; padding:0; border-top:1px solid var(--rule-hard)}
-.facts li{
-  display:grid; grid-template-columns:52px minmax(0,1fr); gap:18px;
-  padding:16px 0; border-bottom:1px solid var(--rule);
+/* A plain bulleted list. It used to be a two-column grid — a 52px column
+   of display-face numerals against a hairline-separated row per item —
+   which is a table pretending to be a list: the numbers carried no
+   meaning (nothing refers to "rule 03") and the rules made five short
+   sentences look like a specification. Real <li> markers now, so the
+   list is a list to a screen reader as well as to the eye. */
+/* A plain bulleted list. It used to be a two-column grid — a 52px column
+   of display-face numerals against a hairline-separated row per item —
+   which is a table pretending to be a list: the numbers carried no
+   meaning (nothing refers to "rule 03") and the rules made five short
+   sentences look like a specification. Real <li> markers now, so it is a
+   list to a screen reader as well as to the eye.
+
+   NOT display:grid on the <ul>, however tempting for the gap. A grid
+   container blockifies its children, which drops display:list-item and
+   takes the markers with it. Margins do the spacing instead. */
+.facts{
+  list-style:disc; margin:0; padding:0 0 0 1.15em;
 }
-.facts b{font-family:var(--display); font-weight:400; color:var(--orange-on); font-size:42px; line-height:.546; letter-spacing:.03em}
-.facts span{color:var(--text-2); font-size:15.5px}
-.band--ink .facts{border-top-color:rgba(255,255,255,.3)}
-.band--ink .facts li{border-bottom-color:rgba(255,255,255,.16)}
-.band--ink .facts span{color:rgba(255,255,255,.68)}
-.band--ink .facts b{color:var(--orange-lt)}
+.facts li{
+  color:var(--text-2); max-width:64ch;
+  margin:0 0 clamp(10px,1.1vw,14px);
+}
+.facts li:last-child{margin-bottom:0}
+.facts li::marker{color:var(--orange-on)}
+/* on the deep band the copy lifts a step, same as every other run there */
+.band--ink .facts li{color:rgba(255,255,255,.68)}
+.band--ink .facts li::marker{color:var(--orange-lt)}
 
 /* big stat — .stat and .stat__l went with the old metrics strip; only
    .stat__n survives, on the two charity blocks that still set a figure in
@@ -1503,122 +2134,86 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .stat__n{font-family:var(--display); font-size:clamp(101px,13vw,172px); line-height:.373; letter-spacing:.02em}
 
 /* ============================================================
-   THE LEDGER — the numbers section
-   Replaces a four-up of giant numerals over shouty uppercase labels.
-   That reads as a SaaS metrics strip: four equal tiles, four equal
-   numbers, captions in tracked-out caps that say nothing a number
-   didn't already say. Three moves fix it.
-
-   1. The labels are sentences, in the body face, sentence case. Every
-      one finishes the thought the number starts — "24k people have
-      crawled with us", not "24K / CRAWLERS". Nothing is tracked out.
-   2. The numbers sit ON a shared hairline with a notch under each,
-      like a printed scale, so the four read as one measured line
-      instead of four cards that happen to be adjacent.
-   3. The give is the payoff, not a fifth statistic: it breaks the grid,
-      takes the green, and gets a hand-drawn mark under it.
+   THE DROP — first-load curtain
+   A handful of tickets fall past the screen and the site is there.
+   Three rules keep it from being the thing everyone hates about
+   intros:
+     · it never blocks. The page is fully built and readable behind
+       it; the curtain is pointer-events:none the moment it starts
+       fading, and it removes itself on a timer that cannot hang.
+     · it runs ONCE per session (sessionStorage), so navigating the
+       site is not a series of curtains.
+     · prefers-reduced-motion and no-JS never see it at all.
    ============================================================ */
-.ledger{display:grid; gap:clamp(34px,4.4vw,60px); justify-items:start}
-.ledger__row{
-  list-style:none; margin:0; padding:0; width:100%;
-  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:clamp(20px,2.6vw,40px);
-  /* the shared rule the numbers stand on */
-  border-top:1px solid var(--rule);
+.drop{
+  position:fixed; inset:0; z-index:200;
+  background:var(--ink-deep);
+  overflow:hidden;
+  transition:opacity .5s var(--quart);
 }
-.ledger__item{
+.drop[data-done]{opacity:0; pointer-events:none}
+.drop__t{
+  position:absolute; top:0; left:0;
+  width:var(--w); will-change:transform;
+  animation:bss-drop var(--dur) cubic-bezier(.42,0,.72,1) var(--delay) forwards;
+  transform:translate3d(var(--x),-140%,0) rotate(var(--r0));
+}
+.drop__t svg{display:block; width:100%; height:auto}
+@keyframes bss-drop{
+  from{ transform:translate3d(var(--x),-140%,0) rotate(var(--r0)) }
+  to  { transform:translate3d(calc(var(--x) + var(--drift)),108vh,0) rotate(var(--r1)) }
+}
+/* the mark sits over the fall so the load has a subject, not just debris */
+.drop__mark{
+  position:absolute; inset:0; display:grid; place-items:center;
+  color:var(--ink); pointer-events:none;
+}
+.drop__logo{width:clamp(148px,20vw,248px); opacity:.92}
+
+/* ============================================================
+   THE WASH
+   A colour that arrives at one edge and is gone by the middle,
+   between two hairlines of the same ink. It started as a one-off on
+   the "ours" row of the listing and turned out to be the most useful
+   thing on the page: it marks a block as belonging to an event
+   without boxing it, without a fill that fights the photography, and
+   without another border.
+
+   One component, three inks. --wash sets the channel triplet so every
+   stop can carry its own alpha; --wash-from and --wash-to move the
+   fade so a wash can enter from the left, the right, or the top.
+   ============================================================ */
+.wash{
   position:relative;
-  padding-top:clamp(18px,2.2vw,28px);
-  display:grid; gap:clamp(6px,.8vw,10px); align-content:start;
+  --wash:255,77,20;
+  background-image:linear-gradient(var(--wash-angle,90deg),
+    rgba(var(--wash),.13) 0%, rgba(var(--wash),.05) 42%, rgba(var(--wash),0) 78%);
 }
-/* the notch — a scale mark on the rule above each number */
-.ledger__item::before{
-  content:""; position:absolute; top:-1px; left:0; width:clamp(26px,3vw,44px);
-  border-top:3px solid var(--orange);
+/* Hairlines top and bottom are not optional — they are what stops the fade
+   ending in a soft edge and reading as a smudge. Part of the component. */
+.wash{
+  border-top:1px solid rgba(var(--wash),.55);
+  border-bottom:1px solid rgba(var(--wash),.55);
 }
-.ledger__n{
-  font-family:var(--display); font-weight:400;
-  font-size:clamp(58px,7.4vw,116px); line-height:.72; letter-spacing:.02em;
-  font-variant-numeric:tabular-nums;   /* stops the count-up jittering */
-  color:var(--ink);
+.wash--orange{--wash:255,77,20}
+.wash--green {--wash:0,194,78}
+.wash--red   {--wash:232,32,42}
+/* enters from the right instead — for blocks whose content sits left */
+.wash--rtl{--wash-angle:270deg}
+/* The vertical variant is gone. It was used twice and both times it read
+   as a big tinted rectangle with a hard edge across the page rather than
+   as a wash — a pale mint block behind the charity figure, and a muddy
+   brown one behind the price stubs. The horizontal fade between two
+   hairlines is the treatment that works, so it is the only one. */
+/* Bleeds past the column edge and pays the padding back, so the colour
+   runs to where the eye reads the margin rather than stopping on the text
+   block. Lifted off .listing__row--ours, which is where this started. */
+.wash--bleed{
+  margin-inline:calc(-1 * clamp(14px,2vw,32px));
+  padding-inline:clamp(14px,2vw,32px);
 }
-.ledger__l{
-  font:400 clamp(13px,1.05vw,15px)/1.45 var(--body);
-  letter-spacing:0; text-transform:none; color:var(--text-2);
-  max-width:20ch;
-}
-@media (max-width:820px){
-  .ledger__row{grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(22px,4vw,34px)}
-}
-@media (max-width:430px){
-  .ledger__row{grid-template-columns:minmax(0,1fr)}
-  .ledger__l{max-width:none}
-}
-
-/* ── the give ───────────────────────────────────────────────── */
-.ledger__payoff{
-  display:grid; gap:clamp(14px,1.8vw,24px); width:100%;
-  grid-template-columns:minmax(0,auto) minmax(0,1fr);
-  align-items:end; column-gap:clamp(28px,4vw,64px);
-}
-@media (max-width:820px){
-  .ledger__payoff{grid-template-columns:minmax(0,1fr); align-items:start}
-}
-.ledger__give{display:grid; gap:6px; margin:0; justify-items:start; position:relative}
-.ledger__amt{
-  font-family:var(--display); font-weight:400;
-  font-size:clamp(80px,10.5vw,168px); line-height:.72; letter-spacing:.02em;
-  font-variant-numeric:tabular-nums;
-  /* the one green on the page: the money that leaves */
-  color:var(--green);
-}
-.ledger__give .ledger__l{max-width:26ch}
-.ledger .lede{max-width:44ch; margin:0}
-
-/* ── MOTION ─────────────────────────────────────────────────────
-   Three things the rest of the site does not do, so this section
-   feels like an event rather than another fade-and-rise.
-
-   · the numerals WIPE UP from the baseline, like ink meeting paper,
-     instead of fading. clip-path only — stays on the compositor.
-   · the notch above each number DRAWS OUT from the left.
-   The count-up itself is in js/bss.js. */
-@keyframes bss-ink-rise{
-  from{ clip-path:inset(100% 0 0 0); transform:translate3d(0,.12em,0) }
-  to  { clip-path:inset(-35% 0 -20% 0); transform:none }
-}
-@keyframes bss-notch{ from{ transform:scaleX(0) } to{ transform:scaleX(1) } }
-
-.has-js .ledger__n,
-.has-js .ledger__amt{ clip-path:inset(100% 0 0 0) }
-.has-js .ledger__item::before{ transform:scaleX(0); transform-origin:left center }
-
-.ledger.is-in .ledger__n,
-.ledger.is-in .ledger__amt{
-  animation:bss-ink-rise .78s var(--quart) both;
-}
-.ledger.is-in .ledger__item::before{
-  animation:bss-notch .5s var(--quart) both;
-}
-
-/* stagger along the row, then the payoff last */
-.ledger.is-in .ledger__item:nth-child(1) .ledger__n{animation-delay:.02s}
-.ledger.is-in .ledger__item:nth-child(2) .ledger__n{animation-delay:.10s}
-.ledger.is-in .ledger__item:nth-child(3) .ledger__n{animation-delay:.18s}
-.ledger.is-in .ledger__item:nth-child(4) .ledger__n{animation-delay:.26s}
-.ledger.is-in .ledger__item:nth-child(1)::before{animation-delay:0s}
-.ledger.is-in .ledger__item:nth-child(2)::before{animation-delay:.08s}
-.ledger.is-in .ledger__item:nth-child(3)::before{animation-delay:.16s}
-.ledger.is-in .ledger__item:nth-child(4)::before{animation-delay:.24s}
-.ledger.is-in .ledger__amt{animation-delay:.34s}
-
-@media (prefers-reduced-motion: reduce){
-  .has-js .ledger__n,
-  .has-js .ledger__amt{clip-path:none}
-  .has-js .ledger__item::before{transform:none}
-  .ledger.is-in .ledger__n,.ledger.is-in .ledger__amt,
-  .ledger.is-in .ledger__item::before{animation:none}
-}
+/* vertical room, for washes on a content block rather than a table row */
+.wash--pad{padding-block:clamp(20px,2.6vw,38px)}
 
 /* ============================================================
    THE LISTING — what else is on this month
@@ -1688,13 +2283,12 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .listing__act{justify-self:end; align-self:center}
 
 /* ours: bleeds out of the column and takes the accent */
-.listing__row--ours{
-  margin-inline:calc(-1 * clamp(14px,2vw,30px));
-  padding-inline:clamp(14px,2vw,30px);
-  background:linear-gradient(90deg,
-    rgba(255,77,20,.13) 0%, rgba(255,77,20,.05) 42%, rgba(255,77,20,0) 78%);
-}
-.listing__row--ours .listing__day{color:var(--orange)}
+
+/* --orange-on, not --orange. This row now carries an orange wash, which
+   tints the white paper under the numeral to #f9e2d9 and drops --orange
+   from 3.12:1 to 2.67 — under the 3.0 floor for large text. --orange-on
+   resolves to --orange-d inside .on-white and measures 4.6. */
+.listing__row--ours .listing__day{color:var(--orange-on)}
 .listing__row--ours .listing__name{color:var(--text)}
 .listing__row--ours::after{transform:scaleX(1); opacity:.55}
 
@@ -1708,32 +2302,30 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 
 /* ============================================================
    PRICE STUBS
-   Two bordered boxes of equal weight asked the reader to compare
-   two things that are not equal — one of them is the recommendation.
-   The border is gone (paper tone carries the surface), the grid is
-   asymmetric, and the pick sits lower and larger so the choice is
-   made by composition rather than by a "Save 20%" chip alone.
+   White paper torn out and laid on the page. They were dark panels
+   with a border, which is the card grid the art direction keeps
+   rejecting; the site already has a paper register (the polaroid,
+   the calendar sheet, the white bands) and this belongs to it.
+
+   .on-white rides along in the markup, so every token inside flips
+   and the type, the chip and the rules all take their dark values
+   without a single override here. Same swap the calendar uses.
    ============================================================ */
 .stubs{
   display:grid; grid-template-columns:1fr 1.18fr;
-  gap:clamp(16px,2.2vw,30px); align-items:end;
+  gap:clamp(16px,2.4vw,34px); align-items:end;
 }
 .stub{
-  position:relative; background:var(--paper-2);
-  padding:clamp(22px,2.8vw,34px) clamp(18px,2.4vw,30px) clamp(24px,3vw,36px);
-  display:grid; gap:clamp(10px,1.2vw,16px); align-content:start;
+  position:relative; display:block; text-decoration:none;
+  background:var(--paper); color:var(--text);
+  padding:clamp(26px,3vw,38px) clamp(22px,2.6vw,32px) clamp(28px,3.2vw,40px);
+  /* Torn on all four edges. A deterministic polygon rather than an image:
+     it scales with the card, costs no request, and never tiles visibly.
+     Point density is split between the long and short edges so the teeth
+     stay about the same size on a card of this proportion. */
+  clip-path:polygon(0.00% 1.37%, 3.85% 0.00%, 7.69% 0.18%, 11.54% 0.69%, 15.38% 0.00%, 19.23% 0.08%, 23.08% 0.57%, 26.92% 1.19%, 30.77% 0.00%, 34.62% 1.20%, 38.46% 0.90%, 42.31% 1.31%, 46.15% 1.61%, 50.00% 0.80%, 53.85% 1.45%, 57.69% 1.55%, 61.54% 0.42%, 65.38% 0.46%, 69.23% 0.31%, 73.08% 0.65%, 76.92% 0.81%, 80.77% 0.26%, 84.62% 0.69%, 88.46% 1.35%, 92.31% 1.34%, 96.15% 0.31%, 100.00% 0.00%, 100.00% 4.55%, 99.34% 9.09%, 98.51% 13.64%, 100.00% 18.18%, 99.72% 22.73%, 99.34% 27.27%, 99.97% 31.82%, 98.72% 36.36%, 100.00% 40.91%, 99.48% 45.45%, 99.59% 50.00%, 100.00% 54.55%, 100.00% 59.09%, 100.00% 63.64%, 98.38% 68.18%, 99.46% 72.73%, 99.47% 77.27%, 98.24% 81.82%, 100.00% 86.36%, 100.00% 90.91%, 98.99% 95.45%, 100.00% 98.55%, 96.15% 98.76%, 92.31% 99.08%, 88.46% 98.88%, 84.62% 98.59%, 80.77% 99.34%, 76.92% 100.00%, 73.08% 99.99%, 69.23% 100.00%, 65.38% 99.66%, 61.54% 98.62%, 57.69% 100.00%, 53.85% 99.72%, 50.00% 99.56%, 46.15% 98.60%, 42.31% 99.36%, 38.46% 99.03%, 34.62% 99.92%, 30.77% 98.73%, 26.92% 98.87%, 23.08% 100.00%, 19.23% 98.45%, 15.38% 99.30%, 11.54% 99.22%, 7.69% 99.34%, 3.85% 99.24%, 0.85% 100.00%, 1.56% 95.45%, 0.53% 90.91%, 0.04% 86.36%, 1.46% 81.82%, 0.00% 77.27%, 1.78% 72.73%, 1.28% 68.18%, 0.99% 63.64%, 0.53% 59.09%, 0.00% 54.55%, 0.27% 50.00%, 0.32% 45.45%, 1.53% 40.91%, 1.47% 36.36%, 1.05% 31.82%, 1.36% 27.27%, 0.00% 22.73%, 1.63% 18.18%, 0.78% 13.64%, 1.43% 9.09%, 0.19% 4.55%);
   transform:translate3d(0,var(--ty,0px),0);
-  transition:transform .34s var(--ease), background .34s var(--quart);
-}
-/* halftone along the top edge — the same print texture the photos and
-   the calendar use, so the stub reads as cut from that stock */
-.stub::before{
-  content:""; position:absolute; left:0; right:0; top:0; height:clamp(20px,2.4vw,30px);
-  background-image:radial-gradient(rgba(17,17,16,.34) 1.3px, transparent 1.4px);
-  background-size:7px 7px;
-  -webkit-mask-image:linear-gradient(180deg,#000,transparent);
-  mask-image:linear-gradient(180deg,#000,transparent);
-  pointer-events:none; opacity:.5;
+  transition:transform .34s var(--ease);
 }
 .stub__tier{font:500 11px/1 var(--body); letter-spacing:.2em;
   text-transform:uppercase; color:var(--text-3); margin:0}
@@ -1741,26 +2333,32 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .stub__amt{
   font-family:var(--display); font-weight:400;
   font-size:clamp(76px,10.4vw,142px); line-height:.38; letter-spacing:.02em;
-  margin:clamp(6px,1vw,12px) 0 0;
-  /* the dollar sign hangs into the padding — optical alignment, so the
-     numeral itself starts on the column edge rather than the currency */
-  margin-left:-.06em;
+  margin:clamp(10px,1.4vw,16px) 0 0 -.06em;   /* the $ hangs into the padding */
+  color:var(--ink);
 }
 .stub__amt sup{font-size:.36em; vertical-align:.9em; letter-spacing:0; margin-right:.04em}
 .stub__ea{font:500 11px/1 var(--body); letter-spacing:.18em;
   text-transform:uppercase; color:var(--text-3); margin-left:.5em; vertical-align:.42em}
-.stub__note{font:400 15px/1.5 var(--body); color:var(--text-2); margin:0}
-.stub .ticket{margin-top:clamp(6px,1vw,12px)}
+.stub__note{font:400 15px/1.5 var(--body); color:var(--text-2); margin:clamp(10px,1.2vw,16px) 0 0}
+.stub .ticket{margin-top:clamp(14px,1.8vw,22px); pointer-events:none}
 
-/* the recommendation: larger type, a warmer sheet, and a rule of accent
-   along the top edge instead of a box around everything */
-.stub--pick{background:var(--paper-3); padding-top:calc(clamp(22px,2.8vw,34px) + 6px)}
-.stub--pick::after{
-  content:""; position:absolute; left:0; right:0; top:0; height:3px;
-  background:var(--orange);
-}
+/* the recommendation is larger and sits lower; the accent is a torn strip
+   of colour across the head rather than a rule on a box */
 .stub--pick .stub__amt{font-size:clamp(84px,11.6vw,158px)}
-@media (hover:hover){ .stub:hover{--ty:-4px} }
+.stub--pick::before{
+  content:""; position:absolute; left:0; right:0; top:0;
+  height:clamp(7px,.8vw,10px); background:var(--orange);
+}
+
+/* ONE hover for the whole card. The ticket used to be its own link inside
+   the card, so the card lifted and then the ticket tilted separately as
+   the cursor crossed it — two animations for one target. The ticket is now
+   inert markup (pointer-events:none above) and the card drives both. */
+@media (hover:hover){
+  .stub:hover{--ty:-5px}
+  .stub:hover .ticket{--rot:-3.4deg; --ty:-3px}
+}
+.stub:focus-visible{outline:3px solid var(--orange); outline-offset:4px}
 
 @media (max-width:720px){
   .stubs{grid-template-columns:minmax(0,1fr); align-items:stretch}
@@ -1781,15 +2379,6 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .sheet .kicker,.sheet .tiny{color:rgba(17,17,16,.62)}
 .sheet .scrawl{color:var(--orange-d)}
 
-/* month switcher, sitting on the sheet: black buttons on white */
-.sheet .tabs{border-bottom-color:rgba(17,17,16,.26)}
-.sheet .tabs a{border-color:rgba(17,17,16,.3); color:rgba(17,17,16,.66)}
-.sheet .tabs a:hover{border-color:var(--on-accent); color:var(--on-accent)}
-.sheet .tabs a.is-active{
-  background:var(--on-accent); border-color:var(--on-accent); color:var(--ink);
-}
-.sheet .tabs a.is-soon:hover{border-color:rgba(17,17,16,.3); color:rgba(17,17,16,.66)}
-
 .cal{width:100%; border-collapse:collapse; table-layout:fixed}
 .cal th{
   font:500 10px/1 var(--body); text-transform:uppercase; letter-spacing:.19em;
@@ -1807,10 +2396,10 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 }
 .cal .evt em{display:block; font-style:normal; color:var(--text-3); letter-spacing:.13em; font-size:9.5px; margin-top:2px}
 .cal .evt--ours{color:var(--orange); font-weight:700}
-/* the hand-drawn "must go" ring */
+/* the hand-drawn "must go" ring — other people's events only */
 .cal .must{position:absolute; left:2%; top:6%; width:96%; height:88%; pointer-events:none; overflow:visible}
 .cal .must path{fill:none; stroke:var(--ink); stroke-width:2.4; stroke-linecap:round; opacity:.85}
-.cal td.ours .must path{stroke:var(--orange); stroke-width:3.2; opacity:1}
+
 
 @media (max-width:900px){
   /* the venue line will not fit in a narrow cell — the name still does,
@@ -1826,43 +2415,91 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 /* the calendar also runs on the dark band on the homepage */
 .band--ink .cal th{color:rgba(255,255,255,.62)}
 .band--ink .cal td{border-top-color:rgba(255,255,255,.2)}
-.band--ink .cal .dnum{color:rgba(255,255,255,.55)}
-.band--ink .cal td.has .dnum{color:var(--ink)}
-.band--ink .cal .evt{color:var(--ink)}
-.band--ink .cal .evt em{color:rgba(255,255,255,.6)}
-.band--ink .cal .evt--ours{color:var(--orange-lt)}
+.band--ink .cal td:not(.ours) .dnum{color:rgba(255,255,255,.55)}
+.band--ink .cal td.has:not(.ours) .dnum{color:var(--ink)}
+.band--ink .cal td:not(.ours) .evt{color:var(--ink)}
+.band--ink .cal td:not(.ours) .evt em{color:rgba(255,255,255,.6)}
 .band--ink .cal .must path{stroke:rgba(255,255,255,.8)}
-.band--ink .cal td.ours .must path{stroke:var(--orange-lt)}
 
 /* Calendar internals on the white sheet. These MUST stay below the
    `.band--ink .cal *` rules above: the homepage calendar sits inside a
    .band--ink section, and at equal specificity source order decides. The
-   doubled `.sheet.sheet` also lifts them to (0,3,0) so a tie is impossible
-   if anything is reordered later. */
+   doubled `.sheet.sheet` also lifts them so a tie is impossible if
+   anything is reordered later.
+
+   Every one of them is scoped `td:not(.ours)`. Both blocks THEME the
+   calendar for the ground it is sitting on, and our own date is not
+   themed — it is a solid orange block with near-black type wherever it
+   appears. Excluding it here is the fix; out-specifying it from the
+   .ours rules below is not, because `.sheet.sheet .cal .dnum` is (0,4,0)
+   and beat `.cal td.ours .dnum` at (0,3,1) — which is exactly how the
+   day numeral ended up at 2.32:1 on the orange. */
 .sheet.sheet .cal th{color:rgba(17,17,16,.6)}
 .sheet.sheet .cal td{border-top-color:rgba(17,17,16,.2)}
-.sheet.sheet .cal .dnum{color:rgba(17,17,16,.45)}
-.sheet.sheet .cal td.has .dnum{color:var(--on-accent)}
-.sheet.sheet .cal .evt{color:var(--on-accent)}
-.sheet.sheet .cal .evt em{color:rgba(17,17,16,.58)}
-.sheet.sheet .cal .evt--ours{color:var(--orange-d)}
+.sheet.sheet .cal td:not(.ours) .dnum{color:rgba(17,17,16,.45)}
+.sheet.sheet .cal td.has:not(.ours) .dnum{color:var(--on-accent)}
+.sheet.sheet .cal td:not(.ours) .evt{color:var(--on-accent)}
+.sheet.sheet .cal td:not(.ours) .evt em{color:rgba(17,17,16,.58)}
 .sheet.sheet .cal .must path{stroke:rgba(17,17,16,.8)}
-.sheet.sheet .cal td.ours .must path{stroke:var(--orange-d)}
+/* ── OUR DATE ────────────────────────────────────────────────────────
+   The one square on the calendar that is ours gets painted rather than
+   annotated. A ring said "worth going to", which is the right note for
+   somebody else's show and much too polite for the only event on the
+   page that we run.
 
+   The paint is a pseudo-element, not a background on the <td>: a table
+   cell cannot be rotated (transform on a table-cell is undefined in
+   practice and collapses the row), and the ~1.4deg tilt is what makes
+   it read as something laid ON the grid rather than a filled table
+   cell. Same reason the polaroids tilt.
 
-/* ============================================================
-   TABS
-   ============================================================ */
-.tabs{display:flex; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--rule-hard); padding-bottom:14px}
-.tabs a{
-  font:500 11px/1 var(--body); text-transform:uppercase; letter-spacing:.15em;
-  text-decoration:none; padding:10px 14px; border:1px solid var(--rule); color:var(--text-3);
-  transition:all .25s var(--quart);
+   TYPE ON ORANGE IS NEAR-BLACK, ALWAYS. --orange is mid-luminance:
+   white on it measures 3.3:1 and fails, --on-accent measures 5.7:1.
+   This is the site-wide rule, and this cell is not an exception. */
+.cal td.ours{overflow:visible}
+.cal td.ours::before{
+  content:""; position:absolute; inset:4px 3px;
+  background:var(--orange); transform:rotate(-1.4deg); z-index:0;
 }
-.tabs a:hover{border-color:var(--ink); color:var(--ink)}
-.tabs a.is-active{background:var(--ink); border-color:var(--ink); color:var(--on-accent); font-weight:700}
-.tabs a.is-soon{border-style:dashed; cursor:default}
-.tabs a.is-soon:hover{border-color:var(--rule); color:var(--text-3)}
+/* the same 6px screen the rest of the print carries, so the block is a
+   printed field rather than a flat swatch */
+.cal td.ours::after{
+  content:""; position:absolute; inset:4px 3px; z-index:1; pointer-events:none;
+  background-image:radial-gradient(rgba(17,17,16,.30) 1.3px, transparent 1.4px);
+  background-size:6px 6px; mix-blend-mode:multiply; opacity:.55;
+  transform:rotate(-1.4deg);
+}
+.cal td.ours .dnum,
+.cal td.ours .evt{position:relative; z-index:2}
+.cal td.ours .dnum{
+  color:var(--on-accent); font-size:clamp(38px,4.4vw,52px); line-height:.42;
+}
+/* The name goes into the handwriting. It is the one line on the
+   calendar that is us talking rather than us listing. */
+.cal td.ours .evt--ours{
+  font-family:var(--script); font-weight:400; text-transform:none;
+  letter-spacing:0; font-size:clamp(19px,2.1vw,26px); line-height:1.02;
+  color:var(--on-accent); margin-top:10px;
+}
+.cal td.ours .evt em{
+  color:rgba(17,17,16,.86); letter-spacing:.11em; font-size:9.5px;
+  margin-top:5px; text-transform:uppercase; font-family:var(--body);
+}
+.cal td.ours .evt--ours:hover{color:var(--on-accent); text-decoration:underline}
+
+/* The doodled arrows. Positioned against the cell and allowed to hang
+   outside it — see the note on CALARROWS in bss.js. */
+.cal__arrow{position:absolute; z-index:3; pointer-events:none; overflow:visible}
+.cal__arrow path{
+  fill:none; stroke:var(--on-accent); stroke-width:3.4;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.cal__arrow--in{left:-46%; top:6%; width:58%; height:auto}
+.cal__arrow--down{right:9%; top:-30%; width:20%; height:auto}
+/* Below 760px a cell is ~48px wide and the arrows are bigger than the
+   thing they point at. The paint carries it on its own down there. */
+@media (max-width:760px){ .cal__arrow{display:none} }
+
 
 /* ============================================================
    FORM BITS
@@ -1912,6 +2549,156 @@ textarea.field{min-height:140px; line-height:1.55; resize:vertical}
 .ftr__signup .h4{margin:0}
 .ftr__signup .capture{margin-top:clamp(14px,1.8vw,22px); justify-content:center; width:100%; max-width:520px}
 
+/* ── THE SIGN-OFF ────────────────────────────────────────────────────
+   Last thing on every page, and the one place the logo has nothing to
+   compete with — so it runs at wordmark scale rather than the chrome
+   scale it takes in the header, and the tagline sits under it in the
+   script face the way a signature sits under a printed mark.
+
+   Deliberately no rule above it: the signup already closes with one,
+   and a second hairline 40px later reads as a stray table border. The
+   space does the separating instead. */
+.ftr__signoff{
+  display:grid; justify-items:center; gap:clamp(10px,1.4vw,16px);
+  padding:clamp(34px,4.4vw,58px) 0 clamp(30px,3.6vw,46px);
+  border-top:1px solid rgba(255,255,255,.12);
+}
+.ftr__logo{width:clamp(184px,26vw,272px); color:var(--ink); opacity:.94}
+.ftr__tag{
+  font-family:var(--script); font-weight:400;
+  font-size:clamp(21px,2.6vw,30px); line-height:1.2;
+  color:var(--orange-on); margin:0; text-align:center;
+}
+/* ============================================================
+   THE PRESS
+   Hover said "you can act on this"; nothing said "it happened".
+   Every interactive object on the site had a hover and only two
+   had a :active, so a click landed with no acknowledgement and
+   the whole thing felt soft.
+
+   One gesture, everywhere: the object gives. It drops whatever
+   lift the hover gave it and compresses a hair. Written through
+   the same --tx/--ty/--rot/--sc variables the reveal composes,
+   so it survives inside a [data-reveal] group — a plain
+   `transform` here would be beaten by the reveal's own rule at
+   (0,3,0), which is the trap that silently killed the polaroid
+   tilts and the in-group ticket hover before.
+
+   Fast on the way in, slower back out: --press-dur is read by
+   each component's own transition so the give is instant and the
+   release settles. That asymmetry is most of what "snappy" is.
+   ============================================================ */
+.btn:active        { --ty:0px; --sc:.965 }
+a.card:active      { --tx:0px; --ty:0px; --sc:.985; box-shadow:2px 2px 0 var(--ink) }
+.taped:active      { --ty:-2px; --sc:.99 }
+.stub:active       { --ty:-1px; --sc:.988 }
+.event:active      { --sc:.988 }
+.listing__row:active { --tx:4px }
+.nav a:active,
+.more__menu a:active { --sc:.96 }
+/* .ticket keeps its own, richer press — it is the signature object and
+   already lands flat from its tilt. This only adds the compression. */
+.ticket:active     { --rot:-1.4deg; --ty:0px; --sc:.975 }
+/* The press has to beat the hover, and both are (0,2,0) at most, so
+   source order does it — these all sit after their hover rules. */
+.btn,a.card,.taped,.stub,.event,.ticket{ --press-dur:.09s }
+.btn:active,a.card:active,.taped:active,.stub:active,
+.event:active,.ticket:active{ transition-duration:var(--press-dur) }
+
+/* ============================================================
+   BODY LINKS
+   Inline links inside running copy were carrying colour alone,
+   which is both the weakest affordance available and a WCAG
+   1.4.1 problem — colour cannot be the only signal. They get a
+   drawn rule that wipes in from the left on hover, which is also
+   the one hover on the site that reads as writing rather than as
+   a UI state.
+   ============================================================ */
+.body a, .lede a, .small a, .ftr__signup a{
+  position:relative; text-decoration:none;
+  background-image:linear-gradient(currentColor,currentColor);
+  background-repeat:no-repeat;
+  background-position:0 100%;
+  background-size:100% 1px;
+  padding-bottom:.06em;
+  transition:background-size .32s var(--ease), color .2s var(--quart);
+}
+@media (hover:hover){
+  .body a:hover, .lede a:hover, .small a:hover, .ftr__signup a:hover{
+    background-size:100% 2px;
+  }
+}
+.body a:focus-visible, .lede a:focus-visible,
+.small a:focus-visible, .ftr__signup a:focus-visible{background-size:100% 2px}
+/* the footer's own links already sit on their own line and take the
+   accent on hover; keep that and let the rule follow the colour */
+.ftr a:hover{background-size:100% 2px}
+
+/* ============================================================
+   THE CURSOR
+   One drawn object per page — ghost, clover, snowflake, or the
+   default sparkle — turning slowly, opening up on anything you
+   can act on. Built in bss.js; everything visual is here.
+
+   THREE NESTED ELEMENTS, ONE JOB EACH. .cur is moved by the rAF
+   loop, .cur__scale takes the hover growth, .cur__spin takes the
+   rotation. They all write `transform`, and a CSS animation beats
+   a plain declaration on the same element — put two of these jobs
+   on one node and the hover silently stops working. This is the
+   same trap the polaroid tilts hit.
+   ============================================================ */
+.cur{
+  position:fixed; left:0; top:0; z-index:210;   /* over .drop (200) */
+  width:30px; height:30px; margin:-15px 0 0 -15px;
+  pointer-events:none;                          /* never eat a click */
+  opacity:0; transition:opacity .2s var(--quart);
+  will-change:transform;
+  color:var(--cur-c, var(--orange));
+}
+.cur.is-on{opacity:1}
+/* Over a text field the drawn cursor gets out of the way and the real
+   I-beam comes back — see the .has-cur rules below. A missing caret is
+   a genuine cost; a missing doodle is not. */
+.cur.is-field{opacity:0}
+.cur__scale,.cur__spin{display:block; width:100%; height:100%}
+.cur__scale{transition:transform .3s var(--ease)}
+.cur__spin{animation:cur-spin var(--cur-dur,14s) linear infinite}
+.cur svg{
+  display:block; width:100%; height:100%;
+  /* reads on both grounds: the fill carries it on the dark pages, the
+     shadow gives it an edge inside the white bands */
+  filter:drop-shadow(0 1px 2px rgba(6,6,5,.5)) drop-shadow(0 0 1px rgba(6,6,5,.5));
+}
+/* the open-up. Faster spin AND bigger, which is the whole gesture */
+.cur.is-hot{--cur-dur:2.1s}
+.cur.is-hot .cur__scale{transform:scale(1.62)}
+@keyframes cur-spin{ to{ transform:rotate(360deg) } }
+
+/* Per page. The cursor takes the event's own ink, so it belongs to the
+   page it is on rather than being one more thing in orange. */
+body[data-page="halloween"] .cur{--cur-c:var(--violet)}
+body[data-page="christmas"] .cur{--cur-c:var(--red)}
+body[data-page="shamrock"]  .cur{--cur-c:var(--green)}
+
+/* The native cursor is hidden ONLY once the drawn one is really on
+   screen — .has-cur is added on the first mousemove, not at boot. A
+   browser that never fires one keeps its arrow.
+   Fields keep theirs: `cursor:auto` here beats the inherited none. */
+@media (pointer: fine){
+  html.has-cur, html.has-cur *{cursor:none}
+  html.has-cur input,
+  html.has-cur textarea,
+  html.has-cur select{cursor:auto}
+}
+/* Reduced motion keeps the object and drops the movement: no spin, no
+   growth, and the follow snaps rather than glides (bss.js reads the same
+   query for the lerp). */
+@media (prefers-reduced-motion: reduce){
+  .cur__spin{animation:none}
+  .cur.is-hot .cur__scale{transform:none}
+}
+
+
 /* ============================================================
    MOTION — the global reduced-motion stop.
    The site now carries three deliberate effects (the entrance reveal,
@@ -1924,26 +2711,32 @@ textarea.field{min-height:140px; line-height:1.55; resize:vertical}
 }
 
 
-/* route map placeholder */
-.map{
-  background:var(--paper-2); border:1.5px solid var(--rule-hard); position:relative; overflow:hidden;
-  display:grid; place-items:center; min-height:260px;
-}
-.map::before{
-  content:""; position:absolute; inset:0;
-  background-image:linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px);
-  background-size:34px 34px; opacity:.55;
-}
-.map__line{position:absolute; left:8%; right:8%; top:52%; height:5px; background:var(--orange); transform:rotate(-4deg)}
-.map__cap{position:relative; z-index:2; font:500 10.5px/1.5 var(--body); text-transform:uppercase;
-  letter-spacing:.19em; color:var(--text-3); text-align:center; background:var(--paper-2); padding:8px 12px}
 
-/* route stop list */
-.stops{list-style:none; margin:0; padding:0; columns:2; column-gap:34px}
-@media (max-width:640px){ .stops{columns:1} }
-.stops li{
-  break-inside:avoid; display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px;
-  padding:11px 0; border-bottom:1px solid var(--rule); font-size:15px;
+/* Route stop list. Grid, not CSS columns: with the route map gone this
+   runs the full width of the shell, and multi-column would order the
+   stops down one side and back up the other — a numbered route has to
+   read 01, 02, 03 left to right. Grid also keeps every row on the same
+   baseline across columns, which columns cannot guarantee, and it does
+   not interact with the reveal's transform the way break-inside does. */
+.stops{
+  list-style:none; margin:0; padding:0;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:clamp(24px,3vw,44px);
+  border-top:1px solid var(--rule);
 }
+@media (max-width:900px){ .stops{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .stops{grid-template-columns:minmax(0,1fr)} }
+.stops li{
+  display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px;
+  align-items:baseline;
+  padding:13px 0; border-bottom:1px solid var(--rule); font-size:15px;
+}
+/* Both lists reserve a column for a leading numeral. Where the numeral is
+   gone the column has to go with it, or every row sits indented behind an
+   empty gutter. Written as :has() rather than a modifier class so the
+   markup stays plain and a numeral coming back needs no CSS change —
+   .listing still carries one on Happening Now, where it is a real date. */
+.listing__row:not(:has(.listing__day)){grid-template-columns:minmax(0,1fr) auto}
+.stops li:not(:has(b)){grid-template-columns:minmax(0,1fr)}
 .stops b{font-family:var(--display); font-weight:400; color:var(--orange-on); font-size:33px; line-height:.614; letter-spacing:.03em}
 .stops em{font-style:normal; color:var(--text-3); display:block; font-size:12.5px; letter-spacing:.04em}

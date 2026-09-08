@@ -4,10 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Happening Now — October 2026 in Milwaukee</title>
-<meta name="description" content="Two to four things a month worth leaving the house for in Milwaukee. Hand-picked, kept short.">
-<script src="js/gate.js?v=1788615671"></script>
-<link rel="stylesheet" href="css/fonts.css?v=1788615671">
-<link rel="stylesheet" href="css/bss.css?v=1788615671">
+<meta name="description" content="The things worth leaving the house for in Milwaukee this month. Hand-picked, kept short.">
+<script>/* Hide the reveal groups BEFORE first paint — see README, "The reveal flash".
+   Guarded twice: reduced motion never hides anything, and if bss.js has not
+   booted within 2.5s the class is pulled back off so a failed script can
+   never leave a page blank. */
+(function(d,w){var r=d.documentElement;
+if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+r.className+=(r.className?' ':'')+'has-js';
+w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+})(document,window);</script>
+<link rel="stylesheet" href="css/fonts.css?v=1788876527">
+<link rel="stylesheet" href="css/bss.css?v=1788876527">
 </head>
 <body data-page="happening">
 <div id="chrome-header"></div>
@@ -17,18 +25,11 @@
     <div class="shell">
       <div class="pagehead pagehead--slim">
         <h1 class="d3 fx">Happening <em class="scr">now</em></h1>
-        <p class="scrawl scrawl--orange">if it's circled, go.</p>
+        <p class="scrawl scrawl--orange">if it's orange, go.</p>
       </div>
 
       <div class="sheet" data-reveal>
-        <nav class="tabs" style="margin-bottom:clamp(18px,2.2vw,30px)">
-          <a href="#" class="is-active">October</a>
-          <a href="#">November</a>
-          <a href="#">December</a>
-          <a href="#">January</a>
-          <a href="#">February</a>
-          <a href="#">March</a>
-        </nav>
+        <p class="kicker" style="margin-bottom:14px" data-month-label>October 2026</p>
         <div data-calendar></div>
       </div>
     </div>
@@ -37,34 +38,7 @@
   <section class="band band--paper2">
     <div class="shell">
       <ol class="listing" data-reveal>
-        <li class="listing__row">
-          <span class="listing__day">03</span>
-          <div class="listing__body">
-            <p class="listing__when">Friday 10/03/26</p>
-            <h3 class="listing__name">Concert of the year</h3>
-            <p class="listing__where">The Rave · doors 7pm · 18+</p>
-          </div>
-          <div class="listing__act"><a class="btn btn--paper" href="#">Their tickets</a></div>
-        </li>
-        <li class="listing__row">
-          <span class="listing__day">17</span>
-          <div class="listing__body">
-            <p class="listing__when">Saturday 10/17/26</p>
-            <h3 class="listing__name">Festival name</h3>
-            <p class="listing__where">Third Ward · all day · free entry</p>
-          </div>
-          <div class="listing__act"><a class="btn btn--paper" href="#">Their site</a></div>
-        </li>
-        <li class="listing__row">
-          <span class="listing__day">24</span>
-          <div class="listing__body">
-            <p class="listing__when">Saturday 10/24/26</p>
-            <h3 class="listing__name">Big show</h3>
-            <p class="listing__where">Fiserv Forum · Deer District</p>
-          </div>
-          <div class="listing__act"><a class="btn btn--paper" href="#">Their tickets</a></div>
-        </li>
-        <li class="listing__row listing__row--ours">
+        <li class="listing__row listing__row--ours wash wash--orange wash--bleed">
           <span class="listing__day">31</span>
           <div class="listing__body">
             <span class="sticker sticker--flat" style="justify-self:start">Ours</span>
@@ -81,6 +55,13 @@
     </div>
   </section>
   <!-- ── THE RULE ────────────────────────────────────────── -->
+  <!-- The three category columns (Music / Campus / The calendar) came out
+       with the placeholder events they described. They promised coverage
+       of concerts, campus dates and the wider calendar, and there is now
+       exactly one thing on this page — copy describing a listings section
+       that does not exist yet reads as a broken promise rather than a
+       plan. The editorial line stays, because it is still true and it is
+       the reason the page is this short. -->
   <section class="band">
     <div class="shell">
       <div class="cols c-offset" data-reveal>
@@ -88,22 +69,14 @@
           <p class="scrawl scrawl--paper" style="max-width:15ch">nobody pays to be on this page</p>
         </div>
         <div class="stack stack--lg">
-          <h2 class="d3 fx" style="max-width:16ch">Four a month,<br>chosen by <em class="scr">us</em></h2>
-          <p class="lede" style="max-width:48ch">If we would not go ourselves, it does not go on the calendar. That is the entire editorial policy.</p>
-          <div class="cols c-3" data-reveal>
-            <div><p class="tiny" style="margin-bottom:10px">Music</p>
-              <p class="small">Concerts of the year. Major festivals. The shows that sell out in an hour.</p></div>
-            <div><p class="tiny" style="margin-bottom:10px">Campus</p>
-              <p class="small">National Marquette Day. Pantherfest. The Marquette senior crawl.</p></div>
-            <div><p class="tiny" style="margin-bottom:10px">The calendar</p>
-              <p class="small">Spring break. New Year's Eve. Our three.</p></div>
-          </div>
+          <h2 class="d3 fx" style="max-width:16ch">More coming <em class="scr">soon</em></h2>
+          <p class="lede" style="max-width:48ch">If we would not go ourselves, it does not go on the calendar. That is the entire editorial policy, and it is why this month is short.</p>
         </div>
       </div>
     </div>
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788615671"></script>
+<script src="js/bss.js?v=1788876527"></script>
 </body>
 </html>

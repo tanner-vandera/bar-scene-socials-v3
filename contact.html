@@ -5,46 +5,36 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Contact — Bar Scene Socials</title>
 <meta name="description" content="Talk to Bar Scene Socials — crawlers, bars and sponsors, press.">
-<script src="js/gate.js?v=1788615671"></script>
-<link rel="stylesheet" href="css/fonts.css?v=1788615671">
-<link rel="stylesheet" href="css/bss.css?v=1788615671">
+<script>/* Hide the reveal groups BEFORE first paint — see README, "The reveal flash".
+   Guarded twice: reduced motion never hides anything, and if bss.js has not
+   booted within 2.5s the class is pulled back off so a failed script can
+   never leave a page blank. */
+(function(d,w){var r=d.documentElement;
+if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+r.className+=(r.className?' ':'')+'has-js';
+w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+})(document,window);</script>
+<link rel="stylesheet" href="css/fonts.css?v=1788876527">
+<link rel="stylesheet" href="css/bss.css?v=1788876527">
 </head>
 <body data-page="contact">
 <div id="chrome-header"></div>
 <main>
+  <!-- One section, not two. The three numbered cards that used to sit
+       between the headline and the form (Crawlers / Bars & sponsors /
+       Press) are gone: they were a routing menu to three placeholder
+       addresses that never existed — hello@, partners@, press@ with no
+       domain on any of them — and the form's own "who you are" select
+       already does that job, for real. The form now opens the page. -->
   <section class="band band--paper2">
     <div class="shell">
       <div class="pagehead pagehead--slim">
         <h1 class="d3 fx">Contact</h1>
       </div>
 
-      <div class="cols c-3" data-reveal>
-        <div class="card card--pad">
-          <span class="secno">01</span>
-          <h3 class="h4" style="margin-top:12px">Crawlers</h3>
-          <p class="small" style="margin-top:8px">Lost your ticket, a question about the day, something went wrong.</p>
-          <p class="h4" style="margin-top:18px; color:var(--orange-on)">hello@</p>
-        </div>
-        <div class="card card--pad" style="border-width:2px; border-color:var(--orange-on)">
-          <span class="secno">02</span>
-          <h3 class="h4" style="margin-top:12px">Bars &amp; sponsors</h3>
-          <p class="small" style="margin-top:8px">Want on a route, want to sponsor, want to host the afterparty.</p>
-          <p class="h4" style="margin-top:18px; color:var(--orange-on)">partners@</p>
-        </div>
-        <div class="card card--pad">
-          <span class="secno">03</span>
-          <h3 class="h4" style="margin-top:12px">Press</h3>
-          <p class="small" style="margin-top:8px">Photos, numbers, a quote from someone who was there.</p>
-          <p class="h4" style="margin-top:18px; color:var(--orange-on)">press@</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="band">
-    <div class="shell">
       <div class="cols c-wide-left" data-reveal style="align-items:start">
         <form class="stack" onsubmit="return false">
-          <div class="cols c-2" data-reveal style="gap:14px">
+          <div class="cols c-2" style="gap:14px">
             <input class="field" type="text" placeholder="Your name" aria-label="Your name">
             <input class="field" type="email" placeholder="you@example.com" aria-label="Your email">
           </div>
@@ -63,20 +53,21 @@
           <div>
             <p class="scrawl" style="max-width:17ch">honestly, the DMs are faster</p>
           </div>
-          <div class="card card--pad">
+          <a class="card card--pad" href="https://www.instagram.com/barscenesocials/"
+             target="_blank" rel="noopener noreferrer">
             <h3 class="h4">Instagram</h3>
             <p class="small" style="margin-top:6px">@barscenesocials — posters, route drops, photos the morning after.</p>
-          </div>
-          <div class="card card--pad">
-            <h3 class="h4">TikTok</h3>
-            <p class="small" style="margin-top:6px">@barscenesocials — where most of you find us in the first place.</p>
-          </div>
+          </a>
+          <a class="card card--pad" href="mailto:barscenesocials@gmail.com">
+            <h3 class="h4">Email</h3>
+            <p class="small" style="margin-top:6px">barscenesocials@gmail.com — we read everything, and we answer.</p>
+          </a>
         </div>
       </div>
     </div>
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788615671"></script>
+<script src="js/bss.js?v=1788876527"></script>
 </body>
 </html>
