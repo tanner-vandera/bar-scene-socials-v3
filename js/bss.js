@@ -9,6 +9,10 @@
      mean hunting through the footer and the contact page separately. */
   var IG   = 'https://www.instagram.com/barscenesocials/';
   var MAIL = 'barscenesocials@gmail.com';
+  /* Ticketing is not on this site — every buy CTA hands off to TicketSignup,
+     which owns inventory, fees and the confirmation email. One constant so a
+     new event URL is a one-line change rather than a hunt through nine pages. */
+  var TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady';
 
   /* The three events sit in the desktop nav at wordmark size, in the
      display face — the closest thing the brand has to a per-event logo
@@ -327,7 +331,7 @@
         '<div class="more__menu">' + moreLinks + '</div></div>' +
       '</nav>' +
       '<div class="hdr__cta" style="flex:none">' +
-        '<a class="btn btn--white" href="tickets.html">Get tickets</a>' +
+        '<a class="btn btn--white" href="' + TIX + '" target="_blank" rel="noopener noreferrer">Get tickets</a>' +
       '</div>' +
       '<button class="burger" type="button" data-burger>Menu</button>' +
     '</div>' +
@@ -337,8 +341,9 @@
       '<span class="kicker">Menu</span>' +
       '<button class="btn" type="button" data-close>Close</button></div>' +
       drawerLinks +
-      '<a class="ticket ticket--flat" href="tickets.html" style="margin-top:26px" ' +
-        'data-ticket data-main="Get tickets" data-sub="Haunted Bar Hop · 10/31/26"></a>' +
+      '<a class="ticket ticket--flat" href="' + TIX + '" target="_blank" rel="noopener noreferrer" ' +
+        'style="margin-top:26px" data-ticket data-main="Get tickets" ' +
+        'data-sub="Haunted Bar Hop · 10/31/26"></a>' +
       '</div>';
   }
 
@@ -357,13 +362,15 @@
             '@barscenesocials</a> — Instagram<br>' +
           '<a href="mailto:' + MAIL + '">' + MAIL + '</a></p></div>' +
       '</div>' +
+      /* This was an email capture with nothing behind it — no list, no
+         endpoint, a form that swallowed the address and said nothing. The
+         announcements genuinely go out on Instagram first, so the block now
+         sends people to the channel that actually exists. */
       '<div class="ftr__signup">' +
         '<p class="h4">Know before everyone else</p>' +
-        '<p class="small">Two emails a year, both of them a date.</p>' +
-        '<form class="capture" onsubmit="return false">' +
-          '<input class="field" type="email" placeholder="you@example.com" aria-label="Email address">' +
-          '<button class="btn btn--red" type="submit">Notify me</button>' +
-        '</form>' +
+        '<p class="small">Dates, route drops and the morning-after photos land on Instagram first.</p>' +
+        '<a class="btn btn--orange" href="' + IG + '" target="_blank" rel="noopener noreferrer" ' +
+          'style="margin-top:clamp(14px,1.8vw,22px)">Follow @barscenesocials</a>' +
       '</div>' +
       /* The sign-off. The logo gets to be big down here — it is the last
          thing on every page and has nothing to compete with, which is the

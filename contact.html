@@ -14,60 +14,45 @@ if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return
 r.className+=(r.className?' ':'')+'has-js';
 w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
 })(document,window);</script>
-<link rel="stylesheet" href="css/fonts.css?v=1788876527">
-<link rel="stylesheet" href="css/bss.css?v=1788876527">
+<link rel="stylesheet" href="css/fonts.css?v=1788998982">
+<link rel="stylesheet" href="css/bss.css?v=1788998982">
 </head>
 <body data-page="contact">
 <div id="chrome-header"></div>
 <main>
-  <!-- One section, not two. The three numbered cards that used to sit
-       between the headline and the form (Crawlers / Bars & sponsors /
-       Press) are gone: they were a routing menu to three placeholder
-       addresses that never existed — hello@, partners@, press@ with no
-       domain on any of them — and the form's own "who you are" select
-       already does that job, for real. The form now opens the page. -->
+  <!-- Two ways in, and that is the whole page. The contact form that used
+       to open it had no endpoint behind it — a static site on Vercel has
+       nowhere to POST, so "Send it" cleared the fields and silently threw
+       the message away, which is worse than no form at all. It is gone.
+       (An earlier pass had already removed three numbered routing cards
+       above it for the same reason: they pointed at hello@ / partners@ /
+       press@ addresses that never existed.) -->
   <section class="band band--paper2">
     <div class="shell">
       <div class="pagehead pagehead--slim">
         <h1 class="d3 fx">Contact</h1>
       </div>
 
-      <div class="cols c-wide-left" data-reveal style="align-items:start">
-        <form class="stack" onsubmit="return false">
-          <div class="cols c-2" style="gap:14px">
-            <input class="field" type="text" placeholder="Your name" aria-label="Your name">
-            <input class="field" type="email" placeholder="you@example.com" aria-label="Your email">
-          </div>
-          <select class="field" aria-label="Who you are">
-            <option>I am a crawler</option>
-            <option>I run a bar</option>
-            <option>I am press</option>
-          </select>
-          <textarea class="field" placeholder="What's up?" aria-label="Message"></textarea>
-          <div class="row row--between">
-            <p class="small">We read everything. We answer within two working days.</p>
-            <button class="btn btn--orange" type="submit">Send it</button>
-          </div>
-        </form>
-        <div class="stack stack--lg">
-          <div>
-            <p class="scrawl" style="max-width:17ch">honestly, the DMs are faster</p>
-          </div>
-          <a class="card card--pad" href="https://www.instagram.com/barscenesocials/"
-             target="_blank" rel="noopener noreferrer">
-            <h3 class="h4">Instagram</h3>
-            <p class="small" style="margin-top:6px">@barscenesocials — posters, route drops, photos the morning after.</p>
-          </a>
-          <a class="card card--pad" href="mailto:barscenesocials@gmail.com">
-            <h3 class="h4">Email</h3>
-            <p class="small" style="margin-top:6px">barscenesocials@gmail.com — we read everything, and we answer.</p>
-          </a>
-        </div>
+      <div class="row row--between" style="align-items:baseline; margin-bottom:clamp(24px,3vw,42px)">
+        <p class="lede" style="max-width:30ch">Two ways in. A person reads both.</p>
+        <p class="scrawl" style="max-width:17ch">honestly, the DMs are faster</p>
+      </div>
+
+      <div class="cols c-2" data-reveal style="align-items:start">
+        <a class="card card--pad" href="https://www.instagram.com/barscenesocials/"
+           target="_blank" rel="noopener noreferrer">
+          <h3 class="h4">Instagram</h3>
+          <p class="small" style="margin-top:6px">@barscenesocials — posters, route drops, photos the morning after. The DMs are open and they are the fastest way to get us.</p>
+        </a>
+        <a class="card card--pad" href="mailto:barscenesocials@gmail.com">
+          <h3 class="h4">Email</h3>
+          <p class="small" style="margin-top:6px">barscenesocials@gmail.com — for bars, sponsors and press. We read everything and answer within two working days.</p>
+        </a>
       </div>
     </div>
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788876527"></script>
+<script src="js/bss.js?v=1788998982"></script>
 </body>
 </html>

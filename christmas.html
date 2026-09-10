@@ -14,8 +14,8 @@ if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return
 r.className+=(r.className?' ':'')+'has-js';
 w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
 })(document,window);</script>
-<link rel="stylesheet" href="css/fonts.css?v=1788876527">
-<link rel="stylesheet" href="css/bss.css?v=1788876527">
+<link rel="stylesheet" href="css/fonts.css?v=1788998982">
+<link rel="stylesheet" href="css/bss.css?v=1788998982">
 </head>
 <body data-page="christmas" class="has-hero">
 <div id="chrome-header"></div>
@@ -43,13 +43,15 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
       <div class="cols c-wide-left wash wash--red wash--rtl wash--bleed wash--pad" data-reveal style="align-items:center">
         <div class="stack">
           <h2 class="d2 fx" style="max-width:12ch">Stay up<br>to <em class="scr">date</em></h2>
-          <p class="lede" style="max-width:36ch">This one sells out on the list before it ever hits the site. Two emails a year, both of them a date.</p>
+          <p class="lede" style="max-width:36ch">This one sells out before it ever really hits the site. The date goes out on Instagram first, and that is the only warning you get.</p>
         </div>
-        <form class="stack" onsubmit="return false">
-          <input class="field" type="email" placeholder="you@example.com" aria-label="Email address">
-          <button class="btn btn--red" type="submit" style="justify-self:start">Notify me</button>
+        <!-- Was an email capture with no list behind it. The date genuinely
+             breaks on Instagram first, so this points at the real channel
+             instead of collecting addresses nothing was going to send to. -->
+        <div class="stack">
+          <a class="btn btn--red" href="https://www.instagram.com/barscenesocials/" target="_blank" rel="noopener noreferrer" style="justify-self:start">Follow @barscenesocials</a>
           <p class="small">No newsletter, no partner offers, no "we miss you". Just the date.</p>
-        </form>
+        </div>
       </div>
     </div>
   </section>
@@ -98,14 +100,14 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
               <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h3>
             </div>
           </a>
-          <a class="ticket pitch__ticket" href="tickets.html" data-ticket
-             data-main="Get tickets" data-sub="From $11.95"></a>
+          <a class="ticket pitch__ticket" href="https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady" target="_blank" rel="noopener noreferrer"
+             data-ticket data-main="Get tickets" data-sub="From $12.49 each"></a>
         </div>
       </div>
     </div>
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788876527"></script>
+<script src="js/bss.js?v=1788998982"></script>
 </body>
 </html>

@@ -2614,7 +2614,15 @@ a.card:active      { --tx:0px; --ty:0px; --sc:.985; box-shadow:2px 2px 0 var(--i
    the one hover on the site that reads as writing rather than as
    a UI state.
    ============================================================ */
-.body a, .lede a, .small a, .ftr__signup a{
+/* Every selector here excludes .btn. This rule is for links inside running
+   copy; a pill button is a different object and gets wrecked by it — the
+   padding-bottom:.06em overrides the button's own 15px bottom padding (at
+   13px type that computes to 0.78px, so the pill loses 14px of height and
+   the label sits on the floor of it) and the gradient paints a 1px rule
+   straight across the fill. Measured on the footer's Instagram button: 32px
+   tall against the header button's 46px, same classes. Anywhere a .btn ends
+   up inside .body / .lede / .small / .ftr__signup, this would bite again. */
+.body a:not(.btn), .lede a:not(.btn), .small a:not(.btn), .ftr__signup a:not(.btn){
   position:relative; text-decoration:none;
   background-image:linear-gradient(currentColor,currentColor);
   background-repeat:no-repeat;
@@ -2624,15 +2632,16 @@ a.card:active      { --tx:0px; --ty:0px; --sc:.985; box-shadow:2px 2px 0 var(--i
   transition:background-size .32s var(--ease), color .2s var(--quart);
 }
 @media (hover:hover){
-  .body a:hover, .lede a:hover, .small a:hover, .ftr__signup a:hover{
+  .body a:not(.btn):hover, .lede a:not(.btn):hover,
+  .small a:not(.btn):hover, .ftr__signup a:not(.btn):hover{
     background-size:100% 2px;
   }
 }
-.body a:focus-visible, .lede a:focus-visible,
-.small a:focus-visible, .ftr__signup a:focus-visible{background-size:100% 2px}
+.body a:not(.btn):focus-visible, .lede a:not(.btn):focus-visible,
+.small a:not(.btn):focus-visible, .ftr__signup a:not(.btn):focus-visible{background-size:100% 2px}
 /* the footer's own links already sit on their own line and take the
    accent on hover; keep that and let the rule follow the colour */
-.ftr a:hover{background-size:100% 2px}
+.ftr a:not(.btn):hover{background-size:100% 2px}
 
 /* ============================================================
    THE CURSOR

@@ -14,8 +14,8 @@ if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return
 r.className+=(r.className?' ':'')+'has-js';
 w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
 })(document,window);</script>
-<link rel="stylesheet" href="css/fonts.css?v=1788876527">
-<link rel="stylesheet" href="css/bss.css?v=1788876527">
+<link rel="stylesheet" href="css/fonts.css?v=1788998982">
+<link rel="stylesheet" href="css/bss.css?v=1788998982">
 </head>
 <body data-page="shamrock" class="has-hero">
 <div id="chrome-header"></div>
@@ -39,13 +39,15 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
       <div class="cols c-wide-left wash wash--green wash--rtl wash--bleed wash--pad" data-reveal style="align-items:center">
         <div class="stack">
           <h2 class="d2 fx" style="max-width:12ch">Stay up<br>to <em class="scr">date</em></h2>
-          <p class="lede" style="max-width:36ch">This one sells out on the list before it ever hits the site. Two emails a year, both of them a date.</p>
+          <p class="lede" style="max-width:36ch">This one sells out before it ever really hits the site. The date goes out on Instagram first, and that is the only warning you get.</p>
         </div>
-        <form class="stack" onsubmit="return false">
-          <input class="field" type="email" placeholder="you@example.com" aria-label="Email address">
-          <button class="btn btn--red" type="submit" style="justify-self:start">Notify me</button>
+        <!-- Was an email capture with no list behind it. The date genuinely
+             breaks on Instagram first, so this points at the real channel
+             instead of collecting addresses nothing was going to send to. -->
+        <div class="stack">
+          <a class="btn btn--red" href="https://www.instagram.com/barscenesocials/" target="_blank" rel="noopener noreferrer" style="justify-self:start">Follow @barscenesocials</a>
           <p class="small">No newsletter, no partner offers, no "we miss you". Just the date.</p>
-        </form>
+        </div>
       </div>
     </div>
   </section>
@@ -57,13 +59,29 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
           <h2 class="d3 fx">What it'll <em class="scr">be</em></h2></div>
         <p class="scrawl" style="max-width:18ch">the one that started the whole thing</p>
       </div>
-      <div class="cols c-3" data-reveal>
-        <div class="taped tilt-1"><div class="photo photo--green ar-43"><span class="photo__cap">The kit</span></div>
-          <span class="taped__cap">last year</span></div>
-        <div class="taped tilt-3"><div class="photo photo--red ar-43"><span class="photo__cap">The bars</span></div>
-          <span class="taped__cap">last year</span></div>
-        <div class="taped tilt-2"><div class="photo photo--orange ar-43"><span class="photo__cap">The night</span></div>
-          <span class="taped__cap">last year</span></div>
+      <!-- Three real photographs from last year's Shuffle, replacing the
+           three flat colour placeholders. Each keeps its own orientation —
+           all three cropped to the same 3:4 portrait, because they are meant
+           to read as three prints off the same camera. The third frame is a
+           landscape original; centre-cropping it keeps the crowd, the pole
+           and the string lights, and costs only the empty edges. Letting it
+           keep its own 4:3 left it 210px shorter than its neighbours and the
+           row read as a broken grid rather than a wall of photos. Captions
+           moved from the .photo overlay onto the tape labels, because a
+           caption burned over a real photograph is a placeholder tell. -->
+      <div class="cols c-3" data-reveal style="align-items:start">
+        <div class="taped tilt-1"><div class="photo ar-34">
+            <img src="images/shamrock-shuffle-polaroid-1.jpg"
+                 alt="Six friends in green Shamrock Shuffle shirts crammed together for a photo at a Milwaukee bar, neon beer signs behind them" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">The kit</span></div>
+        <div class="taped tilt-3"><div class="photo ar-34">
+            <img src="images/shamrock-shuffle-polaroid-2.jpg"
+                 alt="A DJ in green beads working a controller in the front window of a bar, green neon in the glass behind him" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">The music</span></div>
+        <div class="taped tilt-2"><div class="photo ar-34">
+            <img src="images/shamrock-shuffle-polaroid-3.jpg"
+                 alt="A packed back patio under strings of bulbs, the whole crowd in green shirts" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">The night</span></div>
       </div>
     </div>
   </section>
@@ -82,14 +100,14 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
               <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <em class="scr ink ink--orange">Hop</em></h3>
             </div>
           </a>
-          <a class="ticket pitch__ticket" href="tickets.html" data-ticket
-             data-main="Get tickets" data-sub="From $11.95"></a>
+          <a class="ticket pitch__ticket" href="https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady" target="_blank" rel="noopener noreferrer"
+             data-ticket data-main="Get tickets" data-sub="From $12.49 each"></a>
         </div>
       </div>
     </div>
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1788876527"></script>
+<script src="js/bss.js?v=1788998982"></script>
 </body>
 </html>

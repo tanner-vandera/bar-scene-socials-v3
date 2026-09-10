@@ -490,6 +490,54 @@ One known exception: placeholder captions sitting on the night gradient measure
 ~3.4:1 against the gradient's lightest stop. They carry a text-shadow and they
 go away when real photography lands.
 
+## Ticketing, prices and the forms that went (2026-09-09)
+
+**Checkout is TicketSignup, not this site.** Every control that offers to sell
+a ticket — the header button, the drawer stub, the hero tickets, the two price
+stubs on Haunted and on the tickets page, the closing CTAs, and the "one you
+can buy now" pitch on Shamrock and Christmas — points at
+`https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady`, in a new tab
+with `rel="noopener noreferrer"`. The URL is the `TIX` constant in `js/bss.js`
+for the two chrome placements; the page CTAs carry it inline. **`tickets.html`
+survives as a page**, and the only links still pointing at it are navigational:
+"All tickets" in the More menu and the drawer, plus one inline "tickets page"
+sentence on Haunted. The homepage pitch ticket used to say "Get tickets" and go
+to the event page — it now goes to checkout, because a button that says it
+sells you something should.
+
+**Prices came off the live TicketSignup event, and the tiers changed shape.**
+Single **$14.99**, and the group tier is a **group of four for $49.96**
+($12.49 each) — not the group of five the site had been carrying. The saving is
+$10.00 on four, so the chip reads "Save $10" rather than the old "Save 20%",
+which is no longer the arithmetic. Every dependent line moved with it: "Bring
+three friends, pay less", "$49.96 for the four of you", the small-print
+"group of four is one purchase, four tickets", the `data-sub` notes now reading
+"From $12.49 each", and the tickets-page meta description. **The listed prices
+are the base price; TicketSignup adds its own fee at checkout** ($16.65 and
+$14.07 respectively on the day this was written) and the site does not mention
+that anywhere.
+
+**Three email captures and the contact form are gone.** None of them had an
+endpoint — this is a static site on Vercel, so every one of them swallowed the
+address or the message and said nothing, which is worse than not asking. The
+footer signup, the "stay up to date" block on Shamrock and the identical one on
+Christmas are now Instagram buttons, and the two locked event cards on the
+tickets page say "Follow for the date" instead of "Notify me". The contact page
+lost its form entirely and is a two-column pair of cards, Instagram and email.
+Announcements genuinely break on Instagram first, so this is the honest
+mechanism rather than a downgrade.
+
+**Real Shamrock photography.** `images/shamrock-shuffle-polaroid-{1,2,3}.jpg` —
+the crew in the green tees, the DJ, and the back patio — replace the three flat
+colour placeholders in "What it'll be". All three are cropped to the same 3:4
+so they read as prints off one camera; the third is a landscape original and is
+centre-cropped. Letting it keep its native 4:3 left it 210px shorter than its
+neighbours and the row read as a broken grid. Captions moved off the `.photo`
+overlay onto the tape labels.
+
+**The homepage calendar headline** is "Happening now", matching the page it
+links to. It was "What's worth leaving for".
+
 ## Still open
 
 - **Tickets as a page or a header button?** Both exist right now — the page,
