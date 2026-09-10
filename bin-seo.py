@@ -1,6 +1,11 @@
 import io, json, re
 
-SITE = 'https://barscenesocials.com'
+# The apex 308-redirects to www — www IS the canonical host on Vercel.
+# Pointing canonical/og:url/sitemap at the apex made every one of them
+# name a URL that immediately redirects, which is exactly what a
+# canonical is supposed to prevent. If the Vercel primary domain is ever
+# flipped to the apex, change this ONE line and re-run.
+SITE = 'https://www.barscenesocials.com'
 TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady'
 IG   = 'https://www.instagram.com/barscenesocials/'
 

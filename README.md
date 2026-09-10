@@ -129,6 +129,20 @@ at 1200x630 with headless Chrome, then `sips -s format jpeg -s formatOptions 82`
 the template**: `bss.css` puts `padding-top:var(--hdr-h)` there for the fixed
 header, which otherwise shunts the whole card down and clips the URL off the bottom.
 
+**The canonical host is `www.barscenesocials.com`, not the apex.** The apex
+308-redirects to www on Vercel, so every canonical, `og:url`, sitemap `<loc>`
+and JSON-LD `url` uses www — pointing them at the apex made each one name a URL
+that immediately redirects, which is the exact thing a canonical exists to
+prevent. It is one constant (`SITE`) at the top of `bin-seo.py`; if the Vercel
+primary domain is ever flipped to the apex, change that line, re-run, and fix
+`sitemap.xml` + `robots.txt` to match.
+
+Legacy `.html` URLs take three hops — apex→www, then Vercel's `cleanUrls`
+strips `.html`, then the rename redirect fires. **That middle hop is why
+`vercel.json` lists BOTH `/haunted-bar-hop.html` and bare `/haunted-bar-hop`:**
+cleanUrls strips the extension before the redirect table is consulted, so the
+`.html` rule never matches and only the bare rule saves the URL from a 404.
+
 `favicon.svg` is the linked-O element from `images/bss-logo.svg` — the only part
 of the lockup that survives at 16px. `apple-touch-icon.png` is that SVG rendered
 at 180. `sitemap.xml` lists all nine URLs and is referenced from `robots.txt`.
