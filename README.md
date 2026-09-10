@@ -87,6 +87,52 @@ nav tables at the top of `js/bss.js`. Nav highlighting matches `data-page` on
 
 The wireframe's sitemap page is gone — it was explicitly not part of the site.
 
+## Search & sharing
+
+**`bin-seo.py` is the source of truth, not the HTML.** Every page's `<title>`,
+meta description, canonical, Open Graph / Twitter tags and JSON-LD are generated
+from the `PAGES` table at the top of that script and written into each file
+between `<!-- SEO:begin -->` and `<!-- SEO:end -->`. **Edit the table and re-run
+`python3 bin-seo.py`** — hand-editing inside the markers works until the next
+run overwrites it. The script is idempotent and rewrites the block in place.
+
+What it emits per page:
+
+- **canonical** — needed because `/about` and `/about.html` both resolve
+  (the second redirects), and a canonical stops that reading as duplicate content.
+- **Open Graph + Twitter `summary_large_image`** — controls the preview when a
+  link is pasted into Instagram, iMessage, Facebook or Slack. Absolute URLs:
+  scrapers do not resolve relative ones.
+- **`Event` JSON-LD** on the three event pages. This is the one with real upside —
+  it makes the page eligible for Google's event rich results (date, venue and a
+  ticket link shown in the result). `Organization` + `WebSite` sit on the homepage.
+
+Two traps already hit, do not undo them:
+
+1. **`organizer` is inlined on each event, not `{"@id": ".../#org"}`.** The
+   Organization node only exists on the homepage, and a crawler parsing an event
+   page on its own cannot resolve a cross-document `@id`.
+2. **Christmas and Shamrock carry a date-only `startDate` and NO `offers`.**
+   Their running times are not announced and they are not on sale; a guessed time
+   or a fake `InStock` offer is worse than an absent one. Add both together, when
+   they are real.
+
+**Timezones are hand-checked, not guessed.** `2026-10-31T15:00:00-05:00` is CDT
+because US DST ends Sun 11/01/2026 — the day AFTER the crawl. 12/12/26 and
+3/6/27 both fall in CST (`-06:00`); DST 2027 starts 3/14.
+
+**The social cards are generated too.** `images/og/*.jpg` are 1200x630 renders of
+a template built from the site's own CSS, so a share preview looks like the page
+it opens. Regenerate by re-creating the `_og_*.html` templates and screenshotting
+at 1200x630 with headless Chrome, then `sips -s format jpeg -s formatOptions 82`
+— the PNGs come out ~700KB and the JPEGs ~100KB. **Set `padding:0` on `body` in
+the template**: `bss.css` puts `padding-top:var(--hdr-h)` there for the fixed
+header, which otherwise shunts the whole card down and clips the URL off the bottom.
+
+`favicon.svg` is the linked-O element from `images/bss-logo.svg` — the only part
+of the lockup that survives at 16px. `apple-touch-icon.png` is that SVG rendered
+at 180. `sitemap.xml` lists all nine URLs and is referenced from `robots.txt`.
+
 ## Shared pieces
 
 `js/bss.js` holds the header, footer, logo, ticket, and the hand-drawn marks,

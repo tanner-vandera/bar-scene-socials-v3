@@ -3,3 +3,5 @@
 #  It blocked every search engine, so the site could not be found on Google.)
 User-agent: *
 Allow: /
+
+Sitemap: https://barscenesocials.com/sitemap.xml
