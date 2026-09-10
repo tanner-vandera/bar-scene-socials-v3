@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Shamrock Shuffle #18 — coming soon</title>
-<meta name="description" content="Shamrock Shuffle #18, Saturday 3/6/27. Not on sale yet — join the list and hear first.">
+<title>12 Bars of Christmas — coming soon</title>
+<meta name="description" content="12 Bars of Christmas, Saturday 12/12/26. Not on sale yet — join the list and hear first.">
 <script>/* Hide the reveal groups BEFORE first paint — see README, "The reveal flash".
    Guarded twice: reduced motion never hides anything, and if bss.js has not
    booted within 2.5s the class is pulled back off so a failed script can
@@ -17,18 +17,22 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
 <link rel="stylesheet" href="css/fonts.css?v=1789049911">
 <link rel="stylesheet" href="css/bss.css?v=1789049911">
 </head>
-<body data-page="shamrock" class="has-hero">
+<body data-page="christmas" class="has-hero">
 <div id="chrome-header"></div>
 <main>
   <!-- ── HERO — full bleed, centred, locked ──────────────── -->
-  <section class="hero hero--shot grain">
+  <!-- --hero-b: this frame is flash-lit and much brighter than the street
+       shots the .93 default was set for. See the note on
+       .hero--shot:has(.fx--red) > .hero__scrim — the two were measured
+       together and only work as a pair. -->
+  <section class="hero hero--shot grain" style="--hero-b:.7">
     <div class="hero__media hero__media--shot">
-      <img src="images/shamrock-shuffle-hero.jpg" alt="A packed Milwaukee bar on St Patrick’s Day, the whole room in green shirts" decoding="async" fetchpriority="high">
+      <img src="images/12bars-of-christmas-hero.jpg" alt="Five people crowded together in a Milwaukee bar on the 12 Bars of Christmas, all in Christmas jumpers, holding green souvenir steins under strings of lights" decoding="async" fetchpriority="high">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
-      <h1 class="d1 fx fx--green fx--neon fx--split"><span class="ink ink--green">Shamrock</span><br><em class="scr ink ink--orange">Shuffle</em> <span class="ink ink--white">18</span></h1>
-      <p class="hero__meta">Saturday 3/6/27<span class="sep">·</span>21+<span class="sep">·</span>save the date</p>
+      <h1 class="d1 fx fx--red fx--neon fx--split"><span class="ink ink--white">12 Bars of</span><br><em class="scr ink ink--red">Christmas</em></h1>
+      <p class="hero__meta">Saturday 12/12/26<span class="sep">·</span>21+<span class="sep">·</span>tickets coming soon</p>
       <span class="sticker sticker--ghost-paper sticker--flat">Not on sale yet</span>
     </div>
   </section>
@@ -36,7 +40,7 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
   <!-- ── THE ONLY INTERACTION ON THIS PAGE ───────────────── -->
   <section class="band band--paper2">
     <div class="shell">
-      <div class="cols c-wide-left wash wash--green wash--rtl wash--bleed wash--pad" data-reveal style="align-items:center">
+      <div class="cols c-wide-left wash wash--red wash--rtl wash--bleed wash--pad" data-reveal style="align-items:center">
         <div class="stack">
           <h2 class="d2 fx" style="max-width:12ch">Stay up<br>to <em class="scr">date</em></h2>
           <p class="lede" style="max-width:36ch">This one sells out before it ever really hits the site. The date goes out on Instagram first, and that is the only warning you get.</p>
@@ -57,44 +61,40 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
       <div class="row row--between" style="align-items:baseline; margin-bottom:clamp(24px,3vw,42px)">
         <div>
           <h2 class="d3 fx">What it'll <em class="scr">be</em></h2></div>
-        <p class="scrawl" style="max-width:18ch">the one that started the whole thing</p>
+        <p class="scrawl" style="max-width:18ch">the jumpers get worse every year</p>
       </div>
-      <!-- Three real photographs from last year's Shuffle, replacing the
-           three flat colour placeholders. Each keeps its own orientation —
-           all three cropped to the same 3:4 portrait, because they are meant
-           to read as three prints off the same camera. The third frame is a
-           landscape original; centre-cropping it keeps the crowd, the pole
-           and the string lights, and costs only the empty edges. Letting it
-           keep its own 4:3 left it 210px shorter than its neighbours and the
-           row read as a broken grid rather than a wall of photos. Captions
-           moved from the .photo overlay onto the tape labels, because a
-           caption burned over a real photograph is a placeholder tell. -->
-      <div class="cols c-3" data-reveal style="align-items:start">
-        <div class="taped tilt-1"><div class="photo ar-34">
-            <img src="images/shamrock-shuffle-polaroid-1.jpg"
-                 alt="Six friends in green Shamrock Shuffle shirts crammed together for a photo at a Milwaukee bar, neon beer signs behind them" loading="lazy" decoding="async"></div>
-          <span class="taped__cap">The kit</span></div>
-        <div class="taped tilt-3"><div class="photo ar-34">
-            <img src="images/shamrock-shuffle-polaroid-2.jpg"
-                 alt="A DJ in green beads working a controller in the front window of a bar, green neon in the glass behind him" loading="lazy" decoding="async"></div>
-          <span class="taped__cap">The music</span></div>
-        <div class="taped tilt-2"><div class="photo ar-34">
-            <img src="images/shamrock-shuffle-polaroid-3.jpg"
-                 alt="A packed back patio under strings of bulbs, the whole crowd in green shirts" loading="lazy" decoding="async"></div>
-          <span class="taped__cap">The night</span></div>
+      <!-- Two real photographs now, not three placeholders. They are
+           deliberately unequal (1.62fr / 1fr) and each keeps its own
+           orientation — a landscape crop and a portrait one — so the pair
+           reads as two prints pinned to a wall rather than a two-up grid.
+           On phones .c-wide-left collapses to a single column and they
+           stack in this order. -->
+      <div class="cols c-wide-left" data-reveal style="align-items:start">
+        <div class="taped tilt-1">
+          <div class="photo ar-43">
+            <img src="images/12bars-of-christmas-hero.jpg"
+                 alt="Five people in Christmas jumpers packed together at the bar, holding green souvenir steins" loading="lazy" decoding="async">
+          </div>
+          <span class="taped__cap">last year</span></div>
+        <div class="taped tilt-3">
+          <div class="photo ar-34">
+            <img src="images/12bars-of-christmas-polaroid.jpg"
+                 alt="Someone dancing in the middle of the bar in Christmas pyjamas, arms up, the room going with them" loading="lazy" decoding="async">
+          </div>
+          <span class="taped__cap">also last year</span></div>
       </div>
     </div>
   </section>
   <!-- ── NEVER A DEAD END ────────────────────────────────── -->
   <section class="band band--ink grain grain--dark">
     <div class="shell">
-      <div class="cols c-wide-left cols--cta wash wash--green wash--bleed wash--pad" data-reveal>
+      <div class="cols c-wide-left cols--cta wash wash--red wash--bleed wash--pad" data-reveal>
         <div class="stack">
           <h2 class="d2 fx" style="max-width:14ch">One you can<br><em class="scr">buy</em> now</h2>
           <p class="lede" style="max-width:38ch">Haunted Bar Hop — 10/31/26, Brady Street. Ten bars and the only Halloween crawl on the street.</p>
         </div>
         <div class="pitch">
-          <a class="event pitch__card" href="haunted-bar-hop.html">
+          <a class="event pitch__card" href="/hauntedbarhop">
             <div class="photo event__shot ar-169">
               <img src="images/brady-street.webp" alt="" loading="lazy" decoding="async">
               <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <span class="ink ink--orange">Hop</span></h3>

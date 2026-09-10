@@ -21,16 +21,16 @@
      colour; they are now flat white on every page, so the only colour in
      the header is the real logo and the ticket. */
   var NAV = [
-    { href: 'haunted-bar-hop.html', label: 'Haunted Bar Hop',      key: 'halloween' },
-    { href: 'christmas.html',       label: '12 Bars of Christmas', key: 'christmas', soon: true },
-    { href: 'shamrock.html',        label: 'Shamrock Shuffle',     key: 'shamrock',  soon: true }
+    { href: '/hauntedbarhop', label: 'Haunted Bar Hop',      key: 'halloween' },
+    { href: '/12barsofchristmas',       label: '12 Bars of Christmas', key: 'christmas', soon: true },
+    { href: '/shamrockshuffle',        label: 'Shamrock Shuffle',     key: 'shamrock',  soon: true }
   ];
   var MORE = [
-    { href: 'tickets.html',       label: 'All tickets',   key: 'tickets' },
-    { href: 'happening-now.html', label: 'Happening Now', key: 'happening' },
-    { href: 'featured-bars.html', label: 'Featured Bars', key: 'bars' },
-    { href: 'about.html',         label: 'About Us',      key: 'about' },
-    { href: 'contact.html',       label: 'Contact',       key: 'contact' }
+    { href: '/tickets',       label: 'All tickets',   key: 'tickets' },
+    { href: '/happeningnow', label: 'Happening Now', key: 'happening' },
+    { href: '/featured', label: 'Featured Bars', key: 'bars' },
+    { href: '/about',         label: 'About Us',      key: 'about' },
+    { href: '/contact',       label: 'Contact',       key: 'contact' }
   ];
 
   /* ---------------------------------------------------------
@@ -50,7 +50,7 @@
     days: 31,
     events: {
       31: { name: 'Haunted Bar Hop',     where: 'Brady St · 3pm',
-            ours: true, href: 'haunted-bar-hop.html' }
+            ours: true, href: '/hauntedbarhop' }
     }
   };
 
@@ -315,7 +315,7 @@
     var moreLinks = MORE.map(function (n) {
       return '<a href="' + n.href + '"' + (page === n.key ? ' class="is-active"' : '') + '>' + esc(n.label) + '</a>';
     }).join('');
-    var drawerLinks = [{ href:'index.html', label:'Home', key:'home' }]
+    var drawerLinks = [{ href:'/', label:'Home', key:'home' }]
       .concat(NAV, MORE).map(function (n) {
         return '<a href="' + n.href + '">' + esc(n.label) +
           (n.soon ? '<span class="soon">Soon</span>' : '') + '</a>';
@@ -323,7 +323,7 @@
 
     return '' +
     '<header class="hdr"><div class="hdr__in">' +
-      '<a class="lockup" href="index.html" aria-label="Bar Scene Socials — home">' +
+      '<a class="lockup" href="/" aria-label="Bar Scene Socials — home">' +
         logo('lockup__logo') +
       '</a>' +
       '<nav class="nav">' + links +

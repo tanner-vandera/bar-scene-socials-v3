@@ -58,9 +58,32 @@ interaction feedback only: hover, focus, the ticket lift, the mobile drawer.
 
 ## Pages
 
-`index.html` (home) · `haunted-bar-hop.html` · `christmas.html` ·
-`shamrock.html` · `tickets.html` · `happening-now.html` ·
-`featured-bars.html` · `about.html` · `contact.html`
+Every page is served at an extension-less URL. `vercel.json` sets
+`cleanUrls: true`, so Vercel serves `/about` from `about.html` and redirects
+`/about.html` to `/about` on its own. **The file name IS the URL** — keep them
+matching, and a rename is a URL change.
+
+| URL | file |
+| --- | --- |
+| `/` | `index.html` |
+| `/hauntedbarhop` | `hauntedbarhop.html` |
+| `/12barsofchristmas` | `12barsofchristmas.html` |
+| `/shamrockshuffle` | `shamrockshuffle.html` |
+| `/tickets` | `tickets.html` |
+| `/happeningnow` | `happeningnow.html` |
+| `/featured` | `featured.html` |
+| `/about` | `about.html` |
+| `/contact` | `contact.html` |
+
+Five of these were renamed on 2026-09-10 (`haunted-bar-hop`, `christmas`,
+`shamrock`, `happening-now`, `featured-bars`). `cleanUrls` cannot redirect a
+path whose file no longer exists, so those old paths are listed explicitly in
+`vercel.json`'s `redirects` — **do not delete them**, they are what keeps any
+already-shared link alive.
+
+Internal links are absolute (`/tickets`, not `tickets.html`), including the
+nav tables at the top of `js/bss.js`. Nav highlighting matches `data-page` on
+`<body>` against each entry's `key`, NOT the URL, so a rename does not touch it.
 
 The wireframe's sitemap page is gone — it was explicitly not part of the site.
 

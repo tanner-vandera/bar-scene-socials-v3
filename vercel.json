@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/haunted-bar-hop.html", "destination": "/hauntedbarhop", "permanent": true },
+    { "source": "/haunted-bar-hop", "destination": "/hauntedbarhop", "permanent": true },
+    { "source": "/shamrock.html", "destination": "/shamrockshuffle", "permanent": true },
+    { "source": "/shamrock", "destination": "/shamrockshuffle", "permanent": true },
+    { "source": "/christmas.html", "destination": "/12barsofchristmas", "permanent": true },
+    { "source": "/christmas", "destination": "/12barsofchristmas", "permanent": true },
+    { "source": "/happening-now.html", "destination": "/happeningnow", "permanent": true },
+    { "source": "/happening-now", "destination": "/happeningnow", "permanent": true },
+    { "source": "/featured-bars.html", "destination": "/featured", "permanent": true },
+    { "source": "/featured-bars", "destination": "/featured", "permanent": true }
+  ]
+}

@@ -1,3 +1,5 @@
-# Prototype for client review — not the live Bar Scene Socials site.
+# barscenesocials.com — live site. Crawling is welcome.
+# (This file used to carry "Disallow: /" from the prototype-review period.
+#  It blocked every search engine, so the site could not be found on Google.)
 User-agent: *
-Disallow: /
+Allow: /
