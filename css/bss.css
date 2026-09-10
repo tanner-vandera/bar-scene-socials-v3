@@ -550,17 +550,44 @@ img{max-width:100%; display:block}
    headline's orange, unrotated, while the span painted it again in its
    own colour at -2deg on top — two copies, slightly offset. Anything
    carrying its own .ink must stay an atomic inline. */
-.fx .hl__on-line{display:block; line-height:0; margin-top:.22em}
-/* The heroes set the lockup at .d1, where .22em of the parent is ~42px and
-   the tagline drifts away from the mark it belongs to. It reads as a
-   separate line of copy rather than the bottom of the sign, so on a hero
-   only it tucks up under the script word and runs bigger.
+/* NO LONGER HERO-SCOPED. "On Brady" used to run at .22em BELOW the lockup
+   everywhere, and the heroes alone pulled it up a hair. The owners asked
+   for it larger and slightly overlapping the word above — and once the
+   hero moved, a section lockup with the tagline floating 40px underneath
+   read as a different mark, not the same one at a smaller size. One ratio
+   now serves all four instances (both heroes at .d1, the homepage "next
+   up" lockup and the tickets-page lockup at .d2).
 
-   Hero-scoped on purpose. The section lockups are the reference the
-   heroes were asked to match, so they keep the ratio they already have;
-   this only closes the gap that opens at .d1's much larger em. */
-.hero__inner .fx .hl__on-line{margin-top:-.055em}
-.hero__inner .fx .hl__on{font-size:clamp(19px, .265em, 48px)}
+   Both terms are in the PARENT's em, which is the whole point: the
+   overlap is a fixed FRACTION of the cap band, so it holds from a 190px
+   hero down to a 90px phone headline without a breakpoint. Measured at
+   19.6% of cap at 1280, 20.7% at 375, 22.1% at 1600.
+
+   -.34em is MEASURED, and the thing to measure is the INK, not the boxes.
+   Both runs carry large paint-box padding (the script's is .23em/.48em of
+   its own size), so their getBoundingClientRects overlap by 50-odd pixels
+   while the letterforms still sit APART. The number that matters is canvas
+   actualBoundingBox against the cap band of the line above.
+
+   The owners asked for the script to JUST overlap the lockup — touching
+   the letterforms, not riding up into them. The whole usable window is
+   about a tenth of an em, so this was chosen by rendering with the neon
+   flicker frozen and reading each one:
+     -.27  clear of the letters; reads as "sitting below"
+     -.29  the O and B ascenders just break the bottom edge  <-- this
+     -.34  rides ~35% up the cap band; legible but noticeably crossed
+     -.37  the "O" is already being swallowed by the R of BAR
+     -.42  unreadable; the script disappears into the letterforms
+   Do not nudge this without re-rendering — and freeze `.fx--neon` when you
+   do, or the capture lands on a grey dead frame and you will misjudge it.
+
+   Legibility over the letters comes from .hl__on's own text-shadow (it is
+   painted text, not a background-clip fill — see below), which is why the
+   script survives crossing a lit violet cap at all.
+
+   The clamp floor (30px) matters on phones: below it the script would
+   drop under the .d1 ramp's own minimum and the tuck would invert. */
+.fx .hl__on-line{display:block; line-height:0; margin-top:-.29em}
 /* PLAIN PAINTED TEXT, not an .ink. Every other run in a headline paints
    itself as a background clipped to its own glyphs; this one paints its
    colour directly and takes a text-shadow instead of a drop-shadow halo.
@@ -585,10 +612,28 @@ img{max-width:100%; display:block}
    the one that shipped when this was display:block. */
 .fx .hl__on{
   display:inline-block;
+  /* PAINT ORDER, and it is not the DOM order that decides it.
+     .hl__on-line is the LAST child of the headline, so the obvious
+     assumption is that "On Brady" paints on top. It does not. Every .ink
+     run carries `filter:var(--neon)`, and a filter makes a NON-POSITIONED
+     element into a stacking context — which CSS 2.1 Appendix E paints in
+     step 8, "as if it created a new stacking context with z-index:0".
+     A plain static inline-block like this one paints back in step 6, with
+     the ordinary inline content. Step 6 is before step 8, so the lit
+     letterforms were painting straight over the script no matter where it
+     sat in the markup, and the overlap read as "tucked behind".
+
+     position:relative + z-index:1 moves it to step 9 (positive z-index),
+     above the .ink runs. It stays an inline-block, so it is still an
+     ATOMIC inline and the parent's background-clip:text cannot reach in
+     and paint these glyphs a second time — which is the other bug this
+     rule has to keep avoiding, see below. */
+  position:relative; z-index:1;
+  /* global now — see the note on .hl__on-line above */
   background-image:none;
   -webkit-background-clip:border-box; background-clip:border-box;
   color:var(--orange); -webkit-text-fill-color:var(--orange);
-  font-size:clamp(15px, .22em, 34px);
+  font-size:clamp(30px, .40em, 74px);
   line-height:1;
   margin:0;
   padding:.16em .1em .3em .1em;
@@ -1871,6 +1916,12 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 /* event card — the three-up */
 .event{display:grid; grid-template-rows:auto 1fr; text-decoration:none; position:relative}
 .event__meta{display:flex; justify-content:space-between; gap:12px; align-items:baseline; padding-top:14px}
+/* The date under a card is the one hard fact on it and was set at caption
+   size (11px). Tracking eases as it grows — .18em is drawn for 11px and
+   reads as a gap at 14. */
+.event__meta .tiny{font-size:14px; letter-spacing:.13em}
+.event__meta .sticker{font-size:12.5px; padding:9px 15px}
+.event .small{font-size:16px}
 /* --- the name sits IN the thumbnail, in the event's own colour --------
    The card used to repeat the event name below the picture; it now reads
    once, centred on the shot. The thumbnail is sized as the query container
@@ -1891,7 +1942,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
      card. So the card keeps a real scrim (::before, below) and the
      picture keeps its colour: the same total darkness, arriving as one
      neutral wash instead of as a desaturation plus two stops. */
-  filter:saturate(1.05) contrast(1.03);
+  filter:saturate(1.34) contrast(1.05);
 }
 /* .photo::before normally carries the halftone; on a shot thumbnail it is
    the scrim instead, because a coloured name over a photograph needs a
@@ -1951,7 +2002,10 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
      card widths in the homepage row set the same optical size. Raised from
      11cqw/60 — the name is the card's headline and was reading as a label
      on it. */
-  font-size:clamp(26px, 13.5cqw, 78px);
+  /* Raised again (13.5cqw -> 15.6cqw) with the rest of the homepage type.
+     Still sized in cqw against the CARD, so the wide card and the two
+     narrow ones in the same row land on the same optical size. */
+  font-size:clamp(30px, 15.6cqw, 92px);
 }
 
 /* Locked cards grey out the PICTURE, not the card. The filter used to sit
@@ -1986,7 +2040,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    further down. The hatch overlay and the ghost chip carry the rest. */
 /* A locked card greys out the PICTURE by a touch of desaturation only —
    enough to read as "not yet", not enough to undo the colour. */
-.event--locked .event__shot > img{filter:saturate(.72) contrast(1.02) brightness(.92)}
+.event--locked .event__shot > img{filter:saturate(1.12) contrast(1.03) brightness(.94)}
 .event--locked .event__shot{background:var(--ink-2)}
 
 
@@ -2312,7 +2366,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    without a single override here. Same swap the calendar uses.
    ============================================================ */
 .stubs{
-  display:grid; grid-template-columns:1fr 1.18fr;
+  display:grid; grid-template-columns:1.18fr 1fr;
   gap:clamp(16px,2.4vw,34px); align-items:end;
 }
 .stub{
@@ -2327,24 +2381,24 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   transform:translate3d(0,var(--ty,0px),0);
   transition:transform .34s var(--ease);
 }
-.stub__tier{font:500 11px/1 var(--body); letter-spacing:.2em;
-  text-transform:uppercase; color:var(--text-3); margin:0}
+.stub__tier{font:600 clamp(15px,1.55vw,21px)/1.15 var(--body); letter-spacing:.13em;
+  text-transform:uppercase; color:var(--text); margin:0}
 .stub__head{display:flex; justify-content:space-between; align-items:center; gap:12px}
 .stub__amt{
   font-family:var(--display); font-weight:400;
-  font-size:clamp(76px,10.4vw,142px); line-height:.38; letter-spacing:.02em;
+  font-size:clamp(54px,7.1vw,96px); line-height:.38; letter-spacing:.02em;
   margin:clamp(10px,1.4vw,16px) 0 0 -.06em;   /* the $ hangs into the padding */
   color:var(--ink);
 }
 .stub__amt sup{font-size:.36em; vertical-align:.9em; letter-spacing:0; margin-right:.04em}
-.stub__ea{font:500 11px/1 var(--body); letter-spacing:.18em;
+.stub__ea{font:500 12px/1 var(--body); letter-spacing:.16em;
   text-transform:uppercase; color:var(--text-3); margin-left:.5em; vertical-align:.42em}
 .stub__note{font:400 15px/1.5 var(--body); color:var(--text-2); margin:clamp(10px,1.2vw,16px) 0 0}
 .stub .ticket{margin-top:clamp(14px,1.8vw,22px); pointer-events:none}
 
 /* the recommendation is larger and sits lower; the accent is a torn strip
    of colour across the head rather than a rule on a box */
-.stub--pick .stub__amt{font-size:clamp(84px,11.6vw,158px)}
+.stub--pick .stub__amt{font-size:clamp(60px,7.9vw,108px)}
 .stub--pick::before{
   content:""; position:absolute; left:0; right:0; top:0;
   height:clamp(7px,.8vw,10px); background:var(--orange);
@@ -2749,3 +2803,33 @@ body[data-page="shamrock"]  .cur{--cur-c:var(--green)}
 .stops li:not(:has(b)){grid-template-columns:minmax(0,1fr)}
 .stops b{font-family:var(--display); font-weight:400; color:var(--orange-on); font-size:33px; line-height:.614; letter-spacing:.03em}
 .stops em{font-style:normal; color:var(--text-3); display:block; font-size:12.5px; letter-spacing:.04em}
+
+/* ============================================================
+   HOMEPAGE TYPE STEP-UP
+   "We would like all of the text to be bigger on the homepage."
+
+   Scoped to body[data-page="home"] on purpose, and deliberately NOT a
+   change to the site-wide scale. Every other page is a reading page —
+   the route list, the ticket table, the calendar — and was measured at
+   the current sizes. The homepage is a poster, and the running copy on
+   it was set at the same size as the small print on Contact.
+
+   Everything here moves by roughly the same ~14%, so the relationships
+   between the sizes are unchanged; the whole page just sits one step
+   closer. The DISPLAY type is untouched — it is already at the top of
+   its ramp and moving it would break the lockups' measured wrap points.
+   ============================================================ */
+body[data-page="home"]{ font-size:clamp(20px,1.78vw,25px) }
+body[data-page="home"] .lede{ font-size:clamp(20px,1.78vw,25px) }
+body[data-page="home"] .small{ font-size:16px }
+/* .tiny and .sticker are tracked-out caption faces; the tracking has to
+   ease as they grow or the letters read as separate marks rather than a
+   word. Same reason .event__meta .tiny drops from .18em to .13em. */
+body[data-page="home"] .tiny{ font-size:13px; letter-spacing:.15em }
+body[data-page="home"] .sticker{ font-size:12.5px; padding:9px 15px }
+body[data-page="home"] .scrawl{ font-size:clamp(25px,2.95vw,41px) }
+body[data-page="home"] .incl__row > div > .h4{ font-size:clamp(38px,4.3vw,62px) }
+/* The calendar sheet keeps its own scale — it is a dense grid where a
+   14% step costs a column, and it is the one thing on this page that is
+   a table rather than a poster. */
+body[data-page="home"] .sheet .kicker{ font-size:11.5px }
