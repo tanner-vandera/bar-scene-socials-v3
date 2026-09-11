@@ -38,19 +38,113 @@
      homepage and Happening Now so the two can never drift apart.
      Oct 1 2026 falls on a Thursday, hence four leading blanks.
      --------------------------------------------------------- */
-  /* One event, deliberately. The other three were placeholder listings
-     for other people's shows and there is nothing real behind them yet;
-     an empty month with one thing circled is a better answer to "is
-     anything on?" than three invented ones. Add more here and they get
-     the plain treatment automatically — only `ours` takes the painted
-     cell. */
+  /* Two kinds of thing go on this month.
+
+     `events` are single days. Everything that is not ours renders as a
+     STICKER — a small tilted label laid on the square, the way somebody
+     would stick one on a calendar pinned to a wall. Ours renders as the
+     painted cell it always did.
+
+     `spans` are runs of days, drawn as a strip laid ACROSS the squares
+     rather than repeated in each one. A run that crosses a Saturday is
+     split into one strip per week row automatically — see segments().
+     `lane` stacks strips that share a row: 0 sits on the bottom rule, 1
+     sits above it.
+
+     NOTHING IN HERE IS ORANGE, EVER. "If it's orange, go" is the whole
+     promise of the page and it only holds while orange means us and
+     nothing else — the gold and the navy and the blue are what make the
+     one orange square read as ours. That block is now the ONLY thing
+     carrying our own date, so it has to win on colour alone: the name
+     inside it is set in the same label face as every other name on the
+     grid.
+
+     `tilt` is authored per item, not randomised at runtime. A fresh
+     angle on every navigation reads as a rendering bug rather than a
+     hand. */
   var MONTH = {
     label: 'October 2026',
     lead: 4,
     days: 31,
     events: {
-      31: { name: 'Haunted Bar Hop',     where: 'Brady St · 3pm',
+      4:  { name: 'Chance the Rapper', where: 'Landmark CU Live',
+            tone: 'sky',  tilt: -2.4 },
+      14: { name: 'Chief Keef',        where: 'Landmark CU Live',
+            tone: 'lime', tilt:  1.9 },
+      31: { name: 'Haunted Bar Hop',   where: 'Brady St · 3pm',
             ours: true, href: '/hauntedbarhop' }
+    },
+    spans: [
+      /* The playoffs are a backdrop, not a night out — the thinnest
+         strip on the grid, running under everything else. */
+      { from: 1, to: 14, name: 'MLB Playoffs', where: 'Go Brewers', tone: 'navy',
+        lane: 0, tilt: -0.5, thin: true, lead: 150, marked: true },
+      /* Two lines, and no reserved opening. This run is only two squares
+         wide — about 390px at a full desktop and barely 220px at 1024 —
+         and "OKTOBERFEST" beside "Henry Maier Festival Park" does not
+         fit on one line in that at any width worth designing for. Set
+         as a stack it fits everywhere, and a chunkier two-line tape is
+         a better anchor for the row than a thin one. The lockup rests
+         on its far END rather than its opening (see the pin), so the
+         words keep the left and nothing needs holding clear. */
+      { from: 2, to: 4,  name: 'Oktoberfest', where: 'Henry Maier Festival Park',
+        tone: 'gold', lane: 1, tilt: 1.4, stack: true, marked: true }
+    ],
+    /* The pasted-on layer. A pin is a PICTURE and nothing else — no
+       name, no date, no link — so it is alt="" and the label in the cell
+       or the strip does all the talking. A screen reader that announced
+       "Chief Keef" twice in one square would be reading the collage, not
+       the calendar.
+
+       Pins are keyed by day and are INDEPENDENT of events: the Brewers
+       glove sits on the 7th, which has no event of its own, because
+       what it marks is the playoff run crossing that week.
+
+       x / y / size / rot are authored one at a time so no two sit the
+       same way, and they are sized to OVERRUN their squares — this grid
+       is a thing to look at, not a listing to read off, and a sticker
+       that stops politely at a cell border stops looking stuck on.
+
+       The day numeral is still the one thing that always wins, but it
+       no longer wins by geometry (the pins are far too big to be kept
+       out of its corner now). It wins by depth instead: every numeral
+       is z-index 6, above all of this, and carries a soft plate of the
+       sheet colour so it stays readable over whatever passes beneath
+       it. Below 760px the pins ignore x and centre on the square, so
+       what they overrun is a neighbour rather than the sheet edge.
+       See .cal .pin and .cal .dnum in bss.css. */
+    pins: {
+      /* `size` is a WIDTH; height follows the file. The Oktoberfest
+         lockup is a 2.4:1 banner rather than a square badge, so its
+         number is much larger than the others for a mark that is
+         actually SHORTER on the page. */
+      1:  { img: 'sticker-brewers.png',           x:  4, size: 150, rot: -7,
+            anchor: 'bottom', y: 14 },
+      /* Anchored to its RIGHT edge, on the last square of the gold run,
+         so it comes to rest on the far end of the tape and overruns
+         BACKWARDS across Oct 2. Two reasons it is not at the opening
+         like the glove: the words on this tape are long and need the
+         left, and Oct 3 is a Saturday — a mark this wide hung off the
+         left edge of that square would run off the sheet entirely.
+         y rests it on the TOP edge of lane 1 rather than in the middle of
+         it, the way the glove sits in lane 0. Both are touching their
+         tape; this one has to touch it from above, because this tape is
+         the one carrying two lines of words and a mark lying across
+         them takes the venue off the end of the line. */
+      3:  { img: 'sticker-oktoberfest.png',       x:  3, size: 176, rot: -7,
+            anchor: 'bottom', align: 'right', y: 97 },
+      4:  { img: 'sticker-chance-the-rapper.png', x: 38, y:  0, size: 108, rot:  7 },
+      14: { img: 'sticker-chief-keef.png',        x: 36, y:  0, size: 106, rot: 10 },
+      /* Two of the curtain's tickets, come to rest either side of our own
+         square — one in the day above it, one in the day beside it. They
+         are not ON the orange block: that block is the loudest thing on
+         the page and confetti laid over it would only take bites out of
+         it. Sitting just outside, they point at it instead. */
+      /* Kept left in the square above: the doodled arrow that points down
+         at our own date hangs into the right of it, and a ticket parked
+         under the arrowhead reads as the thing being pointed at. */
+      24: [{ mark: 'ticket', x: 16, size: 74, rot:  15, anchor: 'bottom', y: 16 }],
+      30: [{ mark: 'ticket', x: 48, size: 62, rot: -18, anchor: 'bottom', y: 34 }]
     }
   };
 
@@ -279,21 +373,116 @@
       '<path d="M6 58 21 82 39 66"/>' +
     '</svg>';
 
+  /* A week row is the only grouping the grid actually knows about, so a
+     run of days that crosses a Saturday has to be drawn as two strips.
+     Returns { startDay: columnsCovered } — one entry per row the run
+     touches. */
+  function segments(sp) {
+    var out = {}, d = sp.from;
+    while (d <= sp.to) {
+      var col = (MONTH.lead + d - 1) % 7;
+      var n = Math.min(7 - col, sp.to - d + 1);
+      out[d] = n;
+      d += n;
+    }
+    return out;
+  }
+
+  /* One strip. Only the FIRST segment of a run carries the name — the
+     others are the same strip continuing, and repeating the label on
+     each one reads as two separate events. It sits at the start because
+     that is where a run reads from, and because it is where the mark
+     that belongs to it sits. (A narrow first segment will clip its own
+     label; the strip hides the overflow rather than letting it spill
+     across the squares either side.) */
+  function strip(sp, n, labelled) {
+    return '<span class="span span--' + sp.tone + (sp.thin ? ' span--thin' : '') +
+      (sp.stack ? ' span--stack' : '') + (sp.marked ? ' span--marked' : '') +
+      (sp.lead && labelled ? ' span--lead' : '') + '"' +
+      ' style="--n:' + n + ';--lane:' + (sp.lane || 0) + ';--tilt:' + (sp.tilt || 0) + 'deg' +
+      (sp.lead ? ';--lead:' + sp.lead + 'px' : '') + '">' +
+      (labelled
+        ? (sp.name ? '<b>' + esc(sp.name) + '</b>' : '') +
+          (sp.where ? '<em>' + esc(sp.where) + '</em>' : '')
+        : '') +
+      '</span>';
+  }
+
+  /* A pin normally hangs from the top of the square, under the numeral.
+     `anchor:'bottom'` measures from the bottom instead, which is what
+     puts the Brewers glove down ON the playoff strip rather than
+     floating in the middle of a week with no visible connection to it. */
+  function pin(p) {
+    var cls = 'pin' + (p.anchor === 'bottom' ? ' pin--bottom' : '') +
+              (p.align === 'right' ? ' pin--right' : '') +
+              (p.mark ? ' pin--mark' : '');
+    var st = '--sx:' + p.x + '%;--sy:' + p.y + 'px;--ss:' + p.size +
+             'px;--tilt:' + p.rot + 'deg';
+    /* An inline mark rather than a file. Purely decorative — a <span>,
+       aria-hidden, and deliberately NOT an <a>: it is the same silhouette
+       the homepage curtain drops, borrowed as confetti, and a ticket
+       shape that navigated somewhere would be a promise the calendar
+       cannot keep. */
+    if (p.mark === 'ticket') {
+      return '<span class="' + cls + '" aria-hidden="true" style="' + st + '">' +
+        miniTicket(TIX_INK) + '</span>';
+    }
+    return '<img class="' + cls + '" src="images/stickers/' + p.img + '" alt="" ' +
+      'loading="lazy" decoding="async" style="' + st + '">';
+  }
+
+  /* Somebody else's event. A span and not an <a>: there is no ticket
+     page of ours behind these, and a link that goes nowhere is worse
+     than no link — same call as the dead forms that came off the event
+     pages. */
+  function sticker(ev) {
+    return '<span class="stick stick--' + (ev.tone || 'blush') + '"' +
+      ' style="--tilt:' + (ev.tilt || 0) + 'deg">' +
+      '<b>' + esc(ev.name) + '</b>' +
+      (ev.where ? '<em>' + esc(ev.where) + '</em>' : '') +
+    '</span>';
+  }
+
   function calendar() {
     var head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
       .map(function (d) { return '<th>' + d + '</th>'; }).join('');
+
+    /* Which strips begin on which day. Built first so a cell can be
+       rendered in one pass. */
+    var starts = {};
+    (MONTH.spans || []).forEach(function (sp) {
+      var seg = segments(sp), k;
+      for (k in seg) (starts[k] = starts[k] || []).push(strip(sp, seg[k], +k === sp.from));
+    });
 
     var cells = [];
     for (var i = 0; i < MONTH.lead; i++) cells.push('<td></td>');
     for (var d = 1; d <= MONTH.days; d++) {
       var ev = MONTH.events[d];
-      if (!ev) { cells.push('<td><span class="dnum">' + d + '</span></td>'); continue; }
-      cells.push(
-        '<td class="has must-ring' + (ev.ours ? ' ours' : '') + '">' +
-          '<span class="dnum">' + d + '</span>' +
-          '<a class="evt' + (ev.ours ? ' evt--ours' : '') + '" href="' + (ev.href || '#') + '">' +
-            esc(ev.name) + '<em>' + esc(ev.where) + '</em></a>' +
-        '</td>');
+      var pn = (MONTH.pins || {})[d];
+      var strips = starts[d] ? starts[d].join('') : '';
+      var cls = [];
+      if (ev) cls.push('has');
+      if (pn && pn.anchor !== 'bottom') cls.push('has-pin');
+      if (ev && ev.ours) cls.push('ours');
+      /* The ring is opt-in now. It used to be on every event cell, which
+         was invisible while the month held one painted square and would
+         have drawn a circle round all four stickers the moment it did
+         not. */
+      if (ev && ev.must && !ev.ours) cls.push('must-ring');
+      if (strips) cls.push('has-span');
+
+      var body = '<span class="dnum">' + d + '</span>';
+      if (pn) body += [].concat(pn).map(pin).join('');
+      if (ev && ev.ours) {
+        body += '<a class="evt evt--ours" href="' + (ev.href || '#') + '">' +
+          esc(ev.name) + '<em>' + esc(ev.where) + '</em></a>';
+      } else if (ev) {
+        body += sticker(ev);
+      }
+
+      cells.push('<td' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' +
+        body + strips + '</td>');
     }
     while (cells.length % 7) cells.push('<td></td>');
 
@@ -502,6 +691,9 @@
      once per session so moving around the site is not a series of
      curtains. */
   var DROP_INKS = ['#B78BCB', '#FC7C4E', '#91EC8E', '#E1566E', '#5DA4F0', '#F8D282'];
+  /* The curtain's purple, reused for the loose tickets on the calendar so
+     the two stay the same colour if the curtain is ever re-inked. */
+  var TIX_INK = DROP_INKS[0];
 
   function drop() {
     var reduced = window.matchMedia &&

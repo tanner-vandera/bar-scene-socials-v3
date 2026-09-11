@@ -68,6 +68,25 @@
                               This gives 5.48 and still reads 3.45:1 as a
                               shape against the page. */
 
+  /* --- sticker inks: the collage layer on the calendar ------------
+     Other people's events only, and never orange. "If it's orange, go"
+     is the whole promise of Happening Now, and it only holds while
+     orange means us — a gold strip and a blue sticker sitting next to
+     the painted square are what make that square read as ours.
+
+     These live on the white calendar sheet (--ink, #F8F8F6), not on the
+     page ground, so they are measured against near-black type:
+       gold  9.6:1   navy 14.7:1 (white on it)   sky 12.8:1   lime 8.6:1
+     Mixed from the style guide's warm/community + risograph palettes;
+     the powder blue is nudged one step deeper than the extracted
+     #CFE3EE so its edge survives on a near-white sheet. */
+  --stick-gold:  #F2B01E;   /* Octoberfest — beer gold, not a brand */
+  --stick-navy:  #12284B;   /* the playoffs run */
+  --stick-sky:   #BEDDEE;
+  --stick-lime:  #00C24E;
+  --stick-blush: #F9D7D6;   /* the default, if a tone is ever missed */
+  --stick-edge:  #FFFDF7;   /* the die-cut border every sticker carries */
+
   /* --- pinned: type sitting ON an accent or a light surface -------
      This must never follow --ink. White on --orange measures 3.3:1 and
      fails AA — electric orange is mid-luminance, so anything on an
@@ -2433,16 +2452,54 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .sheet .kicker,.sheet .tiny{color:rgba(17,17,16,.62)}
 .sheet .scrawl{color:var(--orange-d)}
 
-.cal{width:100%; border-collapse:collapse; table-layout:fixed}
+.cal{
+  width:100%; border-collapse:collapse; table-layout:fixed;
+  --cal-pad-x:8px; --cal-pad-y:9px;
+  /* How far a label is pushed down in a square that has a picture in it.
+     Deliberately SHORTER than the picture: the label is meant to come
+     down over the bottom of the photograph like a caption stuck on it,
+     which is both what a collage does and what stops a square from
+     reading as three things stacked with air between them. */
+  --pinband:58px;
+  /* Space held at the foot of every square for the tape lanes. Sized to
+     the tallest case — a two-line gold strip on lane 1 over a thin navy
+     one on lane 0 — because a strip is positioned from the bottom and
+     ignores padding, so this is the only thing keeping a label off it. */
+  --laneband:86px;
+  /* pins are authored at a desktop size and scaled from there, so one
+     number per breakpoint moves all of them together */
+  --pin-scale:1;
+}
 .cal th{
   font:500 10px/1 var(--body); text-transform:uppercase; letter-spacing:.19em;
   color:var(--text-3); padding:0 0 12px; text-align:left; font-weight:500;
 }
+/* Taller than it was, and with a floor under it. The month used to hold
+   one painted square and a lot of white; it now holds a sticker stacked
+   over two strip lanes.
+
+   The bottom padding is the important part. A strip is positioned from
+   the PADDING box, so it ignores padding and stays pinned to the bottom
+   of the square — which means padding-bottom is free space that the
+   sticker above cannot grow into, and the cell grows downward instead of
+   the two colliding. Without it, Oct 4 (a sticker AND both lanes) put
+   "Landmark CU Live" underneath the Octoberfest tape. The value is the
+   two lanes plus a little air: 7 + 26 + 23 = 56, rounded up. */
 .cal td{
-  border-top:1px solid var(--rule); height:clamp(96px,9vw,132px);
-  vertical-align:top; padding:9px 8px; position:relative;
+  border-top:1px solid var(--rule); height:clamp(230px,15.5vw,240px);
+  vertical-align:top;
+  padding:var(--cal-pad-y) var(--cal-pad-x) var(--laneband);
+  position:relative; overflow:visible;
 }
-.cal .dnum{font-family:var(--display); font-size:33px; letter-spacing:.03em; color:var(--text-3); line-height:.455}
+/* display:block on purpose. As an inline span the numeral's line box was
+   set by the CELL's inherited line-height rather than its own, so it
+   occupied 29px in flow while reading as 15px — and every label below it
+   inherited that 14px of invisible slack. As a block it is exactly its
+   own line-height, which is what --pinband is measured against. */
+.cal .dnum{
+  display:block; font-family:var(--display); font-size:33px;
+  letter-spacing:.03em; color:var(--text-3); line-height:.455;
+}
 .cal td.has .dnum{color:var(--ink)}
 .cal .evt{
   display:block; margin-top:7px; font:500 11px/1.35 var(--body);
@@ -2454,16 +2511,302 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .cal .must{position:absolute; left:2%; top:6%; width:96%; height:88%; pointer-events:none; overflow:visible}
 .cal .must path{fill:none; stroke:var(--ink); stroke-width:2.4; stroke-linecap:round; opacity:.85}
 
+/* ── THE COLLAGE LAYER ───────────────────────────────────────────────
+   Somebody else's event is a sticker, not a table row: a small label
+   with a die-cut border, tilted a degree or two and dropped a hair off
+   the page, the way one actually sits on a calendar pinned to a wall.
 
+   The tilt is authored per event in bss.js and pinned, for the same
+   reason the torn edge is pinned — an angle that re-rolls on every
+   navigation reads as a rendering bug rather than a hand.
+
+   transform-origin sits at the left edge, not the centre: these are
+   narrow cells, and rotating about the middle walks the right-hand end
+   of a sticker into the next square. */
+.cal .stick{
+  /* Sized to its own words, but capped at roughly its own square. A long
+     name STACKS — the same treatment the name on our own date gets —
+     rather than running out across the week. Allowed to run wide it was
+     legible as a line and illegible as a grid: three squares of pale
+     blue lying over other people's dates read as a banner across the
+     calendar rather than as a note on one day. */
+  position:relative; z-index:2; display:block; margin-top:8px;
+  width:max-content; max-width:116%;
+  padding:5px 7px 6px; border:2px solid var(--stick-edge); border-radius:3px;
+  transform:rotate(var(--tilt,0deg)); transform-origin:8% 50%;
+  box-shadow:0 1px 0 rgba(17,17,16,.22), 0 3px 7px rgba(17,17,16,.13);
+}
+.cal .stick b{
+  display:block; font:700 14px/1.12 var(--body);
+  text-transform:uppercase; letter-spacing:.03em;
+}
+/* The venue goes into the handwriting — short, an aside, which is the
+   only thing the script face is for. The NAME stays in label type on
+   purpose: the one name on this calendar written by hand is Haunted Bar
+   Hop, and it stops being a signal the moment four others join it. */
+.cal .stick em{
+  display:block; font-style:normal; font-family:var(--script);
+  font-size:17px; line-height:1.05; margin-top:3px;
+  color:rgba(17,17,16,.74);
+}
+.cal .stick--sky  {background:var(--stick-sky);   color:var(--on-accent)}
+.cal .stick--lime {background:var(--stick-lime);  color:var(--on-accent)}
+.cal .stick--gold {background:var(--stick-gold);  color:var(--on-accent)}
+.cal .stick--blush{background:var(--stick-blush); color:var(--on-accent)}
+.cal .stick--navy {background:var(--stick-navy);  color:#FFFDF7}
+.cal .stick--navy em{color:rgba(255,253,247,.82)}
+
+/* ── THE PASTED-ON PICTURES ──────────────────────────────────────────
+   Real die-cut stickers, laid in the square at an angle. Each one is
+   authored with its own x / y / size / rotation in MONTH (bss.js) so no
+   two sit the same way — a uniform grid of pictures is a sticker SHEET,
+   and the thing being imitated is a sticker sheet that has been used.
+
+   THE DAY NUMERAL ALWAYS WINS. It is the one piece of information a
+   calendar exists to carry, and it is drawn at a fixed 33px at every
+   width — so as the column narrows the numeral does NOT, and a pin
+   placed by percentage walks straight into it. Two defences, because
+   one is not enough:
+
+     1. Geometry. Every pin is authored at x >= 34%, and below 760px
+        the percentage is abandoned altogether for centred-under-the-
+        numeral (see the narrow-column block further down), which is the
+        only placement that still clears a 45px column.
+     2. Order. The numeral is z-index 6, above every pin, every label
+        and every strip, so even a pin dropped in at a bad x stays
+        behind the date rather than on top of it.
+
+   The drop shadow does the separating, not the die-cut border: these
+   sit on a near-white sheet and three of the four are outlined in
+   white, so their own edge disappears into the paper. */
+.cal .pin{
+  position:absolute; z-index:1;
+  left:var(--sx); top:var(--sy);
+  width:calc(var(--ss) * var(--pin-scale)); height:auto;
+  /* The sheet-wide `img{max-width:100%}` applies here too, and a pin's
+     containing block is ONE SQUARE — so every picture was being quietly
+     clamped to its column the moment the authored size passed it, which
+     is most of them below about 1200px and all of them on a phone. That
+     is not a safety net for these: overrunning the square is the whole
+     idea, and the clamp was what made a 99px sticker render at 48px. */
+  max-width:none;
+  transform:rotate(var(--tilt,0deg)); transform-origin:50% 88%;
+  filter:drop-shadow(0 2px 3px rgba(17,17,16,.30));
+  pointer-events:auto;
+}
+/* Anchored to the bottom of the square instead of hanging from the top.
+   This is what sets the Brewers glove down ON the playoff strip: --sy is
+   read as a distance up from the bottom rule, small enough that the
+   glove and the tape overlap, so the two read as one object rather than
+   a picture that happens to be in the same week.
+
+   z-index 4 puts it above the strips (3) — a glove the tape was drawn
+   over would look like a printing mistake rather than a sticker. */
+.cal .pin--bottom{top:auto; bottom:var(--sy); z-index:4}
+/* Hung off the right edge of its square instead of the left, so it
+   overruns backwards. The only way a mark wider than a column can sit
+   in the last column of a week without running off the sheet. */
+.cal .pin--right{left:auto; right:var(--sx)}
+
+/* The loose tickets: the homepage curtain's own silhouette, at confetti
+   size. A <span> wrapping an <svg>, so it needs its width stated and its
+   line box killed; everything else it inherits from .pin. */
+.cal .pin--mark{line-height:0}
+.cal .pin--mark svg{display:block; width:100%; height:auto}
+
+/* A label in a square that has a picture starts below the picture. */
+.cal td.has-pin .stick{margin-top:var(--pinband)}
+/* Above the pins, the labels and the tape — see the note above.
+
+   NO PLATE, NO SHADOW, NOTHING. The date is plain type in plain grey,
+   and the only thing keeping it clear of the collage is z-index.
+
+   Three attempts at a paper plate behind these all failed, and they all
+   failed for the SAME reason, which the note further up this file
+   already spells out under "NO GLOW ON A WHITE GROUND": inside
+   .on-white the --ink token has inverted to near-black. Both calendars
+   sit inside .on-white. So every "plate in the sheet's own colour"
+   written here was deriving a BLACK halo — first blurred, then as eight
+   hard offsets, then blurred again and softer. Technically consistent,
+   and wrong every time. A token that means "the mark" is not the token
+   for "the ground"; on this sheet the ground is --paper.
+
+   It is also unnecessary. Measured across the breakpoints, exactly two
+   numerals on the grid are ever touched by anything — the 5th and the
+   15th, grazed at the edge by the photograph in the square before them,
+   around 1024px — and both stay legible on their own, because they are
+   drawn above the picture rather than under it. */
+.cal .dnum{position:relative; z-index:6}
+
+/* ── HOVER: KNOCK THE STICKER CROOKED ───────────────────────────────
+   One rotation and nothing else. The angle is relative to the sticker's
+   OWN rest angle, so one authored at +10deg and one at -18deg both turn
+   by the same amount from where they actually sit.
+
+   Pointer devices only — :hover on a touch screen latches after a tap
+   and the sticker would simply stay askew. */
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .cal .pin,
+  .cal .stick{transition:transform .22s var(--ease)}
+  .cal .pin:hover,
+  .cal .stick:hover{transform:rotate(calc(var(--tilt,0deg) + 7deg)); z-index:7}
+}
+
+/* ── MULTI-DAY STRIPS ────────────────────────────────────────────────
+   A run of days is one piece of tape laid across the squares, not the
+   same event copied into each of them.
+
+   Width is counted in columns. An absolutely positioned box resolves its
+   percentages against its containing block, which for these is the
+   CELL'S PADDING BOX — one whole square, padding included — not the
+   content box inside it. So `--n * 100%` is already --n squares, and
+   `left:0` is already the square's left edge. (Adding the cell padding
+   back on top, which looks like the obvious fix, over-runs every strip
+   by one padding per column: the 7-column one ended up 106px past the
+   right edge of the table.) The 3px each end keeps two consecutive runs
+   from touching.
+
+   --lane stacks strips that share a week row. Lane 0 rides the bottom
+   rule; each lane up clears the one below it. */
+.cal .span{
+  position:absolute; z-index:3; display:flex; align-items:center; gap:7px;
+  left:3px;
+  width:calc(var(--n) * 100% - 6px);
+  bottom:calc(7px + var(--lane) * 30px);
+  height:29px; padding:0 11px; border-radius:2px;
+  transform:rotate(var(--tilt,0deg));
+  box-shadow:0 1px 0 rgba(17,17,16,.18), 0 2px 6px rgba(17,17,16,.12);
+  white-space:nowrap; overflow:hidden;
+}
+.cal .span b{
+  font:700 13.5px/1 var(--body); text-transform:uppercase; letter-spacing:.06em;
+}
+.cal .span em{
+  font-style:normal; font-family:var(--script); font-size:16.5px;
+  line-height:1; opacity:.8;
+}
+/* The playoffs are a fortnight of background, not a night out. Half the
+   height of a real event strip so it never competes with one. */
+.cal .span--thin{height:24px; padding:0 9px; gap:5px}
+.cal .span--thin b{font-size:12px}
+.cal .span--thin em{font-size:15px}
+/* Two lines instead of one. Used where a run is too few squares wide to
+   set its name and its venue side by side — see the Oktoberfest span in
+   bss.js. The strip grows upward from the lane it sits on, which is why
+   --laneband is sized off this case and not off a plain strip. */
+.cal .span--stack{
+  display:flex; flex-direction:column; align-items:flex-start;
+  justify-content:center; gap:1px;
+  height:auto; min-height:29px; padding:6px 11px 7px; white-space:normal;
+}
+.cal .span--stack b{line-height:1.08}
+.cal .span--stack em{line-height:1.04; opacity:.86}
+/* A strip with something sitting on its opening holds that space clear
+   rather than running its name underneath. --lead is the mark's own
+   authored width, passed in from MONTH, so a 92px glove and a 118px
+   lockup each reserve the right amount; multiplying by the same
+   --pin-scale the pin uses keeps the two locked together at every
+   breakpoint. A percentage would not track, because a label's width is
+   roughly constant in px while the column it sits in is not. */
+.cal .span--lead{padding-left:calc(var(--pin-scale) * var(--lead,92px) + 14px)}
+.cal .span--gold{background:var(--stick-gold); color:var(--on-accent)}
+.cal .span--navy{background:var(--stick-navy); color:#FFFDF7}
+.cal .span--sky {background:var(--stick-sky);  color:var(--on-accent)}
+.cal .span--lime{background:var(--stick-lime); color:var(--on-accent)}
+
+
+
+
+/* --pinband tracks the picture: it is the picture's own height less the
+   overlap we want the label to take, so the caption keeps landing in the
+   same place on the photograph as both scale down. */
+@media (max-width:1100px){
+  .cal{--pin-scale:.92; --pinband:51px}
+}
 @media (max-width:900px){
-  /* the venue line will not fit in a narrow cell — the name still does,
-     and the full detail is one tap away on Happening Now */
-  .cal .evt em{display:none}
+  /* Both venue lines come off here. A label is capped to about its own
+     square now, so at this width "Landmark CU Live" breaks after "CU"
+     and a two-line name becomes a four-line block. The name is the half
+     that identifies the night; the venue is in the listing below. */
+  .cal .evt em,
+  .cal .stick em{display:none}
+  .cal{--pin-scale:.82; --pinband:44px}
+  .cal td{height:clamp(208px,22vw,226px)}
 }
 @media (max-width:760px){
   .cal th{font-size:8.5px; letter-spacing:.08em}
   .cal .evt{font-size:9.5px; letter-spacing:.03em}
-  .cal td{padding:6px 4px; height:clamp(76px,15vw,110px)}
+  .cal{--cal-pad-x:4px; --cal-pad-y:6px; --pin-scale:.66; --pinband:66px; --laneband:66px}
+  .cal td{height:clamp(208px,45vw,232px)}
+  /* A column is about 45px wide here and the numeral is still 33px, so
+     there is no horizontal room beside it at any x — the authored
+     percentage is dropped and every pin centres UNDER the date instead.
+     left is computed rather than using translateX so the transform
+     stays pure rotation and the wobble keyframes keep working. */
+  .cal .pin:not(.pin--bottom){left:calc(50% - (var(--ss) * var(--pin-scale)) / 2)}
+  /* only the ones hanging from the top have to clear the numeral */
+  .cal .pin:not(.pin--bottom){
+    /* 32px, and every part of that number was measured rather than
+       guessed. The numeral's own line box is 15px, but Jomhuria's
+       glyphs overflow it and the ink actually ends at 26.7px; and a
+       square rotated by 10deg has a bounding box ~16% taller than
+       itself, which grows UPWARD from where `top` puts it. 16px put all
+       four pictures across their dates and 24px still grazed them. */
+    top:calc(32px + var(--sy) * .3);
+  }
+  /* A square is about 45px wide down here. The tilt is what tips a
+     sticker into its neighbour at that size, so it comes off; the
+     die-cut border and the shadow still carry the sticker read. */
+  .cal .stick{margin-top:5px; padding:4px 6px 5px; border-width:1.5px}
+
+  .cal td.has-pin .stick{margin-top:var(--pinband)}
+  .cal .stick b{font-size:12.5px; letter-spacing:.02em; line-height:1.1}
+  /* Strips have to wrap down here — "Milwaukee Octoberfest" is wider
+     than the two squares it covers — so they stop being fixed-height. */
+  .cal .span{
+    height:auto; min-height:19px; padding:3px 6px; gap:5px;
+    white-space:normal; transform:none; bottom:calc(6px + var(--lane) * 30px);
+  }
+  .cal .span b{font-size:11.5px; letter-spacing:.03em; line-height:1.12}
+  .cal .span--thin{height:auto; min-height:17px; padding:2px 5px}
+  /* The tape keeps its NAME here and loses only its handwriting. What
+     made this impossible before was the reserved opening: a mark lying
+     on the tape took 80 of the 145px the navy run has down here, and the
+     name had nowhere to go. The marks now rest on the tape's TOP EDGE
+     instead (see .pin--bottom below), which is the same thing the
+     Oktoberfest lockup already did, so the opening is not needed and the
+     full width of the tape is free to carry the words. */
+  .cal .span--lead{padding-left:0}
+  .cal .span--marked em{display:none}
+  .cal .span--stack{min-height:0; padding:3px 6px}
+  /* Both tape marks sit ABOVE their strip down here rather than across
+     it, so the words underneath stay readable end to end. They still
+     touch the tape they belong to — they just touch its top edge.
+
+     Measured, because the numbers here are unforgiving: the navy run is
+     139px wide at a 375px viewport, "MLB PLAYOFFS" takes 85 of it, and
+     the glove is 74 — so the two cannot share the tape at any placement,
+     and the glove has to come off it.
+
+     It also hangs off the LEFT end rather than sitting inside Oct 1.
+     A 74px sticker does not fit a 48px square, and overrunning to the
+     right puts it into Oct 2, where it lands on the gold tape's own name
+     and on the Oktoberfest lockup. To the left is the empty square
+     before the 1st, so that is the way it overruns — half on the start
+     of the line, half off it. */
+  .cal .pin--bottom{bottom:27px}
+  .cal .pin--bottom:not(.pin--right){left:-52%}
+  /* The gold tape carries one line here rather than two, so it is about
+     22px shorter than on a desktop, and the lockup riding its top edge
+     comes down to match. */
+  .cal .pin--right{bottom:60px}
+  /* The two tape marks are the one thing that cannot keep its full size
+     here. They sit at opposite ends of the same corner of the grid — the
+     glove at the start of the navy run, the lockup at the end of the
+     gold one — and a 48px column leaves about 145px between them for
+     215px of sticker, so at full size they landed on each other. The
+     free-standing pictures keep the full .66 and go on overrunning. */
+  .cal .pin--bottom{--pin-scale:.44}
 }
 
 /* the calendar also runs on the dark band on the homepage */
@@ -2490,7 +2833,10 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    day numeral ended up at 2.32:1 on the orange. */
 .sheet.sheet .cal th{color:rgba(17,17,16,.6)}
 .sheet.sheet .cal td{border-top-color:rgba(17,17,16,.2)}
-.sheet.sheet .cal td:not(.ours) .dnum{color:rgba(17,17,16,.45)}
+/* #90908E is rgba(17,17,16,.45) already blended onto the sheet: the same
+   colour it has always rendered as, but opaque, so the plate behind it
+   cannot show through the strokes. */
+.sheet.sheet .cal td:not(.ours) .dnum{color:#90908E}
 .sheet.sheet .cal td.has:not(.ours) .dnum{color:var(--on-accent)}
 .sheet.sheet .cal td:not(.ours) .evt{color:var(--on-accent)}
 .sheet.sheet .cal td:not(.ours) .evt em{color:rgba(17,17,16,.58)}
@@ -2528,12 +2874,16 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .cal td.ours .dnum{
   color:var(--on-accent); font-size:clamp(38px,4.4vw,52px); line-height:.42;
 }
-/* The name goes into the handwriting. It is the one line on the
-   calendar that is us talking rather than us listing. */
+/* The name is set in the label face, not the handwriting. The script
+   was legible on its own in an empty month; with four other names on the
+   grid it became the hardest one to read on the sheet, which is a bad
+   outcome for the only event we actually run. The block does the
+   shouting now — it is the one painted square on the calendar, and it
+   does not need the type to be different as well. */
 .cal td.ours .evt--ours{
-  font-family:var(--script); font-weight:400; text-transform:none;
-  letter-spacing:0; font-size:clamp(19px,2.1vw,26px); line-height:1.02;
-  color:var(--on-accent); margin-top:10px;
+  font-family:var(--body); font-weight:700; text-transform:uppercase;
+  letter-spacing:.03em; font-size:clamp(13px,1.35vw,16.5px); line-height:1.16;
+  color:var(--on-accent); margin-top:9px;
 }
 .cal td.ours .evt em{
   color:rgba(17,17,16,.86); letter-spacing:.11em; font-size:9.5px;

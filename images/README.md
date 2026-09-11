@@ -12,6 +12,14 @@
 | `shamrock-shuffle-card.jpg` | Shamrock event card. |
 | `TicketButtonEmpty.svg` | Source artwork the ticket silhouette in `bss.js` was traced from. Not loaded at runtime. |
 
+## Calendar stickers live in `stickers/`
+
+The collage marks on the Happening Now calendar are their own folder,
+`images/stickers/`, with their own README covering naming, format and the two
+rules that are easy to get wrong (they sit on a WHITE sheet, and none of them
+may be orange). Slots are keyed by the `mark` field on an event or span in
+`MONTH` in `js/bss.js`.
+
 ## The Halloween photographs are not from Brady Street
 
 `haunted-bar-hop-hero.jpg`, the three polaroids and `haunted-bar-hop-crowd.jpg`
