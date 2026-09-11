@@ -7,6 +7,10 @@
 #   _neon-preview.html   an unfinished alternate homepage direction
 #   _fallback.html       Brush Script MT vs Yellowtail comparison
 #   _lead.html           headline line-height ladder
+#   _og-card.html        1200x630 social-card template, rendered with
+#                        headless Chrome into images/og/. Local-only, so it
+#                        WILL be lost on a fresh clone — it has been lost once
+#                        already. Rebuild from images/README.md if missing.
 _*.html
 
 # local dev helper — not part of the site
@@ -14,3 +18,9 @@ bin-bump.sh
 
 # local contrast-audit harness — never deployed
 _audit.js
+
+# local cleanUrls dev server (emulates vercel.json) — never deployed
+_serve.py
+
+# editor/agent config — not part of the site
+.claude/

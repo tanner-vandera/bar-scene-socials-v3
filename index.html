@@ -38,16 +38,29 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
 <meta name="geo.placename" content="Milwaukee">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.barscenesocials.com/#org","name":"Bar Scene Socials","url":"https://www.barscenesocials.com/","logo":"https://www.barscenesocials.com/images/bss-logo.svg","email":"barscenesocials@gmail.com","sameAs":["https://www.instagram.com/barscenesocials/"],"areaServed":{"@type":"City","name":"Milwaukee","addressRegion":"WI"}},{"@type":"WebSite","@id":"https://www.barscenesocials.com/#site","url":"https://www.barscenesocials.com/","name":"Bar Scene Socials","publisher":{"@id":"https://www.barscenesocials.com/#org"},"inLanguage":"en-US"}]}</script>
 <!-- SEO:end -->
-<link rel="stylesheet" href="css/fonts.css?v=1789049911">
-<link rel="stylesheet" href="css/bss.css?v=1789049911">
+<link rel="stylesheet" href="css/fonts.css?v=1789092573">
+<link rel="stylesheet" href="css/bss.css?v=1789092573">
 </head>
 <body data-page="home" class="has-hero">
 <div id="chrome-header"></div>
 <main>
   <!-- ── 01 HERO — full bleed, centred ──────────────────── -->
-  <section class="hero hero--shot grain">
+  <!-- --hero-pos: the Spider-Man trio sits in the lower half of a 2:3 frame,
+       so the default 50% crop cuts them off at the knees. 85% keeps the whole
+       pointing gag inside a 16:10 hero.
+
+       --hero-b: this frame is FLASH-LIT. Mean luminance is only .023, but the
+       flash puts hot highlights — lit faces, a white striped shirt — directly
+       behind the headline, and --violet is a mid-luminance ink that loses from
+       both ends. Measured with BSSAudit() across the whole crop x exposure
+       grid: at exposure 1 EVERY crop from 50% to 95% fails ("Haunted" lands
+       2.25-2.75 against a 3:1 floor), so this is not a crop that can be moved
+       out of trouble. .7 puts the worst word at 3.44. .85 also passes but only
+       at 3.02, which is too close to the line to survive a re-encode.
+       Re-run BSSAudit() if this picture, the crop or the scrim changes. -->
+  <section class="hero hero--shot grain" style="--hero-pos:85%; --hero-b:.7">
     <div class="hero__media hero__media--shot">
-      <img src="images/brady-street.webp" alt="Brady Street, Milwaukee — a row of bar and restaurant signs down both sides of the street, cars parked at the meters" decoding="async" fetchpriority="high">
+      <img src="images/haunted-bar-hop-hero.jpg" alt="Three crawlers in Spider-Man suits crouched on a packed bar floor, pointing at each other, a costumed crowd pressed in around them" decoding="async" fetchpriority="high">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
@@ -72,35 +85,40 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
       <!-- Three taped prints under the pitch, the same treatment the
            Shuffle page uses on its own "what it'll be" section. All three
            share ONE .ar-34 — a c-3 row with mixed aspect ratios leaves a
-           short frame and reads as a broken grid, not a collage. Only the
-           first is an actual Halloween photograph; the other two are
-           route bars. Swap them the moment real crawl photos arrive. -->
+           short frame and reads as a broken grid, not a collage.
+
+           These are now real crawl photographs (the two route-bar stand-ins
+           are gone). They are NOT from Brady Street — they are from a
+           different Halloween event last year — so the captions stay vague
+           on purpose. Do not put a venue, a street or a year in them; a
+           caption naming Brady over a photo shot somewhere else is a claim
+           the picture cannot back. -->
       <div class="cols c-3" data-reveal style="align-items:start; margin-top:clamp(34px,4.4vw,64px)">
         <div class="taped tilt-1"><div class="photo ar-34">
-            <img src="images/haunted-bar-hop-shot.jpg"
-                 alt="A mummy at the bar seen through a Brady Street window on Halloween night, a cobweb strung across the glass" loading="lazy" decoding="async"></div>
-          <span class="taped__cap">Last Halloween</span></div>
+            <img src="images/haunted-bar-hop-polaroid-1.jpg"
+                 alt="Four crawlers leaning over a bar rail in nineties costumes, one pointing straight at the camera, cups lined up on the bar in front of them" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">The lineup</span></div>
         <div class="taped tilt-3"><div class="photo ar-34">
-            <img src="images/bar-jo-cats.jpg"
-                 alt="Jo-Cats Pub at night from across the street, neon in the windows and string lights over the patio" loading="lazy" decoding="async"></div>
-          <span class="taped__cap">Jo-Cats</span></div>
+            <img src="images/haunted-bar-hop-polaroid-2.jpg"
+                 alt="A group of crawlers packed shoulder to shoulder under purple club lighting, one in a tall striped hat and painted clown face grinning over the rest" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">Peak hour</span></div>
         <div class="taped tilt-2"><div class="photo ar-34">
-            <img src="images/bar-jacks-american-pub.jpg"
-                 alt="The long dark bar at Jack's American Pub, green walls covered in framed photos" loading="lazy" decoding="async"></div>
-          <span class="taped__cap">Jack's</span></div>
+            <img src="images/haunted-bar-hop-polaroid-3.jpg"
+                 alt="A crawler in a Ghostface mask holding a drink up in the middle of a crowded dance floor, hands raised on every side" loading="lazy" decoding="async"></div>
+          <span class="taped__cap">No notes</span></div>
       </div>
     </div>
   </section>
   <!-- ── 03 NEXT UP ──────────────────────────────────────── -->
   <section class="band band--shot grain grain--soft">
     <div class="band__bg" aria-hidden="true">
-      <img src="images/brady-street.webp" alt="" loading="lazy" decoding="async">
+      <img src="images/haunted-bar-hop-crowd.jpg" alt="" loading="lazy" decoding="async">
     </div>
     <div class="shell">
       <div class="cols c-offset" data-reveal style="align-items:start">
         <div class="stack stack--lg">
           <div class="row" style="gap:10px">
-            <span class="sticker sticker--live">On sale — 640 left</span>
+            <span class="sticker sticker--live">On sale</span>
             <span class="sticker sticker--ghost sticker--flat">Sat 10/31/26</span>
             <span class="sticker sticker--ghost sticker--flat">21+</span>
           </div>
@@ -141,7 +159,7 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
       <div class="cols c-wide-left" data-reveal style="align-items:start">
         <a class="event" href="/hauntedbarhop">
           <div class="photo event__shot ar-169">
-            <img src="images/brady-street.webp" alt="" loading="lazy" decoding="async">
+            <img src="images/haunted-bar-hop-hero.jpg" alt="" loading="lazy" decoding="async">
             <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <span class="ink ink--orange">Hop</span></h3>
           </div>
           <div class="event__meta">
@@ -237,6 +255,6 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1789049911"></script>
+<script src="js/bss.js?v=1789092573"></script>
 </body>
 </html>

@@ -353,7 +353,7 @@
       '<div class="ftr__grid">' +
         '<div><p class="ftr__h">When</p><p class="small">Saturday 10/31/26<br>3–8pm with afterparty&nbsp;DJ</p></div>' +
         '<div><p class="ftr__h">Where</p><p class="small">Brady Street<br>Milwaukee, Wisconsin</p></div>' +
-        '<div><p class="ftr__h">Who</p><p class="small">21 and over<br>Bring ID, they will check</p></div>' +
+        '<div><p class="ftr__h">Who</p><p class="small">21 and over<br>You\'re never too old for fun</p></div>' +
         '<div><p class="ftr__h">Find us</p><p class="small">' +
           // rel on the external link: noopener closes the window.opener
           // hole that target=_blank leaves open, noreferrer keeps the
