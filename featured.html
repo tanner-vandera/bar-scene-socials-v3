@@ -10,9 +10,21 @@
    booted within 2.5s the class is pulled back off so a failed script can
    never leave a page blank. */
 (function(d,w){var r=d.documentElement;
+function add(c){r.className+=(r.className?' ':'')+c}
+function del(c){r.className=r.className.replace(new RegExp('\\s*\\b'+c+'\\b'),'')}
+/* THE FONT GATE. Holds the hero's own content back until the real faces
+   have arrived \u2014 see ".fonts-pending" in bss.css for why. Deliberately
+   ABOVE the reduced-motion guard: a typeface swapping under you is not
+   motion, and the frame it produces here is a broken one, not merely a
+   different one. Capped at 1.5s so a font that never arrives cannot
+   leave the hero empty. */
+add('fonts-pending');
+function faced(){del('fonts-pending')}
+if(d.fonts&&d.fonts.ready)d.fonts.ready.then(faced);else faced();
+w.setTimeout(faced,1500);
 if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-r.className+=(r.className?' ':'')+'has-js';
-w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+add('has-js');
+w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 })(document,window);</script>
 <!-- SEO:begin — generated, see README "Search & sharing" -->
 <link rel="canonical" href="https://www.barscenesocials.com/featured">
@@ -37,8 +49,8 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
 <meta name="geo.region" content="US-WI">
 <meta name="geo.placename" content="Milwaukee">
 <!-- SEO:end -->
-<link rel="stylesheet" href="css/fonts.css?v=1789166485">
-<link rel="stylesheet" href="css/bss.css?v=1789166485">
+<link rel="stylesheet" href="css/fonts.css?v=1789231456">
+<link rel="stylesheet" href="css/bss.css?v=1789231456">
 </head>
 <body data-page="bars">
 <div id="chrome-header"></div>
@@ -61,37 +73,37 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
       <div class="cols c-3" data-reveal>
         <a class="card" href="#">
           <div class="photo ar-43"><img src="images/bar-water-street-brewery.jpg"
-            alt="Inside Water Street Brewery — brick arches, neon beer signs, a pool table and a long bar of pink stools" loading="lazy" decoding="async"></div>
+            alt="Inside Water Street Brewery — brick arches, neon beer signs, a pool table and a long bar of pink stools" loading="lazy" decoding="async" width="900" height="506"></div>
           <div class="card__body"><h3 class="h4">Water Street Brewery</h3></div>
         </a>
         <a class="card" href="#">
           <div class="photo ar-43"><img src="images/bar-jacks-american-pub.jpg"
-            alt="The long dark bar at Jacks American Pub, green walls covered in framed photos" loading="lazy" decoding="async"></div>
+            alt="The long dark bar at Jacks American Pub, green walls covered in framed photos" loading="lazy" decoding="async" width="900" height="675"></div>
           <div class="card__body"><h3 class="h4">Jacks American Pub</h3></div>
         </a>
         <a class="card" href="#">
           <div class="photo ar-43"><img src="images/bar-jo-cats.jpg"
-            alt="Jo-Cats at night from across the street, neon in the windows and string lights over the patio" loading="lazy" decoding="async"></div>
+            alt="Jo-Cats at night from across the street, neon in the windows and string lights over the patio" loading="lazy" decoding="async" width="900" height="667"></div>
           <div class="card__body"><h3 class="h4">Jo-Cats</h3></div>
         </a>
         <a class="card" href="#">
           <div class="photo ar-43"><img src="images/bar-deer-camp.jpg"
-            alt="Deer Camp — antler chandeliers, a stone fireplace and orange-topped stools" loading="lazy" decoding="async"></div>
+            alt="Deer Camp — antler chandeliers, a stone fireplace and orange-topped stools" loading="lazy" decoding="async" width="900" height="675"></div>
           <div class="card__body"><h3 class="h4">Deer Camp</h3></div>
         </a>
         <a class="card" href="#">
           <div class="photo ar-43"><img src="images/bar-burnhearts.jpg"
-            alt="Burnhearts from the pavement, the script sign across the front and wicker chairs lined up under it" loading="lazy" decoding="async"></div>
+            alt="Burnhearts from the pavement, the script sign across the front and wicker chairs lined up under it" loading="lazy" decoding="async" width="900" height="675"></div>
           <div class="card__body"><h3 class="h4">Burnhearts</h3></div>
         </a>
         <a class="card" href="#">
           <div class="photo ar-43"><img src="images/bar-finks.jpg"
-            alt="The pergola over the patio at Finks, strung with festoon lights" loading="lazy" decoding="async"></div>
+            alt="The pergola over the patio at Finks, strung with festoon lights" loading="lazy" decoding="async" width="900" height="675"></div>
           <div class="card__body"><h3 class="h4">Finks</h3></div>
         </a>
         <a class="card" href="#">
           <div class="photo ar-43"><img src="images/bar-the-sofie.jpg"
-            alt="The Sofie — leather chesterfields down both walls, a long gas fire at the far end" loading="lazy" decoding="async"></div>
+            alt="The Sofie — leather chesterfields down both walls, a long gas fire at the far end" loading="lazy" decoding="async" width="900" height="675"></div>
           <div class="card__body"><h3 class="h4">The Sofie</h3></div>
         </a>
       </div>
@@ -112,6 +124,6 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
   <span class="tear tear--up" style="--tear-fill:#F8F8F6"></span>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1789166485"></script>
+<script src="js/bss.js?v=1789231456"></script>
 </body>
 </html>

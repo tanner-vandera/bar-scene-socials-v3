@@ -10,9 +10,21 @@
    booted within 2.5s the class is pulled back off so a failed script can
    never leave a page blank. */
 (function(d,w){var r=d.documentElement;
+function add(c){r.className+=(r.className?' ':'')+c}
+function del(c){r.className=r.className.replace(new RegExp('\\s*\\b'+c+'\\b'),'')}
+/* THE FONT GATE. Holds the hero's own content back until the real faces
+   have arrived \u2014 see ".fonts-pending" in bss.css for why. Deliberately
+   ABOVE the reduced-motion guard: a typeface swapping under you is not
+   motion, and the frame it produces here is a broken one, not merely a
+   different one. Capped at 1.5s so a font that never arrives cannot
+   leave the hero empty. */
+add('fonts-pending');
+function faced(){del('fonts-pending')}
+if(d.fonts&&d.fonts.ready)d.fonts.ready.then(faced);else faced();
+w.setTimeout(faced,1500);
 if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-r.className+=(r.className?' ':'')+'has-js';
-w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+add('has-js');
+w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 })(document,window);</script>
 <!-- SEO:begin — generated, see README "Search & sharing" -->
 <link rel="canonical" href="https://www.barscenesocials.com/12barsofchristmas">
@@ -38,8 +50,8 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
 <meta name="geo.placename" content="Milwaukee">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Event","name":"12 Bars of Christmas","startDate":"2026-12-12","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Milwaukee","address":{"@type":"PostalAddress","addressLocality":"Milwaukee","addressRegion":"WI","addressCountry":"US"}},"description":"Milwaukee's 12 Bars of Christmas bar crawl. Twelve bars, Christmas jumpers, a souvenir stein and a DJ. 21+.","image":["https://www.barscenesocials.com/images/og/12barsofchristmas.jpg"],"url":"https://www.barscenesocials.com/12barsofchristmas","organizer":{"@type":"Organization","name":"Bar Scene Socials","url":"https://www.barscenesocials.com/","sameAs":["https://www.instagram.com/barscenesocials/"]},"isAccessibleForFree":false,"typicalAgeRange":"21-"}</script>
 <!-- SEO:end -->
-<link rel="stylesheet" href="css/fonts.css?v=1789166485">
-<link rel="stylesheet" href="css/bss.css?v=1789166485">
+<link rel="stylesheet" href="css/fonts.css?v=1789231456">
+<link rel="stylesheet" href="css/bss.css?v=1789231456">
 </head>
 <body data-page="christmas" class="has-hero">
 <div id="chrome-header"></div>
@@ -51,7 +63,7 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
        together and only work as a pair. -->
   <section class="hero hero--shot grain" style="--hero-b:.7">
     <div class="hero__media hero__media--shot">
-      <img src="images/12bars-of-christmas-hero.jpg" alt="Five people crowded together in a Milwaukee bar on the 12 Bars of Christmas, all in Christmas jumpers, holding green souvenir steins under strings of lights" decoding="async" fetchpriority="high">
+      <img src="images/12bars-of-christmas-hero.jpg" alt="Five people crowded together in a Milwaukee bar on the 12 Bars of Christmas, all in Christmas jumpers, holding green souvenir steins under strings of lights" decoding="async" fetchpriority="high" width="1800" height="1199">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
@@ -97,13 +109,13 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
         <div class="taped tilt-1">
           <div class="photo ar-43">
             <img src="images/12bars-of-christmas-hero.jpg"
-                 alt="Five people in Christmas jumpers packed together at the bar, holding green souvenir steins" loading="lazy" decoding="async">
+                 alt="Five people in Christmas jumpers packed together at the bar, holding green souvenir steins" loading="lazy" decoding="async" width="1800" height="1199">
           </div>
           <span class="taped__cap">last year</span></div>
         <div class="taped tilt-3">
           <div class="photo ar-34">
             <img src="images/12bars-of-christmas-polaroid.jpg"
-                 alt="Someone dancing in the middle of the bar in Christmas pyjamas, arms up, the room going with them" loading="lazy" decoding="async">
+                 alt="Someone dancing in the middle of the bar in Christmas pyjamas, arms up, the room going with them" loading="lazy" decoding="async" width="900" height="1170">
           </div>
           <span class="taped__cap">also last year</span></div>
       </div>
@@ -120,7 +132,7 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
         <div class="pitch">
           <a class="event pitch__card" href="/hauntedbarhop">
             <div class="photo event__shot ar-169">
-              <img src="images/haunted-bar-hop-hero.jpg" alt="" loading="lazy" decoding="async">
+              <img src="images/haunted-bar-hop-hero.jpg" alt="" loading="lazy" decoding="async" width="1365" height="2048">
               <h3 class="event__title fx fx--orange fx--split"><span class="ink ink--violet">Haunted</span><br><span class="ink ink--violet">Bar</span> <span class="ink ink--orange">Hop</span></h3>
             </div>
           </a>
@@ -132,6 +144,6 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1789166485"></script>
+<script src="js/bss.js?v=1789231456"></script>
 </body>
 </html>

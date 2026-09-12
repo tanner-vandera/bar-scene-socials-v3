@@ -10,9 +10,21 @@
    booted within 2.5s the class is pulled back off so a failed script can
    never leave a page blank. */
 (function(d,w){var r=d.documentElement;
+function add(c){r.className+=(r.className?' ':'')+c}
+function del(c){r.className=r.className.replace(new RegExp('\\s*\\b'+c+'\\b'),'')}
+/* THE FONT GATE. Holds the hero's own content back until the real faces
+   have arrived \u2014 see ".fonts-pending" in bss.css for why. Deliberately
+   ABOVE the reduced-motion guard: a typeface swapping under you is not
+   motion, and the frame it produces here is a broken one, not merely a
+   different one. Capped at 1.5s so a font that never arrives cannot
+   leave the hero empty. */
+add('fonts-pending');
+function faced(){del('fonts-pending')}
+if(d.fonts&&d.fonts.ready)d.fonts.ready.then(faced);else faced();
+w.setTimeout(faced,1500);
 if(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-r.className+=(r.className?' ':'')+'has-js';
-w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\bhas-js\b/,'');},2500);
+add('has-js');
+w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 })(document,window);</script>
 <!-- SEO:begin — generated, see README "Search & sharing" -->
 <link rel="canonical" href="https://www.barscenesocials.com/hauntedbarhop">
@@ -38,8 +50,8 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
 <meta name="geo.placename" content="Milwaukee">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Event","name":"Haunted Bar Hop on Brady","startDate":"2026-10-31T15:00:00-05:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Brady Street","address":{"@type":"PostalAddress","addressLocality":"Milwaukee","addressRegion":"WI","addressCountry":"US","streetAddress":"Brady Street","postalCode":"53202"}},"description":"Milwaukee's only Halloween bar crawl on Brady Street. Ten bars, no cover at any of them, drink specials at every stop, costume prizes, daytime DJs and an official afterparty. 21+.","image":["https://www.barscenesocials.com/images/og/hauntedbarhop.jpg"],"url":"https://www.barscenesocials.com/hauntedbarhop","organizer":{"@type":"Organization","name":"Bar Scene Socials","url":"https://www.barscenesocials.com/","sameAs":["https://www.instagram.com/barscenesocials/"]},"isAccessibleForFree":false,"typicalAgeRange":"21-","endDate":"2026-10-31T20:00:00-05:00","offers":{"@type":"AggregateOffer","url":"https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady","priceCurrency":"USD","lowPrice":"12.40","highPrice":"14.99","offerCount":"2","availability":"https://schema.org/InStock"}}</script>
 <!-- SEO:end -->
-<link rel="stylesheet" href="css/fonts.css?v=1789166485">
-<link rel="stylesheet" href="css/bss.css?v=1789166485">
+<link rel="stylesheet" href="css/fonts.css?v=1789231456">
+<link rel="stylesheet" href="css/bss.css?v=1789231456">
 </head>
 <body data-page="halloween" class="has-hero">
 <div id="chrome-header"></div>
@@ -50,7 +62,7 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
        the exposure is a measured contrast fix, not a taste call. -->
   <section class="hero hero--shot grain" style="--hero-pos:85%; --hero-b:.7">
     <div class="hero__media hero__media--shot">
-      <img src="images/haunted-bar-hop-hero.jpg" alt="Three crawlers in Spider-Man suits crouched on a packed bar floor, pointing at each other, a costumed crowd pressed in around them" decoding="async" fetchpriority="high">
+      <img src="images/haunted-bar-hop-hero.jpg" alt="Three crawlers in Spider-Man suits crouched on a packed bar floor, pointing at each other, a costumed crowd pressed in around them" decoding="async" fetchpriority="high" width="1365" height="2048">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
@@ -78,15 +90,15 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
       <div class="cols c-3" data-reveal style="align-items:start; margin-top:clamp(34px,4.4vw,64px)">
         <div class="taped tilt-1"><div class="photo ar-34">
             <img src="images/haunted-bar-hop-polaroid-1.jpg"
-                 alt="Four crawlers leaning over a bar rail in nineties costumes, one pointing straight at the camera, cups lined up on the bar in front of them" loading="lazy" decoding="async"></div>
+                 alt="Four crawlers leaning over a bar rail in nineties costumes, one pointing straight at the camera, cups lined up on the bar in front of them" loading="lazy" decoding="async" width="1365" height="2048"></div>
           <span class="taped__cap">The lineup</span></div>
         <div class="taped tilt-3"><div class="photo ar-34">
             <img src="images/haunted-bar-hop-polaroid-2.jpg"
-                 alt="A group of crawlers packed shoulder to shoulder under purple club lighting, one in a tall striped hat and painted clown face grinning over the rest" loading="lazy" decoding="async"></div>
+                 alt="A group of crawlers packed shoulder to shoulder under purple club lighting, one in a tall striped hat and painted clown face grinning over the rest" loading="lazy" decoding="async" width="1365" height="2048"></div>
           <span class="taped__cap">Peak hour</span></div>
         <div class="taped tilt-2"><div class="photo ar-34">
             <img src="images/haunted-bar-hop-polaroid-3.jpg"
-                 alt="A crawler in a Ghostface mask holding a drink up in the middle of a crowded dance floor, hands raised on every side" loading="lazy" decoding="async"></div>
+                 alt="A crawler in a Ghostface mask holding a drink up in the middle of a crowded dance floor, hands raised on every side" loading="lazy" decoding="async" width="1820" height="1820"></div>
           <span class="taped__cap">No notes</span></div>
       </div>
     </div>
@@ -94,7 +106,7 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
   <!-- ── 02 WHAT YOU GET ─────────────────────────────────── -->
   <section class="band band--shot">
     <div class="band__bg" aria-hidden="true">
-      <img src="images/haunted-bar-hop-crowd.jpg" alt="" loading="lazy" decoding="async">
+      <img src="images/haunted-bar-hop-crowd.jpg" alt="" loading="lazy" decoding="async" width="1365" height="2048">
     </div>
     <div class="shell">
       <div class="row row--between" style="align-items:baseline; margin-bottom:clamp(26px,3vw,44px)">
@@ -254,6 +266,6 @@ w.setTimeout(function(){if(!w.__bssBooted)r.className=r.className.replace(/\s*\b
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1789166485"></script>
+<script src="js/bss.js?v=1789231456"></script>
 </body>
 </html>

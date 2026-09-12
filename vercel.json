@@ -3,15 +3,102 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/haunted-bar-hop.html", "destination": "/hauntedbarhop", "permanent": true },
-    { "source": "/haunted-bar-hop", "destination": "/hauntedbarhop", "permanent": true },
-    { "source": "/shamrock.html", "destination": "/shamrockshuffle", "permanent": true },
-    { "source": "/shamrock", "destination": "/shamrockshuffle", "permanent": true },
-    { "source": "/christmas.html", "destination": "/12barsofchristmas", "permanent": true },
-    { "source": "/christmas", "destination": "/12barsofchristmas", "permanent": true },
-    { "source": "/happening-now.html", "destination": "/happeningnow", "permanent": true },
-    { "source": "/happening-now", "destination": "/happeningnow", "permanent": true },
-    { "source": "/featured-bars.html", "destination": "/featured", "permanent": true },
-    { "source": "/featured-bars", "destination": "/featured", "permanent": true }
+    {
+      "source": "/haunted-bar-hop.html",
+      "destination": "/hauntedbarhop",
+      "permanent": true
+    },
+    {
+      "source": "/haunted-bar-hop",
+      "destination": "/hauntedbarhop",
+      "permanent": true
+    },
+    {
+      "source": "/shamrock.html",
+      "destination": "/shamrockshuffle",
+      "permanent": true
+    },
+    {
+      "source": "/shamrock",
+      "destination": "/shamrockshuffle",
+      "permanent": true
+    },
+    {
+      "source": "/christmas.html",
+      "destination": "/12barsofchristmas",
+      "permanent": true
+    },
+    {
+      "source": "/christmas",
+      "destination": "/12barsofchristmas",
+      "permanent": true
+    },
+    {
+      "source": "/happening-now.html",
+      "destination": "/happeningnow",
+      "permanent": true
+    },
+    {
+      "source": "/happening-now",
+      "destination": "/happeningnow",
+      "permanent": true
+    },
+    {
+      "source": "/featured-bars.html",
+      "destination": "/featured",
+      "permanent": true
+    },
+    {
+      "source": "/featured-bars",
+      "destination": "/featured",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(css|js)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/favicon.svg",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    },
+    {
+      "source": "/apple-touch-icon.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    }
   ]
 }

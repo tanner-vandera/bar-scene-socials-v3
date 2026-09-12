@@ -72,7 +72,8 @@
       14: { name: 'Chief Keef',        where: 'Landmark CU Live',
             tone: 'lime', tilt:  1.9 },
       31: { name: 'Haunted Bar Hop',   where: 'Brady St · 3pm',
-            ours: true, href: '/hauntedbarhop' }
+            ours: true, href: '/hauntedbarhop', chip: 'On sale',
+            shot: 'haunted-bar-hop-crowd.jpg' }
     },
     spans: [
       /* The playoffs are a backdrop, not a night out — the thinnest
@@ -118,7 +119,7 @@
          lockup is a 2.4:1 banner rather than a square badge, so its
          number is much larger than the others for a mark that is
          actually SHORTER on the page. */
-      1:  { img: 'sticker-brewers.png',           x:  4, size: 150, rot: -7,
+      1:  { img: 'sticker-brewers.png',           x:  4, size: 132, rot: -7,
             anchor: 'bottom', y: 14 },
       /* Anchored to its RIGHT edge, on the last square of the gold run,
          so it comes to rest on the far end of the tape and overruns
@@ -144,7 +145,11 @@
          at our own date hangs into the right of it, and a ticket parked
          under the arrowhead reads as the thing being pointed at. */
       24: [{ mark: 'ticket', x: 16, size: 74, rot:  15, anchor: 'bottom', y: 16 }],
-      30: [{ mark: 'ticket', x: 48, size: 62, rot: -18, anchor: 'bottom', y: 34 }]
+      /* pin--crowded: on a phone our own card widens out across the end
+         of the month and lands exactly here, so this one stands down.
+         The 24th's ticket sits in the row above and is unaffected. */
+      30: [{ mark: 'ticket', x: 48, size: 62, rot: -18, anchor: 'bottom', y: 34,
+             cls: 'pin--crowded' }]
     }
   };
 
@@ -415,7 +420,8 @@
   function pin(p) {
     var cls = 'pin' + (p.anchor === 'bottom' ? ' pin--bottom' : '') +
               (p.align === 'right' ? ' pin--right' : '') +
-              (p.mark ? ' pin--mark' : '');
+              (p.mark ? ' pin--mark' : '') +
+              (p.cls ? ' ' + p.cls : '');
     var st = '--sx:' + p.x + '%;--sy:' + p.y + 'px;--ss:' + p.size +
              'px;--tilt:' + p.rot + 'deg';
     /* An inline mark rather than a file. Purely decorative — a <span>,
@@ -429,6 +435,37 @@
     }
     return '<img class="' + cls + '" src="images/stickers/' + p.img + '" alt="" ' +
       'loading="lazy" decoding="async" style="' + st + '">';
+  }
+
+  /* OUR OWN DATE, and the only square on the grid that is a CARD rather
+     than a mark on a square. It is built in the same order as the event
+     cards on the homepage — picture, name, the line under it, a status
+     pill — because it is the same object at a twelfth of the size, and
+     the calendar is the one place on the site where ours has to out-read
+     four other people's nights.
+
+     It keeps the orange. The field and its halftone are still the td's
+     own ::before and ::after; the card lays over them at the same inset
+     and the same 1.4deg, so the picture sits INSIDE the orange rather
+     than replacing it. That matters twice over: "if it's orange, go" is
+     the page's whole promise, and near-black on --orange measures 5.7:1,
+     so every word here passes without a scrim, a plate or a halo. Put
+     the photograph behind the type instead and this one small square
+     would need the whole hero apparatus to stay legible.
+
+     The numeral is not in here — it is the shared .dnum, drawn by the
+     cell and sitting above the card at z-index 6, which is why the card
+     carries a top padding rather than a first row. */
+  function ourCard(ev) {
+    return '<a class="ourcard" href="' + (ev.href || '#') + '">' +
+      (ev.shot
+        ? '<span class="ourcard__shot"><img src="images/' + ev.shot + '" alt="" ' +
+          'loading="lazy" decoding="async"></span>'
+        : '') +
+      '<span class="ourcard__name">' + esc(ev.name) + '</span>' +
+      '<span class="ourcard__meta">' + esc(ev.where) + '</span>' +
+      (ev.chip ? '<span class="ourcard__chip">' + esc(ev.chip) + '</span>' : '') +
+    '</a>';
   }
 
   /* Somebody else's event. A span and not an <a>: there is no ticket
@@ -475,8 +512,7 @@
       var body = '<span class="dnum">' + d + '</span>';
       if (pn) body += [].concat(pn).map(pin).join('');
       if (ev && ev.ours) {
-        body += '<a class="evt evt--ours" href="' + (ev.href || '#') + '">' +
-          esc(ev.name) + '<em>' + esc(ev.where) + '</em></a>';
+        body += ourCard(ev);
       } else if (ev) {
         body += sticker(ev);
       }

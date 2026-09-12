@@ -178,7 +178,16 @@ body{
 .stops span{color:var(--text)}
 ::selection{background:var(--orange); color:var(--on-accent)}
 a{color:inherit}
-img{max-width:100%; display:block}
+/* height:auto is REQUIRED now that every <img> carries width/height
+   attributes. The attributes are there so the browser can reserve the
+   right box before the file arrives — no reflow as each picture lands —
+   but with max-width:100% constraining the WIDTH and the height still
+   pinned to the attribute, a shrunk image would keep its full intrinsic
+   height and stretch. `auto` hands the height back to the intrinsic
+   ratio the attributes declare. Every image that needs to fill a box
+   instead sets its own height (hero media, event thumbnails, the
+   calendar pins and card shot) and those win on specificity. */
+img{max-width:100%; height:auto; display:block}
 :focus-visible{
   outline:3px solid var(--orange); outline-offset:3px; border-radius:2px;
 }
@@ -395,11 +404,33 @@ img{max-width:100%; display:block}
 /* Two misfires, then it holds. This was six — three fast and three slow —
    which read as a fault rather than a tube striking. The duration comes
    down with the count so the strike still lands inside the first second. */
+/* IT ARRIVES LIT. The first frame used to be
+   `grayscale(1) brightness(.32)` — a deliberately dead tube, struck a
+   moment later — and on the page it read as a rendering fault rather
+   than a flourish. Three things compounded:
+
+   · On a .fx--split lockup (which is every event name on the site) the
+     parent's --fx-filter is EMPTY, so its resting filter is `none`. This
+     keyframe therefore does not dim a glow — it greyscales and darkens
+     the whole rendered subtree, the .ink runs' own neon and dark halos
+     included. Grey, blurred, dim: the whole lockup at once.
+   · .fx--lit is added by JS on first view, so the dead frame lands when
+     bss.js boots — by which time the hero PHOTOGRAPH is often still
+     decoding, so it shows up as grey type on a black rectangle with
+     nothing else on screen to explain it.
+   · It held for 14% of .62s, which is long enough to read as a frame
+     that should not be there.
+
+   So the sign is lit from 0% and misfires twice AFTER you have already
+   seen it working, which is the same character without the dead start.
+   The ambient loop's own stutter (86.8-92% of bss-neon, above) is
+   untouched — that one is mid-cycle and reads correctly. */
 @keyframes bss-neon-on{
-  0%    { filter:grayscale(1) brightness(.32) }
-  14%   { filter:var(--fx-filter) }
-  27%   { filter:grayscale(1) brightness(.42) }
-  46%   { filter:var(--fx-filter) }
+  0%    { filter:var(--fx-filter) }
+  7%    { filter:grayscale(1) brightness(.46) }
+  15%   { filter:var(--fx-filter) }
+  28%   { filter:grayscale(1) brightness(.56) }
+  44%   { filter:var(--fx-filter) }
   100%  { filter:var(--fx-filter) }
 }
 .fx--lit{
@@ -677,9 +708,46 @@ img{max-width:100%; display:block}
     0 0 7px  rgba(6,6,5,.95),
     0 0 16px rgba(6,6,5,.8);
 }
-/* the card titles are small and sit on a scrimmed photo — the glow at
-   that size is just a smudge */
-.event__title .ink{filter:none}
+/* THE DARK BACKING, on the card titles now as well.
+
+   These used to carry `filter:none` — no neon glow, because at 30-92px
+   a bloom is just a smudge, and no dark either, because the scrim under
+   them was at 86% and nothing needed it. The scrim is at 15% now, so the
+   dark moves here: the same device .hero--shot uses, for the same
+   reason, and it is the reason a 15% wash is survivable at all.
+
+   No colour glow, only dark — the smudge argument still holds at this
+   size. Flat px radii, not em: these titles clamp from 30px to 92px and
+   an em radius at the bottom of that range is sub-pixel. Sub-opaque
+   throughout, so the falloff has no edge in it and reads as a shadow
+   behind the letters rather than a keyline drawn round them.
+
+   Measured with BSSAudit() on this wash: the worst painted edge on the
+   homepage row is "Christmas" at 4.75:1, against the site's 3.0 floor —
+   comfortably better than the 3.14 it managed on its own bespoke 85%
+   plate, because a halo tracks the glyph and a plate cannot. */
+.event__title .ink{
+  /* FIVE layers here, where the hero gets two, and the difference is
+     AREA. Filter cost is superlinear in the area rasterised, and the
+     hero lockup is 190px against these titles' 30-92px — so layers that
+     cost the hero 450ms of first paint cost these almost nothing, and
+     they can have as many as they need.
+
+     They need five. Laddered at 25%: three layers left "Hop" at 2.41 and
+     "Christmas" at 2.94, four left "Hop" at 2.81, five clears the whole
+     row with nothing under 3.4. Cut to one and it collapses to
+     1.09-2.07, because a single sub-opaque layer cannot become a ground
+     however wide it is — it is the stacking that approaches opacity.
+
+     Unlike the hero these carry no colour glow, so this is the only
+     filter on them and there is no bloom for the dark to push outward. */
+  filter:
+    drop-shadow(0 0 2px  rgba(6,6,5,.50))
+    drop-shadow(0 0 4px  rgba(6,6,5,.50))
+    drop-shadow(0 0 8px  rgba(6,6,5,.48))
+    drop-shadow(0 0 14px rgba(6,6,5,.44))
+    drop-shadow(0 0 24px rgba(6,6,5,.35));
+}
 
 /* ── THE DARK HALO — legibility that lives on the type ───────────────
    The heroes carry no scrim at all now, so a neon word can land on a
@@ -758,10 +826,61 @@ img{max-width:100%; display:block}
    No --neon-k here any more either. Halving the radii was compensating
    for the offset, and with the offset gone the heroes just use the same
    glow as everything else. */
+/* THREE dark layers now, not one, because the scrim under them came down
+   from 50% to 25% to match the event cards and this is where that
+   darkness went.
+
+   The order is still the thing that matters: var(--neon) first, dark
+   LAST. Chained drop-shadows each cast from the RESULT of the last, so a
+   dark layer placed before the colour pushes the bloom outward and
+   leaves a black band between the glyph and its own glow — the bug
+   written up at length above. Cast last, all three paint behind the
+   finished neon and none of them touch it.
+
+   A tight near-opaque core that IS the effective background at the
+   stroke edge, then two softer radii so the falloff is a gradient with
+   no edge in it. Nothing fully opaque, or it reads as a keyline drawn
+   round the letters. Every radius keeps a px floor via max(): a pure em
+   radius is right for the glow and wrong for the halo, because at the
+   bottom of the clamp .016em is sub-pixel and the small type sits on the
+   same photograph as the large. */
+/* ONE dark layer, and the layer COUNT is a performance number.
+
+   Chained drop-shadows each rasterise and blur the RESULT of the last,
+   across the whole subtree — and this subtree is a 190px lockup, so the
+   cost is superlinear in both the number of layers and the area.
+   Measured on the Haunted page, first paint against layer count:
+
+     no ink filter at all ............ 64-100ms
+     --neon + ONE dark layer ........ 148-208ms
+     --neon + THREE dark layers ..... 608-668ms
+
+   Three cost about 450ms of blank screen on every navigation, which was
+   most of "the site feels laggy between pages". So it is one layer, made
+   denser and tighter than the .92/10px it used to be rather than
+   repeated: a tight near-opaque layer is what sets the effective
+   background at the stroke edge, and that is the whole job. The two
+   softer radii were buying feathering, not contrast.
+
+   NOT A TEXT-SHADOW, and this was tried. text-shadow would cost nothing
+   here — it paints from the glyph outline with no subtree raster — but
+   an .ink is background-clip:text with a transparent fill, and the
+   shadow ends up painting OVER the clipped background instead of behind
+   it: the lockup rendered as black letters inside a violet glow, 1.15:1.
+   .hl__on can use a text-shadow because it paints its colour directly.
+   An .ink cannot.
+
+   TWO layers, not one, and not three. One cannot reach the floor at any
+   radius — laddered at 10/14/18/24/30px it plateaus at 2.1-2.3 for the
+   violet, because a single sub-opaque layer cannot become a ground no
+   matter how wide it is; it is the STACKING that approaches opacity.
+   Two gets there, and stops one rasterisation short of the three that
+   cost 450ms. */
 .hero--shot .fx .ink{
   filter:
     var(--neon)
-    drop-shadow(0 0 max(10px, .055em) rgba(6,6,5,.92));
+    drop-shadow(0 0 max(4px,  .022em) rgba(6,6,5,.97))
+    drop-shadow(0 0 max(12px, .06em)  rgba(6,6,5,.92));
 }
 
 /* A .fx headline's drop-shadow is ONE filter over its whole subtree, so it
@@ -1049,28 +1168,57 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
 
    What is left is two flat layers and no plate:
 
-   · a flat 50% black across the whole frame. Even, deliberately — it is
+   · a flat 38% black across the whole frame. Even, deliberately — it is
      an exposure decision applied to the picture, not a shape cut around
      the words, so the photograph reads the same in the corners as it
      does behind the lockup.
+
+     38 AND NOT THE CARDS' 25, and the gap is a performance decision
+     rather than a design one. The darkness a mid-luminance ink needs has
+     to come from either the scrim or the halo, and on a 190px lockup
+     halo layers are expensive: 25% needs three of them to clear 3:1 and
+     three cost ~450ms of first paint. 38% clears it with two. Laddered
+     with two layers, the violet reads 2.69 / 2.91 / 3.11 at 25 / 32 /
+     38, so 38 is the first step that passes. The cards sit at 25 because
+     their titles are 30-92px, where three layers cost nothing.
    · a shallow gradient over the top of that. Not a photo treatment but
      chrome: the fixed header floats transparently over the first 60px
      of every hero and its links have to sit on something predictable.
 
-   THIS IS A HERO-ONLY NUMBER. The event cards carry their own scrim on
-   .event__shot::before and are tuned separately — they have no room to
-   plate only the type, so the two were never the same instrument and
-   must not be changed together.
+     THIS ONE WENT UP WHEN THE FLAT WASH CAME DOWN, and the arithmetic is
+     the point. The two layers composite, so what the header actually
+     sits on is 1-(1-top)(1-flat). At the old .34 over a .50 flat that
+     was .67. Leaving .34 over the lighter flat would have dropped it to
+     .505 — and the Shamrock hero has a lit television in its top-left
+     corner, directly behind the logo, where 13px nav links need 4.5:1
+     and would have had about 3.6. Solving 1-(1-x)(1-.38)=.67 gives
+     x=.47, so the top stop is .47 and the 9% stop scales with it. The
+     header is protected exactly as well as it was at 50%; the picture
+     below it is not touched.
 
-   The halo on the type stays regardless. At 20% it was carrying most of
-   the load on its own (worst painted edge 2.17-2.71 across the four
-   heroes); at 50% every hero clears 3:1 outright with the halo now the
-   belt rather than the braces. */
+   IT IS NO LONGER A HERO-ONLY NUMBER, and the note that used to say so
+   has been rewritten rather than deleted, because the reason it gave was
+   sound at the time. It said the cards "have no room to plate only the
+   type, so the two were never the same instrument". That was true while
+   the cards' protection was a 86% scrim on .event__shot::before. It is
+   not true any more: the cards now carry the same dark halo on their own
+   ink that the heroes do, which needs no room at all, so both surfaces
+   are running the same instrument and 25% is deliberately the same
+   number on each. A hero and a card of the same event should not be two
+   different exposures of it.
+
+   The halo on the type is what makes that survivable, and it is doing
+   more of the work than it used to. History worth keeping: at 20% the
+   halo alone put the worst painted edge at 2.17-2.71 across the four
+   heroes; 50% cleared 3:1 outright with the halo as the belt rather than
+   the braces. 38% sits between those, and the halo on
+   .hero--shot .fx .ink went from one layer to two to take the
+   difference back — see the note there for why not three. */
 .hero--shot > .hero__scrim{
   background:
     linear-gradient(180deg,
-      rgba(8,8,7,.34) 0%, rgba(8,8,7,.14) 9%, rgba(8,8,7,0) 18%),
-    linear-gradient(rgba(8,8,7,.50), rgba(8,8,7,.50));
+      rgba(8,8,7,.47) 0%, rgba(8,8,7,.20) 9%, rgba(8,8,7,0) 18%),
+    linear-gradient(rgba(8,8,7,.38), rgba(8,8,7,.38));
 }
 /* No per-ink variants any more. --red and --violet each needed their own
    deeper scrim when the scrim was the only protection; the halo on the
@@ -1138,6 +1286,45 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
     0 0 22px rgba(6,6,5,.75);
 }
 @media (max-width:640px){ .hero__inner{padding-left:18px; padding-right:18px} }
+
+/* ── THE FONT GATE ───────────────────────────────────────────────────
+   The hero's content waits for the real typefaces, then fades in.
+
+   This is not polish, it is a correctness fix. Every display measure on
+   this site is tuned to JOMHURIA'S metrics — --hl-lead .46, the
+   --fx-pt/--fx-pb paint-box padding, the script's -.29em tuck, and the
+   negative margins that cancel all of it. Those numbers are meaningless
+   against the fallback (Arial Narrow, with a cap height more than twice
+   Jomhuria's), so for the moment before the woff2 lands the lockup does
+   not merely look wrong, it COLLIDES: on the Shamrock hero "Shuffle"
+   lands on top of "SHAMROCK 18". font-display:swap is what asks for
+   that frame, and it is the right setting for body copy — text you can
+   read in the wrong face beats text you cannot read at all. A display
+   lockup whose layout is metric-tuned is the exception.
+
+   So the gate is on .hero__inner rather than on .fx: .fx and .fx--lit
+   already own their `animation` property for the neon, and a second
+   animation there would fight the tube striking. Fading the hero's whole
+   content block also keeps the lockup, the meta line and the ticket
+   arriving together rather than in pieces.
+
+   opacity only, never visibility or display: the box still lays out, so
+   nothing below the hero moves when it appears. The class is removed by
+   the guard in every page's <head> on document.fonts.ready, with a 1.5s
+   cap so a font that never arrives cannot leave an empty hero.
+
+   .pagehead is gated with it. Only four pages carry a photographic hero;
+   the other five open on a .pagehead instead, and its headline is the
+   same metric-tuned display type with the same script tuck in it. Same
+   problem, same fix. */
+.hero__inner,
+.pagehead{transition:opacity .42s var(--ease)}
+.fonts-pending .hero__inner,
+.fonts-pending .pagehead{opacity:0}
+@media (prefers-reduced-motion:reduce){
+  .hero__inner,
+  .pagehead{transition:none}
+}
 
 /* centred page heads on the pages that keep a paper hero */
 .pagehead{text-align:center; display:grid; justify-items:center; gap:clamp(14px,2vw,22px)}
@@ -1983,37 +2170,33 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
      arriving as a neutral wash over a colour photograph instead of as a
      desaturation plus two stops.
 
-     Unlike a hero, a card cannot plate only its type. The title is
-     centred on a 16:9 thumbnail and its box IS most of the card; there
-     is nowhere for a tighter ellipse to be tighter. */
-  background-image:radial-gradient(112% 92% at 50% 50%,
-    rgba(8,8,7,.86) 0%, rgba(8,8,7,.74) 58%, rgba(8,8,7,.60) 100%);
+     THIS IS NOW A 25% WASH, and the darkness has moved onto the type.
+     At .86/.74/.60 the scrim was doing its job and hiding the
+     photographs while it did it — three real crowd shots reduced to a
+     texture behind a word. The note above is still true as far as it
+     goes: a card cannot plate only its type with a TIGHTER ELLIPSE,
+     because the title's box is most of the card. But it can put the
+     dark on the glyphs, which is exactly what .hero--shot already does
+     further up this file, and which needs no room at all.
+
+     So: the wash is the lightest thing that still separates a picture
+     from the paper it sits on, and legibility comes from the halo on
+     .event__title .ink below. It started at 15% and came up to 25% by
+     eye — 15% read as almost no wash at all, which left the brightest
+     frame in the row (Shamrock, mean luminance .123 against Christmas's
+     .064) sitting too close in value to the paper around it. */
+  background-image:linear-gradient(rgba(8,8,7,.25), rgba(8,8,7,.25));
 }
 
-/* Violet and red take one step deeper again, and for the same underlying
-   reason: both are MID-luminance inks (.19 and .18), so unlike white or
-   neon yellow they are squeezed from both ends — a blown highlight and a
-   lit mid-tone are equally fatal, and there is no plate strength that
-   fixes one without the ground passing through the other on the way.
-   Green and orange sit far enough from the middle to live on the base.
+/* The per-ink deepenings are GONE, and deliberately so.
 
-   Measured on the base scrim above with the pictures in colour:
-   "Haunted" 2.98:1 and "Christmas" 2.89:1, both under the 3.0 floor.
-   Here they read 3.70 and 3.45 with no painted pixel under 3. */
-.event:has(.ink--violet) .event__shot::before{
-  background-image:radial-gradient(112% 92% at 50% 50%,
-    rgba(8,8,7,.91) 0%, rgba(8,8,7,.82) 58%, rgba(8,8,7,.70) 100%);
-}
-/* Red sits a step lighter than violet. It was on the same values, but the
-   Christmas photograph is the warmest and most colourful on the site and
-   was the one paying most for the shared setting — this is the lightest
-   plate that still holds the script word, measured at 3.14:1 against a
-   3.0 floor with no painted pixel below it. There is no room left to
-   lighten it further without the word going under. */
-.event:has(.ink--red) .event__shot::before{
-  background-image:radial-gradient(112% 92% at 50% 50%,
-    rgba(8,8,7,.85) 0%, rgba(8,8,7,.74) 58%, rgba(8,8,7,.60) 100%);
-}
+   They existed because the darkness was the scrim's job: violet and red
+   are MID-luminance inks (.19 and .18), squeezed from both ends by a
+   blown highlight and a lit mid-tone alike, so each needed the whole
+   card taken down another step. With the dark now cast from the glyphs
+   themselves, the ink's luminance no longer argues with the picture's —
+   the effective background at every stroke edge is the halo, and the
+   halo is the same for all four inks. One wash, one halo, four cards. */
 .event__title{
   position:relative; z-index:3; text-align:center;
   padding-left:.4em; padding-right:.4em;
@@ -2857,39 +3040,166 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    white on it measures 3.3:1 and fails, --on-accent measures 5.7:1.
    This is the site-wide rule, and this cell is not an exception. */
 .cal td.ours{overflow:visible}
+/* ── THE BOX ─────────────────────────────────────────────────────────
+   The orange field, its halftone and the card are all this one box, and
+   it is the same shape at every width — hung off the RIGHT edge of the
+   square, starting BELOW the numeral, and never narrower than --oc-min.
+
+   That last part is the whole point. The box used to be the square, and
+   a square is whatever 1/7th of the shell happens to be: 194px at 1440
+   and 100px at 761, which is not enough to hold a picture, a name, a
+   venue line and a pill. Between 760 and 1024 the card was 100-138px
+   wide with the photograph crushed to 64px, and at exactly 760 it jumped
+   from 100px to 242px, because the phone rules widened it and nothing
+   else did.
+
+   So it widens wherever the column is too narrow for it, and overruns
+   LEFT into the empty end of the month. Right-anchored because the 31st
+   is a Saturday with nothing to its right but sheet edge; below the
+   numeral because that is what keeps the 29th and the 30th from having
+   their dates covered when it overruns across them. */
+.cal td.ours{
+  --oc-min:188px;
+  --oc-box:max(calc(100% - 6px), var(--oc-min));
+}
+.cal td.ours::before,
+.cal td.ours::after,
+.cal td.ours .ourcard{
+  position:absolute; inset:32px 3px 4px auto; width:var(--oc-box);
+  transform:rotate(-1.4deg);
+}
 .cal td.ours::before{
-  content:""; position:absolute; inset:4px 3px;
-  background:var(--orange); transform:rotate(-1.4deg); z-index:0;
+  content:""; background:var(--orange); z-index:0;
 }
 /* the same 6px screen the rest of the print carries, so the block is a
    printed field rather than a flat swatch */
 .cal td.ours::after{
-  content:""; position:absolute; inset:4px 3px; z-index:1; pointer-events:none;
+  content:""; z-index:1; pointer-events:none;
   background-image:radial-gradient(rgba(17,17,16,.30) 1.3px, transparent 1.4px);
   background-size:6px 6px; mix-blend-mode:multiply; opacity:.55;
-  transform:rotate(-1.4deg);
 }
-.cal td.ours .dnum,
-.cal td.ours .evt{position:relative; z-index:2}
 .cal td.ours .dnum{
+  position:relative; z-index:6;
   color:var(--on-accent); font-size:clamp(38px,4.4vw,52px); line-height:.42;
 }
-/* The name is set in the label face, not the handwriting. The script
-   was legible on its own in an empty month; with four other names on the
-   grid it became the hardest one to read on the sheet, which is a bad
-   outcome for the only event we actually run. The block does the
-   shouting now — it is the one painted square on the calendar, and it
-   does not need the type to be different as well. */
-.cal td.ours .evt--ours{
-  font-family:var(--body); font-weight:700; text-transform:uppercase;
-  letter-spacing:.03em; font-size:clamp(13px,1.35vw,16.5px); line-height:1.16;
-  color:var(--on-accent); margin-top:9px;
+
+/* ── OUR DATE, AS A CARD ─────────────────────────────────────────────
+   The square used to be a coloured field with a line of bold type at the
+   top and two thirds of nothing under it. It is now a miniature of the
+   homepage event card, in the same order: picture, name, the line under
+   it, a status pill. The grid around it is a collage of photographs and
+   stickers; the one square that is OURS was the only thing on it still
+   made of type alone.
+
+   It lies in exactly the box the orange field and its halftone occupy —
+   same inset, same 1.4deg — so the picture sits INSIDE the orange
+   instead of replacing it. Both reasons matter: "if it's orange, go" is
+   the page's whole promise, and near-black on --orange is 5.7:1, so
+   every word in here passes with no scrim, no plate and no halo. A
+   photograph behind the type would have needed the entire hero
+   apparatus to hold a 194px square.
+
+   The top padding is the numeral's seat. .dnum is the cell's, not the
+   card's, and it draws above at z-index 6. */
+.cal td.ours .ourcard{
+  z-index:2; transform-origin:50% 50%;
+  display:grid; grid-template-rows:minmax(0,1fr) auto auto;
+  padding:11px 11px 12px; overflow:hidden;
+  text-decoration:none; color:var(--on-accent);
+  /* the name is sized against the CARD, not the viewport — same device
+     .event__title uses, and the reason the lockup now breaks to the same
+     two lines at every width instead of one line at some and two at
+     others */
+  container-type:inline-size;
 }
-.cal td.ours .evt em{
-  color:rgba(17,17,16,.86); letter-spacing:.11em; font-size:9.5px;
-  margin-top:5px; text-transform:uppercase; font-family:var(--body);
+/* object-position, not a crop: every Haunted frame in the repo is 2:3
+   portrait and the crawlers sit in the BOTTOM half of it — the same
+   reason the hero runs --hero-pos. A centred crop in a slot this wide
+   throws the subjects away and keeps a ceiling. */
+.cal td.ours .ourcard__shot{
+  display:block; position:relative; overflow:hidden; min-height:0;
+  margin-bottom:8px; background:var(--ink-2);
 }
-.cal td.ours .evt--ours:hover{color:var(--on-accent); text-decoration:underline}
+.cal td.ours .ourcard__shot img{
+  display:block; width:100%; height:100%;
+  object-fit:cover; object-position:50% 74%;
+}
+/* The display face, which is what the rest of the site sets a name in.
+   Jomhuria's Latin cap height is .3907em, so these numbers look about
+   2.2x too large and are not — see the type note at the top of the
+   file. */
+.cal td.ours .ourcard__name{
+  display:block; font-family:var(--display); font-weight:400;
+  font-size:clamp(23px,25cqw,40px); line-height:.46;
+  letter-spacing:.02em; text-transform:uppercase; color:var(--on-accent);
+}
+.cal td.ours .ourcard__meta{
+  display:block; margin-top:6px;
+  font:500 9.5px/1.2 var(--body); text-transform:uppercase;
+  letter-spacing:.11em; color:rgba(17,17,16,.86);
+}
+/* The pill inverts — near-black ground, light orange type — which is the
+   same move the homepage makes with .sticker--live, and the only way to
+   put a second orange on an orange field and still see it. 8.2:1. */
+.cal td.ours .ourcard__chip{
+  justify-self:start; margin-top:7px;
+  background:var(--on-accent); color:var(--orange-lt);
+  font:700 8.5px/1 var(--body); text-transform:uppercase;
+  letter-spacing:.12em; padding:5px 8px 4px; border-radius:999px;
+}
+.cal td.ours .ourcard:hover .ourcard__name{text-decoration:underline}
+.cal td.ours .ourcard:hover .ourcard__shot img{transform:scale(1.04)}
+.cal td.ours .ourcard__shot img{transition:transform .5s var(--ease)}
+@media (prefers-reduced-motion:reduce){
+  .cal td.ours .ourcard__shot img{transition:none}
+}
+
+/* ── OUR CARD, ON A PHONE ───────────────────────────────────
+   A square is 48px wide down there and the card cannot live inside one:
+   at desktop proportions the name broke to "HAU / BAR", the venue line
+   and the pill were both cut off, and the whole thing ran off the right
+   of the sheet.
+
+   So it stops pretending to be a square and becomes a card properly —
+   about two and a half columns wide, hung off the RIGHT edge of the 31st
+   and overrunning LEFT across the empty end of the month. Right, because
+   the 31st is a Saturday and there is nothing to its right but sheet
+   edge.
+
+   It also starts BELOW the numeral band instead of at the top of the
+   cell, and that is what makes the overrun safe: the 29th and the 30th
+   keep their own numerals, because the card never reaches up into the
+   row they sit in. The orange field and its halftone come with it — all
+   three are the same box.
+
+   THIS BLOCK HAS TO SIT AFTER THE RULES ABOVE. It first went in with the
+   other narrow-column rules a few hundred lines earlier, where
+   `inset:auto ... auto` lost to the desktop `inset:4px 3px` at identical
+   specificity — and lost SILENTLY, because `width` is not set in the
+   desktop rule. So the card came out 238% wide and still pinned by its
+   LEFT edge; over-constrained, `right` was ignored, and it ran straight
+   off the sheet. */
+@media (max-width:900px){
+  /* the sheet itself is narrower here, so the floor comes down with it —
+     188px against a 96px column was two thirds of the week */
+  .cal td.ours{--oc-min:152px}
+}
+@media (max-width:760px){
+  /* 86px is about 1.9 columns at a 48px square — the 31st plus a small
+     overhang onto the 30th, rather than the 2.5 columns 118px reached
+     back across. Laddered at 118/104/94/86/78 and nothing clips at any of
+     them: the name is sized in cqw so it shrinks with the card and stays
+     on two lines, and the venue line and the pill both still fit. This is
+     the narrowest step that keeps the photograph a useful size. */
+  .cal td.ours{--oc-min:86px}
+  .cal td.ours .ourcard{padding:9px 9px 10px}
+  .cal td.ours .ourcard__shot{margin-bottom:7px}
+  .cal td.ours .ourcard__meta{font-size:8.5px; letter-spacing:.08em; margin-top:5px}
+  .cal td.ours .ourcard__chip{font-size:7.5px; padding:4px 6px 3px; margin-top:6px}
+  /* The loose ticket the widened card now lands on. One stays — the one
+     in the row above — which is enough to read as confetti. */
+  .cal .pin--crowded{display:none}
+}
 
 /* The doodled arrows. Positioned against the cell and allowed to hang
    outside it — see the note on CALARROWS in bss.js. */
