@@ -166,7 +166,7 @@ accessible name. To recolour it anywhere, set `color` on the container. Never
 add a second, recoloured copy of the artwork.
 
 Three placements: `.lockup__logo` (header, 126px), `.ftr__logo` (the footer
-sign-off, at wordmark scale with "Setting the scene" under it in the script
+sign-off, at wordmark scale with "Local Milwaukee Bar Events" under it in the script
 face), and `.drop__logo` (the falling-ticket loader).
 
 **"On Brady" is part of the Haunted Bar Hop mark**, not a caption — it ships on

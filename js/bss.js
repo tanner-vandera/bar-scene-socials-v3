@@ -600,11 +600,11 @@
       /* The sign-off. The logo gets to be big down here — it is the last
          thing on every page and has nothing to compete with, which is the
          one place on the site it can run at wordmark scale rather than
-         chrome scale. "Setting the scene" sits under it in the script
+         chrome scale. "Local Milwaukee Bar Events" sits under it in the script
          face, the way a signature sits under a printed mark. */
       '<div class="ftr__signoff">' +
         logo('ftr__logo', 'Bar Scene Socials') +
-        '<p class="ftr__tag">Setting the scene</p>' +
+        '<p class="ftr__tag">Local Milwaukee Bar Events</p>' +
       '</div>' +
     '</div></footer>';
   }
