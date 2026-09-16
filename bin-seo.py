@@ -38,8 +38,8 @@ def event(name,slug,start,end,loc,desc,offers=None,status="EventScheduled"):
     if offers: e["offers"]=offers
     return e
 
-HAUNTED_DESC = ("Milwaukee's only Halloween bar crawl on Brady Street. Ten bars, no cover at any of "
-                "them, drink specials at every stop, costume prizes, daytime DJs and an official "
+HAUNTED_DESC = ("Milwaukee's only Halloween bar crawl on Brady Street. Ten bars, free cover at all "
+                "of them, drink and food specials, costume prizes, daytime DJs and an official "
                 "afterparty. 21+.")
 
 PAGES = {
@@ -57,8 +57,8 @@ PAGES = {
  'hauntedbarhop.html': dict(
    url='/hauntedbarhop', slug='hauntedbarhop',
    title="Haunted Bar Hop 2026 — Milwaukee Halloween Bar Crawl",
-   desc=("Saturday 10/31/26 on Brady Street, 3pm–8pm with an afterparty DJ. Ten bars, no cover, "
-         "drink specials, costume prizes and a bingo card. From $12.40. 21+."),
+   desc=("Saturday 10/31/26 on Brady Street, 3pm–8pm with an afterparty DJ. Ten bars, free cover, "
+         "drink and food specials, costume prizes and a bingo card. From $12.40. 21+."),
    ogtype='article',
    ld=[event("Haunted Bar Hop on Brady","hauntedbarhop",
         # 10/31/2026 is still CDT — US DST ends Sun 11/01/2026

@@ -19,7 +19,8 @@ not a ticketing platform.** Torn paper, riso ink, collage grids, halftone,
 taped photos, one rust accent. Nothing glossy, nothing 3D, no clip art.
 
 **Type** — Anton (display, monumental, ~10:1 against body at desktop),
-Caveat (hand-written accents only, never body copy), Space Grotesk (body/UI).
+Yellowtail (the script half of a headline pairing only — the standalone
+hand-written asides are gone), Space Grotesk (body/UI).
 
 **Colour** — black and white grounds, three electric accents, nothing else.
 Near-white `#F8F8F6` and near-black `#111110` (never pure `#fff`/`#000`) carry

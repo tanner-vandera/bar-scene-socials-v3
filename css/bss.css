@@ -932,22 +932,6 @@ img{max-width:100%; height:auto; display:block}
 .small{font-size:14px; line-height:1.6; color:var(--text-2)}
 .tiny{font:500 11px/1.4 var(--body); text-transform:uppercase; letter-spacing:.18em; color:var(--text-3)}
 
-/* the hand-written voice — short accents only, never body copy */
-.scrawl{
-  font-family:var(--script); font-weight:400;
-  font-size:clamp(22px,2.6vw,36px); line-height:1.15; color:var(--ink);
-  transform:rotate(-2.2deg); display:inline-block;
-}
-/* Each event page tints its handwriting in its own colour — the accent the
-   brief asks for, in the one voice on the page that can carry it without
-   competing with the headline. --red-on rather than --red on the Christmas
-   page: the script clamps down to 22px, which is not "large text", so it
-   needs 4.5:1 and --red only reaches 4.20. */
-body[data-page="halloween"] .scrawl{color:var(--orange)}
-body[data-page="christmas"] .scrawl{color:var(--red-on)}
-body[data-page="shamrock"]  .scrawl{color:var(--green)}
-.scrawl--orange{color:var(--orange)}
-.scrawl--paper{color:var(--ink)}
 
 /* ============================================================
    TEXTURE — the thing that makes it feel printed
@@ -1360,7 +1344,6 @@ body[data-page="shamrock"]  .scrawl{color:var(--green)}
 .band:has(> .shell--tight > .pagehead--slim){
   padding-top:clamp(40px,4.6vw,72px);
 }
-.pagehead--slim .scrawl{margin:0 0 .35em; transform:rotate(-1.6deg)}
 .pagehead--slim .taped{flex:0 0 auto; width:clamp(124px,13vw,168px)}
 @media (max-width:640px){
   .pagehead--slim{gap:18px}
@@ -1459,7 +1442,6 @@ section{position:relative}
    all. Setting --neon empties both users of it: .fx's own --fx-filter
    and the filter on each .ink run. */
 .on-white .fx,.on-white .fx .ink{--neon:none}
-.on-white .scrawl--paper,.on-white .scrawl--orange{color:var(--orange-d)}
 /* --orange-lt (#FF8A4D) is tuned for small type on black and measures
    2.3:1 on white. --orange-d is 4.9:1. Body links inside a white band take
    the dark orange; the underline is kept because colour alone is not a
@@ -2633,7 +2615,6 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   padding:clamp(16px,2.2vw,30px);
 }
 .sheet .kicker,.sheet .tiny{color:rgba(17,17,16,.62)}
-.sheet .scrawl{color:var(--orange-d)}
 
 .cal{
   width:100%; border-collapse:collapse; table-layout:fixed;
@@ -3487,7 +3468,6 @@ body[data-page="home"] .small{ font-size:16px }
    word. Same reason .event__meta .tiny drops from .18em to .13em. */
 body[data-page="home"] .tiny{ font-size:13px; letter-spacing:.15em }
 body[data-page="home"] .sticker{ font-size:12.5px; padding:9px 15px }
-body[data-page="home"] .scrawl{ font-size:clamp(25px,2.95vw,41px) }
 body[data-page="home"] .incl__row > div > .h4{ font-size:clamp(38px,4.3vw,62px) }
 /* The calendar sheet keeps its own scale — it is a dense grid where a
    14% step costs a column, and it is the one thing on this page that is
