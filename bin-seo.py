@@ -114,8 +114,8 @@ PAGES = {
  'about.html': dict(
    url='/about', slug='default',
    title="About — Bar Scene Socials, Milwaukee Bar Crawls",
-   desc=("Eight years of Milwaukee bar crawls run by people who actually go to them. No national "
-         "operator, no office — three events a year on streets we drink on."),
+   desc=("We host Milwaukee’s most anticipated bar crawl traditions: the Haunted Bar Hop, "
+         "12 Bars of Christmas and the Shamrock Shuffle. Local organizers, 21+."),
    ogtype='website', ld=[]),
 
  'contact.html': dict(
