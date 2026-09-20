@@ -6,6 +6,10 @@ import io, json, re
 # canonical is supposed to prevent. If the Vercel primary domain is ever
 # flipped to the apex, change this ONE line and re-run.
 SITE = 'https://www.barscenesocials.com'
+# Cache-bust token for assets replaced UNDER THEIR EXISTING NAME. Kept in
+# step with the stylesheets by bin-bump.sh, which rewrites every ?v= in the
+# HTML; the value here only matters when this script regenerates the block.
+ASSET_V = '1789926612'
 TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady'
 IG   = 'https://www.instagram.com/barscenesocials/'
 
@@ -151,7 +155,12 @@ def block(cfg):
     img = SITE + '/images/og/' + cfg['slug'] + '.jpg'
     L = [MARK_OPEN,
       '<link rel="canonical" href="%s">' % u,
-      '<link rel="icon" href="/favicon.svg" type="image/svg+xml">',
+      # The mark changed from orange to white on 2026-09-20 under the SAME
+      # filename, and favicon.svg is served max-age=604800 — a whole week of
+      # the old icon for anyone who had already loaded the site. A ?v= is the
+      # only thing that moves them onto the new one. bin-bump.sh rewrites
+      # every ?v= in the HTML, so this stays in step with the stylesheets.
+      '<link rel="icon" href="/favicon.svg?v=%s" type="image/svg+xml">' % ASSET_V,
       '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
       '<meta name="theme-color" content="#111110">',
       '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">',
