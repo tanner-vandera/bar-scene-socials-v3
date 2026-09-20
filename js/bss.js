@@ -612,8 +612,11 @@
   /* Entrance reveal.
      The owners previously said the animation on this site was too much, so
      this is deliberately quiet: a 14px rise and a fade, once, on the way in
-     — no parallax, no scroll-driven scrubbing, no count-ups, nothing that
-     moves while you read. Siblings cascade rather than all landing at once.
+     — no parallax, no scroll-driven scrubbing, nothing that moves while you
+     read. Siblings cascade rather than all landing at once.
+     ONE exception, asked for directly (2026-09-20): the charity figure on
+     the Shamrock page counts up. See countUp() below. It is scoped to
+     [data-countup] and nothing else on the site may move.
 
      Deliberately NOT IntersectionObserver. IO reports state changes, so an
      element scrolled past between ticks (a fast flick, the End key, a
@@ -658,6 +661,127 @@
         }
       }
       if (!pending.length) {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(check);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    check();
+  }
+
+
+  /* Count-up, scoped to [data-countup] — currently one element, the charity
+     figure on the Shamrock page. The exception to the "nothing moves" note
+     on reveal() above, and it stays an exception.
+
+     The element's OWN text is the source of truth: it is parsed into
+     prefix / number / suffix, so the markup keeps the real figure and a
+     blocked or failed script leaves $133,000+ sitting on the page. The
+     animation only ever replaces text it is about to restore exactly.
+
+     Same rAF-throttled scroll check as reveal(), for the same reason an
+     IntersectionObserver is wrong there: an element scrolled past between
+     ticks would never fire and the number would sit at zero for good.
+     Skipped entirely under prefers-reduced-motion — a number ticking is
+     exactly the kind of motion that setting is asking us not to make. */
+  function countUp() {
+    var els = [].slice.call(document.querySelectorAll('[data-countup]'));
+    if (!els.length) return;
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var items = [];
+    [].forEach.call(els, function (el) {
+      var m = /^(\D*?)([\d][\d,]*)(.*)$/.exec(el.textContent.trim());
+      if (!m) return;
+      var raw = m[2].replace(/,/g, '');
+      var target = parseInt(raw, 10);
+      if (!isFinite(target) || target <= 0) return;
+      /* Count in the figure's OWN granularity. "133,000" is round to a
+         thousand, so the last three digits are noise — animating them
+         churns six glyphs a frame and reads as jitter rather than as a
+         number going up. Trailing zeros in the source give the step. */
+      var zeros = /0*$/.exec(raw)[0].length;
+      var step = Math.pow(10, Math.min(zeros, 3)) || 1;
+      items.push({ el: el, pre: m[1], suf: m[3], target: target, step: step });
+    });
+    if (!items.length) return;
+
+    function fmt(item, v) {
+      return item.pre + v.toLocaleString('en-US') + item.suf;
+    }
+    /* Hold the box at the FINAL string's width. The figure is centred, so
+       without this every digit that appears re-centres the whole line and
+       the number twitches sideways the entire way up. min-width (not
+       width) so a narrow viewport can still grow the box. */
+    function lockWidth(item) {
+      var el = item.el, prev = el.textContent;
+      el.style.display = 'inline-block';
+      el.style.minWidth = '';
+      el.textContent = fmt(item, item.target);
+      var w = el.getBoundingClientRect().width;
+      el.textContent = prev;
+      el.style.minWidth = Math.ceil(w) + 'px';
+    }
+    function lockAll() { [].forEach.call(items, lockWidth); }
+
+    lockAll();
+    /* the first measure may have used the fallback face */
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockAll);
+    window.addEventListener('resize', lockAll);
+
+    [].forEach.call(items, function (item) { item.el.textContent = fmt(item, 0); });
+
+    var DUR = 2200;
+    function run(item) {
+      var t0 = null, last = -1, painted = 0;
+      function frame(ts) {
+        if (t0 === null) t0 = ts;
+        var p = Math.min((ts - t0) / DUR, 1);
+        /* smoothstep, not ease-out-cubic. Cubic dumps a third of the
+           value into the first few frames, which is what read as
+           "intense"; this starts slow, rises, and settles. */
+        var eased = p * p * (3 - 2 * p);
+        var v = Math.round(item.target * eased / item.step) * item.step;
+        /* repaint at most ~18/sec — past that the glyphs strobe rather
+           than count, however smooth the underlying curve is */
+        if (p === 1) v = item.target;
+        if (v !== last && (p === 1 || ts - painted >= 55)) {
+          item.el.textContent = fmt(item, v);
+          last = v; painted = ts;
+        }
+        if (p < 1) requestAnimationFrame(frame);
+        else item.el.textContent = fmt(item, item.target);   /* exact, always */
+      }
+      requestAnimationFrame(frame);
+      /* Belt and braces. rAF stops in a background tab and is throttled
+         under low-power modes, so a run interrupted partway would leave a
+         WRONG figure sitting on the page — $40,000+ where the real number
+         is $133,000+. Measured, not theoretical. setTimeout still fires
+         when rAF does not, so the true value always lands whatever
+         happens to the frame loop. */
+      setTimeout(function () {
+        item.el.textContent = fmt(item, item.target);
+      }, DUR + 400);
+    }
+
+    var ticking = false;
+    function check() {
+      ticking = false;
+      var trigger = window.innerHeight * 0.88;
+      for (var i = items.length - 1; i >= 0; i--) {
+        if (items[i].el.getBoundingClientRect().top < trigger) {
+          run(items[i]);
+          items.splice(i, 1);
+        }
+      }
+      if (!items.length) {
         window.removeEventListener('scroll', onScroll);
         window.removeEventListener('resize', onScroll);
       }
@@ -1040,6 +1164,7 @@
     window.__bssBooted = 1;
 
     reveal();
+    countUp();
     drop();
     ignite();
     cursor();

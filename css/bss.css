@@ -30,10 +30,15 @@
   --stone:      #7A7A74;   /* the default placeholder photo field */
 
   /* --- accents: orange, green, red. Nothing else. --------- */
-  --orange:     #FF4D14;   /* THE accent — CTAs, marks, links, live state.
-                              5.7:1 on the black ground, so it is safe as
-                              type here in a way it never was on white. */
-  --orange-on:  #FF8A4D;   /* small type on black where --orange is too hot */
+  --orange:     #FF8A4D;   /* THE accent — CTAs, marks, links, live state.
+                              8.1:1 on the black ground, so it is safe as
+                              type here in a way it never was on white.
+                              Was #FF4D14 (5.7:1) — softened to the cooler,
+                              less saturated orange the chips already used. */
+  --orange-on:  #FF8A4D;   /* same value as --orange since the accent was
+                              softened; kept as its own name because the
+                              11px chips mean "the safe orange", not "the
+                              accent", and the two may diverge again. */
   --orange-d:   #C93A08;   /* the dark sibling — only for the handful of
                               surfaces that are still light (button hover,
                               the ticket stock, the taped polaroid) */
@@ -175,7 +180,7 @@ body{
 /* …which means anything that used to rely on inheriting the BRIGHT ink
    has to say so now. These are labels and names, not prose. */
 .h4{color:var(--text)}
-.stops span{color:var(--text)}
+.stops span{color:var(--text); font-weight:500}
 ::selection{background:var(--orange); color:var(--on-accent)}
 a{color:inherit}
 /* height:auto is REQUIRED now that every <img> carries width/height
@@ -957,13 +962,22 @@ img{max-width:100%; height:auto; display:block}
    Negative margins pull the seam over the join so there is no hairline.
    ============================================================ */
 .tear{
-  display:block; width:100%; height:clamp(14px,1.8vw,26px); line-height:0;
+  --tear-h:clamp(14px,1.8vw,26px);
+  display:block; width:100%; height:var(--tear-h); line-height:0;
   position:relative; z-index:1; pointer-events:none;
   color:var(--tear-fill, var(--paper));
 }
 .tear svg{display:block; width:100%; height:100%; fill:currentColor}
-.tear--down{margin-bottom:-1px}
-.tear--up{margin-top:-1px; transform:rotate(180deg)}
+/* A tear is a torn SHEET, not a strip of its own: only the SVG path is
+   painted and everything around it is transparent. Laid out in the flow
+   it therefore shows the BODY ground through the torn-away part, which
+   was invisible while every neighbour was near-black and reads as a
+   black band the moment one of them is a photograph or an accent.
+   So each tear is pulled back over the field it tears AWAY from —
+   --down over the section above, --up over the section below — and the
+   gap reveals that neighbour instead of the page ground. */
+.tear--down{margin-top:calc(-1 * var(--tear-h)); margin-bottom:-1px}
+.tear--up{margin-bottom:calc(-1 * var(--tear-h)); margin-top:-1px; transform:rotate(180deg)}
 /* the fixed header tears into the page rather than ending on a straight
    edge. It hangs below the bar, so it must not intercept clicks (it is
    already pointer-events:none) and it hides while the header is
@@ -1114,7 +1128,7 @@ img{max-width:100%; height:auto; display:block}
 .hero__media--shot::before{
   content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
   background:linear-gradient(158deg,
-    rgba(255,77,20,.06) 0%, rgba(232,32,42,.04) 45%, rgba(17,17,16,.10) 100%);
+    rgba(255,138,77,.06) 0%, rgba(232,32,42,.04) 45%, rgba(17,17,16,.10) 100%);
   mix-blend-mode:multiply;
 }
 /* print texture over photography, low (style guide calls for 8-15%) */
@@ -1466,6 +1480,78 @@ section{position:relative}
   box-shadow:inset 0 0 0 1px rgba(17,17,16,.14);
 }
 .on-white .sticker--ghost,.on-white .sticker--ghost-paper{background:transparent}
+
+/* ============================================================
+   ACCENT BANDS — a flat block of event colour with the type
+   inverted onto it. Same mechanism as .on-white above: the SCOPE
+   remaps the tokens and nothing inside has to know what ground it
+   is standing on. --fx-c already defaults to --ink, so a headline
+   follows the remap on its own; only the glow has to be told.
+
+   TWO polarities, because the three accents do not share one:
+     · --orange and --green are bright. Near-black type measures
+       8.09:1 and 7.94:1 on them.
+     · red is mid-luminance and is squeezed from BOTH ends — the
+       same trap --violet documents at the top of this file.
+       #E8202A gives 4.20:1 against near-black and 4.23:1 against
+       off-white, so NEITHER clears the 4.5 floor for body copy.
+       The red band is built on --red-d instead, where off-white
+       measures 6.26:1. If it ever moves back to --red, the body
+       copy on it fails at any text colour.
+   ============================================================ */
+.on-accent{
+  --paper:      var(--acc-bg);
+  --paper-2:    var(--acc-bg);
+  --paper-3:    var(--acc-bg);
+  --ink:        var(--acc-ink);
+  --ink-deep:   var(--acc-bg);
+  --text:       var(--acc-ink);
+  --text-2:     var(--acc-ink-2);
+  --text-3:     var(--acc-ink-3);
+  --rule:       var(--acc-rule);
+  --rule-hard:  var(--acc-ink);
+  --on-accent:  var(--acc-bg);
+  background:var(--acc-bg); color:var(--acc-ink);
+}
+/* No glow and no grain on a flat colour ground. Both are tuned to lift
+   type off a near-black photographic ground; on a solid one they only
+   muddy it. Same call .on-white makes. */
+.on-accent .fx,.on-accent .fx .ink{--neon:none}
+.on-accent.grain::after,.on-accent .grain::after{display:none}
+/* A wash is a TINT OF AN ACCENT over the page ground. On a band that is
+   already that accent it has nothing to tint and its two hairlines read
+   as stray rules, so the whole component goes. */
+.on-accent .wash{background-image:none; border-top:0; border-bottom:0}
+/* Buttons invert: the band's own ground becomes the type colour on
+   hover. This is the move .band--orange already assumed. */
+.on-accent .btn{border-color:var(--acc-ink); color:var(--acc-ink); background:transparent}
+.on-accent .btn:hover{background:var(--acc-ink); color:var(--acc-bg); border-color:var(--acc-ink)}
+/* The chip's default translucent-white fill washes out on a bright
+   accent; a translucent BLACK one holds on all three grounds. */
+.on-accent .sticker{background:rgba(17,17,16,.16); color:var(--acc-ink); box-shadow:none}
+/* A hovered .listing__row wipes a second rule in over its border, and that
+   rule is --orange. On a band that IS --orange it draws orange on orange
+   and the hover simply does not read. Inside an accent scope it becomes
+   the band's own ink — the one colour guaranteed to carry on all three
+   grounds — and gains a pixel, because a hairline at ink weight is what
+   makes the wipe legible rather than the colour alone. */
+.on-accent .listing__row::after{background:var(--acc-ink); height:2px}
+
+.on-accent--orange{
+  --acc-bg:var(--orange);  --acc-ink:#111110;
+  --acc-ink-2:rgba(17,17,16,.80); --acc-ink-3:rgba(17,17,16,.66);
+  --acc-rule:rgba(17,17,16,.34);
+}
+.on-accent--green{
+  --acc-bg:var(--green);   --acc-ink:#111110;
+  --acc-ink-2:rgba(17,17,16,.80); --acc-ink-3:rgba(17,17,16,.66);
+  --acc-rule:rgba(17,17,16,.34);
+}
+.on-accent--red{
+  --acc-bg:var(--red-d);   --acc-ink:#F8F8F6;
+  --acc-ink-2:rgba(248,248,246,.84); --acc-ink-3:rgba(248,248,246,.72);
+  --acc-rule:rgba(248,248,246,.38);
+}
 
 .cols{display:grid; gap:clamp(24px,3vw,48px)}
 .c-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1864,7 +1950,8 @@ body.has-hero{padding-top:0}
 /* A quiet chip, not an orange blob: the fill is a low-opacity white so it
    reads as a frosted tag on whatever it sits on, and the accent moves to
    the type. --orange-on rather than --orange because this is 11px text —
-   #FF4D14 measures 4.1:1 on the composited fill and #FF8A4D gives 5.9:1. */
+   the old #FF4D14 accent measured 4.1:1 on the composited fill where
+   #FF8A4D gives 5.9:1. The accent is now #FF8A4D too, so they match. */
 .sticker{
   display:inline-flex; align-items:center; gap:7px;
   font:700 11px/1 var(--body); letter-spacing:.05em;
@@ -1878,8 +1965,8 @@ body.has-hero{padding-top:0}
   animation:bss-pulse 2.4s var(--quart) infinite;
 }
 @keyframes bss-pulse{
-  0%,100%{ box-shadow:0 0 0 0 rgba(255,77,20,.55) }
-  55%    { box-shadow:0 0 0 5px rgba(255,77,20,0) }
+  0%,100%{ box-shadow:0 0 0 0 rgba(255,138,77,.55) }
+  55%    { box-shadow:0 0 0 5px rgba(255,138,77,0) }
 }
 @media (prefers-reduced-motion:reduce){
   .sticker--live::before{animation:none}
@@ -1942,7 +2029,7 @@ body.has-hero{padding-top:0}
    page is themed. It USED to end on var(--ink-deep), which inverts to
    #FFFFFF inside .on-white: dropped into a white band the gradient ran
    orange → red → white and the white .photo__cap on top measured 1.06:1. */
-.photo--night{background:linear-gradient(152deg,#FF4D14 0%,#E8202A 46%,#080807 100%)}
+.photo--night{background:linear-gradient(152deg,#FF8A4D 0%,#E8202A 46%,#080807 100%)}
 
 /* A real photograph inside a .photo frame. Same monochrome grade the
    event cards and the section backgrounds already use, so a printed
@@ -2328,7 +2415,16 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    own `color`, so anything relying on inheritance picks up that solid
    near-black instead of the prose tone — --text-2 is the same token in
    both grounds and inverts with them. */
-.incl li{color:var(--text-2); max-width:46ch}
+/* Markers are back, by request. The note above records that the ORANGE
+   dash was the problem — six accent marks doing structural work on a
+   photographic band. A quiet bullet in the prose tone is not that: it
+   reads as list punctuation, not as scaffolding, and it costs no accent. */
+.incl li{
+  color:var(--text-2); max-width:46ch;
+  display:grid; grid-template-columns:.8em minmax(0,1fr); gap:.5em;
+  align-items:baseline;
+}
+.incl li::before{content:"\2022"; color:var(--text-3); line-height:inherit}
 @media (max-width:720px){
   .incl{grid-template-columns:minmax(0,1fr); gap:clamp(24px,5vw,34px)}
 }
@@ -2369,7 +2465,18 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 /* a straight x2.2 gave 211px, which put the widest stat ("24k", 1.05em of
    advance) 37px into the neighbouring column of the 4-up grid at every
    viewport over 1000px. 13vw/172px is the largest that fits the column. */
-.stat__n{font-family:var(--display); font-size:clamp(101px,13vw,172px); line-height:.373; letter-spacing:.02em}
+.stat__n{font-family:var(--display); font-size:clamp(101px,13vw,172px); line-height:.373; letter-spacing:.02em;
+  /* the figure counts up, so the digits must not jiggle the line width
+     as they change — a no-op on a face with no tabular set */
+  font-variant-numeric:tabular-nums}
+/* The line under the figure. Larger and heavier than .lede: it is the only
+   other thing in the band and at lede weight it read as a footnote under a
+   172px number. */
+.stat__cap{
+  font-size:clamp(21px,2vw,29px); font-weight:600; line-height:1.45;
+  color:var(--text-2); max-width:24ch;
+  margin:clamp(22px,2.6vw,36px) auto 0;
+}
 
 /* ============================================================
    THE DROP — first-load curtain
@@ -2423,7 +2530,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    ============================================================ */
 .wash{
   position:relative;
-  --wash:255,77,20;
+  --wash:255,138,77;
   background-image:linear-gradient(var(--wash-angle,90deg),
     rgba(var(--wash),.13) 0%, rgba(var(--wash),.05) 42%, rgba(var(--wash),0) 78%);
 }
@@ -2433,7 +2540,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   border-top:1px solid rgba(var(--wash),.55);
   border-bottom:1px solid rgba(var(--wash),.55);
 }
-.wash--orange{--wash:255,77,20}
+.wash--orange{--wash:255,138,77}
 .wash--green {--wash:0,194,78}
 .wash--red   {--wash:232,32,42}
 /* enters from the right instead — for blocks whose content sits left */
@@ -2565,24 +2672,40 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   transform:translate3d(0,var(--ty,0px),0);
   transition:transform .34s var(--ease);
 }
-.stub__tier{font:600 clamp(15px,1.55vw,21px)/1.15 var(--body); letter-spacing:.13em;
-  text-transform:uppercase; color:var(--text); margin:0}
-.stub__head{display:flex; justify-content:space-between; align-items:center; gap:12px}
-.stub__amt{
+/* TIER and AMOUNT trade places typographically: the tier is the display
+   headline and the price is the quiet body line under it. The sizes are
+   the ones each selector used to carry, moved across, so the card's
+   vertical rhythm is unchanged. */
+.stub__tier{
   font-family:var(--display); font-weight:400;
-  font-size:clamp(54px,7.1vw,96px); line-height:.38; letter-spacing:.02em;
-  margin:clamp(10px,1.4vw,16px) 0 0 -.06em;   /* the $ hangs into the padding */
-  color:var(--ink);
+  /* .38 was right for a price: one line, and Jomhuria's cap is only ~.39
+     of its em so the number sat in its own box. A TIER wraps ("Group of
+     four" is three lines in this column), and at .38 those lines meet
+     cap-to-cap. .46 is the leading the display headlines already use. */
+  font-size:clamp(54px,7.1vw,96px); line-height:.46; letter-spacing:.02em;
+  text-transform:uppercase; color:var(--ink); margin:0;
 }
-.stub__amt sup{font-size:.36em; vertical-align:.9em; letter-spacing:0; margin-right:.04em}
+/* The chip has to keep its own width — against a 96px headline the
+   default flex shrink squeezed "Save $10.36" onto two lines. */
+.stub__head{display:flex; justify-content:space-between; align-items:flex-start; gap:14px}
+.stub__head .sticker{flex:none; white-space:nowrap}
+.stub__amt{
+  font:600 clamp(15px,1.55vw,21px)/1.15 var(--body); letter-spacing:.13em;
+  text-transform:uppercase; color:var(--text);
+  margin:clamp(14px,1.8vw,22px) 0 0;
+}
+/* At display size the $ was a .36em superscript riding high on a 96px
+   numeral. On a 21px body line it is just a currency mark on the
+   baseline-ish, so it takes a normal size and a much smaller lift. */
+.stub__amt sup{font-size:.8em; vertical-align:.18em; letter-spacing:0; margin-right:.06em}
 .stub__ea{font:500 12px/1 var(--body); letter-spacing:.16em;
-  text-transform:uppercase; color:var(--text-3); margin-left:.5em; vertical-align:.42em}
+  text-transform:uppercase; color:var(--text-3); margin-left:.5em; vertical-align:0}
 .stub__note{font:400 15px/1.5 var(--body); color:var(--text-2); margin:clamp(10px,1.2vw,16px) 0 0}
 .stub .ticket{margin-top:clamp(14px,1.8vw,22px); pointer-events:none}
 
 /* the recommendation is larger and sits lower; the accent is a torn strip
    of colour across the head rather than a rule on a box */
-.stub--pick .stub__amt{font-size:clamp(60px,7.9vw,108px)}
+.stub--pick .stub__tier{font-size:clamp(60px,7.9vw,108px)}
 .stub--pick::before{
   content:""; position:absolute; left:0; right:0; top:0;
   height:clamp(7px,.8vw,10px); background:var(--orange);
@@ -3210,7 +3333,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .field:hover{border-color:rgba(248,248,246,.34)}
 .field:focus{
   outline:none; border-color:var(--orange);
-  box-shadow:0 0 0 4px rgba(255,77,20,.2);
+  box-shadow:0 0 0 4px rgba(255,138,77,.2);
 }
 select.field{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23F8F8F6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -3219,7 +3342,7 @@ select.field{
 textarea.field{min-height:140px; line-height:1.55; resize:vertical}
 .ftr .field{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.28); color:var(--ink)}
 .ftr .field::placeholder{color:rgba(255,255,255,.5)}
-.ftr .field:focus{border-color:var(--orange); box-shadow:0 0 0 4px rgba(255,77,20,.28)}
+.ftr .field:focus{border-color:var(--orange); box-shadow:0 0 0 4px rgba(255,138,77,.28)}
 .capture{display:flex; gap:12px; flex-wrap:wrap}
 .capture .field{flex:1; min-width:220px}
 
@@ -3433,7 +3556,7 @@ body[data-page="shamrock"]  .cur{--cur-c:var(--green)}
 .stops li{
   display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px;
   align-items:baseline;
-  padding:13px 0; border-bottom:1px solid var(--rule); font-size:15px;
+  padding:13px 0; border-bottom:1px solid var(--rule); font-size:20px;
 }
 /* Both lists reserve a column for a leading numeral. Where the numeral is
    gone the column has to go with it, or every row sits indented behind an

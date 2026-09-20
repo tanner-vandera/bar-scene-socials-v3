@@ -78,14 +78,14 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
-      <h1 class="d1 fx fx--green fx--neon fx--split"><span class="ink ink--green">Shamrock</span> <br><em class="scr ink ink--orange">Shuffle</em> <span class="ink ink--white">18</span></h1>
+      <h1 class="d1 fx fx--green fx--neon fx--split"><span class="ink ink--green">Shamrock</span> <br><em class="scr ink ink--white">Shuffle</em> <span class="ink ink--orange">18</span></h1>
       <p class="hero__meta">Saturday 3/6/27<span class="sep">·</span>21+<span class="sep">·</span>save the date</p>
       <span class="sticker sticker--ghost-paper sticker--flat">Not on sale yet</span>
     </div>
   </section>
-  <span class="tear tear--down" style="--tear-fill:var(--paper)"></span>
+  <span class="tear tear--down" style="--tear-fill:var(--green)"></span>
   <!-- ── THE ONLY INTERACTION ON THIS PAGE ───────────────── -->
-  <section class="band band--paper2">
+  <section class="band on-accent on-accent--green">
     <div class="shell">
       <div class="cols c-wide-left wash wash--green wash--rtl wash--bleed wash--pad" data-reveal style="align-items:center">
         <div class="stack">
@@ -102,6 +102,7 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
       </div>
     </div>
   </section>
+  <span class="tear tear--up" style="--tear-fill:var(--green)"></span>
   <!-- ── WHAT IT'LL BE ───────────────────────────────────── -->
   <section class="band">
     <div class="shell">
@@ -151,11 +152,14 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
        dark-ground colour and measures about 2:1 on white. Do not hardcode
        a green here; use the token and let the surface decide. -->
   <span class="tear tear--down" style="--tear-fill:#F8F8F6"></span>
-  <section class="band band--tight on-white">
+  <section class="band on-white">
     <div class="shell" style="text-align:center">
       <div data-reveal>
-        <p class="stat__n" style="color:var(--green-on); margin:0">$133,000+</p>
-        <p class="lede" style="margin:clamp(14px,1.6vw,22px) auto 0; max-width:30ch">raised for charity since 2019</p>
+        <!-- The figure in the markup IS the final value, so a blocked or
+             failed script leaves the real number on the page; data-countup
+             only animates text it is about to put back. -->
+        <p class="stat__n" data-countup style="color:var(--green-on); margin:0">$133,000+</p>
+        <p class="stat__cap">raised for local Milwaukee charities over the years</p>
       </div>
     </div>
   </section>

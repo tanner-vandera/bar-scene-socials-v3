@@ -29,6 +29,14 @@ venue, street or year. **Do not caption them with a Brady bar or call them "Last
 Halloween on Brady"** - the pictures cannot back the claim. The alt text
 describes what is in frame and names no location, for the same reason.
 
+`haunted-bar-hop-polaroid-3.jpg` was replaced on 2026-09-20 with a photograph
+supplied by the owners (two crawlers in costume under purple lighting; it also
+brought the row into line at 2:3 — the old Ghostface frame was the only square
+one). Its provenance is NOT recorded here, so the rule above still applies to
+it by default: the caption stays "No notes" and the alt text names no venue,
+street or year. If it *is* from Brady, that is worth writing down, because it
+would be the only picture on the site that can back the claim.
+
 ## The Haunted hero needs BOTH knobs, and that was measured
 
 `--hero-pos:85%` + `--hero-b:.7`, set inline on the `.hero` of index.html and

@@ -25,14 +25,35 @@ hand-written asides are gone), Space Grotesk (body/UI).
 **Colour** — black and white grounds, three electric accents, nothing else.
 Near-white `#F8F8F6` and near-black `#111110` (never pure `#fff`/`#000`) carry
 every surface; white `#FFFFFF` is for cards, and `#EFEFEC` is the one grey band.
-The accents are **orange `#FF4D14`** (THE accent — CTAs, marks, links, live
-state), **green `#00C24E`** and **red `#E8202A`**, each with a darker sibling
+The accents are **orange `#FF8A4D`** (THE accent — CTAs, marks, links, live
+state; softened from `#FF4D14` on 2026-09-20), **green `#00C24E`** and **red `#E8202A`**, each with a darker sibling
 (`--orange-d`, `--green-d`, `--red-d`) for text sizes on white.
 
-**One colour rule worth knowing:** electric orange is mid-luminance, so *white
-text on it is only 3.3:1 and fails AA*. Everything on an orange surface — chips,
-buttons, the orange band — carries **ink type**, which is 5.7:1 and reads
+**One colour rule worth knowing:** the orange is mid-luminance, so *white text
+on it fails AA* — 2.20:1 against the current `#FF8A4D`, and it was already only
+3.3:1 against the old `#FF4D14`. Everything on an orange surface — chips,
+buttons, the orange band — carries **ink type**, which is 8.09:1 and reads
 punchier anyway. Never put white on `--orange`.
+
+**Accent bands (`.on-accent`).** A section can take a flat block of event
+colour: `.on-accent.on-accent--orange` / `--green` / `--red`. It works the same
+way `.on-white` does — the SCOPE remaps the tokens and nothing inside has to
+know what ground it is standing on. `--fx-c` already defaults to `--ink`, so a
+headline follows on its own; only the glow and the grain have to be switched
+off. There are TWO polarities, because the three accents do not share one:
+orange and green are bright and take near-black type (8.09:1, 7.94:1), while
+**red is built on `--red-d`, not `--red`** — `#E8202A` measures 4.20:1 against
+near-black and 4.23:1 against off-white, so *neither* clears the 4.5 floor for
+body copy. `--red-d` gives off-white 6.26:1. If the red band is ever moved back
+to `--red`, the copy on it fails at any text colour.
+
+A band that is an accent must be bracketed by torn edges filled with that
+accent (`tear--down` above, `tear--up` below), or the colour ends on a straight
+line and reads as a border. See "the tear is a sheet, not a strip" in
+`css/bss.css`: a tear paints only its SVG path and now pulls back over its
+neighbour, so the torn-away part reveals that neighbour rather than the page
+ground. Before that fix, any tear next to a photo or an accent showed a black
+band through the gap.
 
 **Controls** — buttons and chips are pills, solid-filled, level (no rotation),
 with modern focus rings. The printed, hand-made character lives in the artwork
@@ -53,9 +74,12 @@ type and goes solid paper once you scroll past 60px. Below 760px it drops the ti
 shows just the mark and Menu, as the reference does; the drawer carries a ticket instead.
 
 **Motion** — deliberately almost none. The owners said the animation was too
-much, so there are no scroll reveals, no parallax, no counters. What is left is
-interaction feedback only: hover, focus, the ticket lift, the mobile drawer.
-`prefers-reduced-motion` kills even that.
+much, so there is no parallax and nothing that moves while you read. What is
+left is a quiet entrance reveal, interaction feedback (hover, focus, the ticket
+lift, the mobile drawer), and **one counter**: the charity figure on the
+Shamrock page counts up when it scrolls into view, asked for directly on
+2026-09-20. It is scoped to `[data-countup]` and nothing else may move — see
+`countUp()` in `js/bss.js`. `prefers-reduced-motion` kills all of it.
 
 ## Pages
 
@@ -414,7 +438,8 @@ six led nowhere, and the page is meant to be a very short answer to "is
 anything on?", not a listings archive. If more months are ever added, `MONTH`
 becomes an array and the switcher comes back with real destinations.
 
-**Ten stops, one event.** The route is ten named bars — Nomad World Pub through
+**The route.** Headed "Milwaukee's best bars on Brady Street" (was "Ten stops,
+one street" until 2026-09-20). The route is ten named bars — Nomad World Pub through
 HiHat Lounge — and every "sixteen bars" on the site went with the placeholders.
 The rows carry names only; the one-line captions under them ("Bingo stamp here",
 "DJ 4-7pm") were invented colour under placeholder names, and with a real route
