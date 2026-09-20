@@ -939,7 +939,6 @@ img{max-width:100%; height:auto; display:block}
   font:500 11.5px/1.3 var(--body); text-transform:uppercase;
   letter-spacing:.24em; color:var(--text-3); margin:0;
 }
-.kicker--paper{color:rgba(255,255,255,.72)}
 .lede{font-size:clamp(18px,1.55vw,22px); line-height:1.6; color:var(--text-2); max-width:34ch; margin:0}
 .body p{margin:0 0 1.05em; max-width:62ch}
 .body p:last-child{margin-bottom:0}
@@ -1067,11 +1066,7 @@ img{max-width:100%; height:auto; display:block}
 }
 .hero > .hero__media{position:absolute; inset:0; z-index:0; place-self:stretch}
 /* the "photo goes here" marker sits in a corner, not behind the headline */
-.hero > .hero__media .photo__cap{
-  position:absolute; left:22px; bottom:20px; z-index:3; text-align:left;
-  max-width:22ch; opacity:.4; padding:0;
-}
-@media (max-width:640px){ .hero > .hero__media .photo__cap{left:18px; bottom:16px} }
+.hero > .hero__media @media (max-width:640px){ .hero > .hero__media .photo__cap{left:18px; bottom:16px} }
 .hero__media img{width:100%; height:100%; object-fit:cover}
 
 /* ── REAL PHOTOGRAPHY IN A HERO ──────────────────────────────

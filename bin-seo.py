@@ -9,7 +9,7 @@ SITE = 'https://www.barscenesocials.com'
 # Cache-bust token for assets replaced UNDER THEIR EXISTING NAME. Kept in
 # step with the stylesheets by bin-bump.sh, which rewrites every ?v= in the
 # HTML; the value here only matters when this script regenerates the block.
-ASSET_V = '1789926612'
+ASSET_V = '1789938063'
 TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady'
 IG   = 'https://www.instagram.com/barscenesocials/'
 
@@ -29,7 +29,10 @@ def event(name,slug,start,end,loc,desc,offers=None,status="EventScheduled"):
        "eventStatus":"https://schema.org/"+status,
        "eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode",
        "location":loc,"description":desc,
-       "image":[SITE+"/images/og/"+slug+".jpg"],
+       # versioned like og:image above — Google caches the image it pulls
+       # for a rich result against this URL too, and three of these
+       # renders changed on 2026-09-20 without changing filename
+       "image":[SITE+"/images/og/"+slug+".jpg?v="+ASSET_V],
        "url":SITE+"/"+slug,
        # inlined, NOT {"@id": .../#org} — that node only exists on the
        # homepage, and a crawler parsing this page alone cannot resolve a
@@ -152,7 +155,13 @@ def esc(t):
 
 def block(cfg):
     u   = SITE + cfg['url']
-    img = SITE + '/images/og/' + cfg['slug'] + '.jpg'
+    # The og/ renders are cached by the SCRAPERS, not just by browsers:
+    # Facebook, iMessage and X keep a preview against the image URL and do
+    # not re-fetch it on their own. Three of these were re-rendered on
+    # 2026-09-20 (new accent orange; the Shamrock lockup had Shuffle and
+    # 18 the wrong way round) and the filenames did not change, so the
+    # URL has to. Same rule as images/README.md states for in-place swaps.
+    img = SITE + '/images/og/' + cfg['slug'] + '.jpg' + '?v=' + ASSET_V
     L = [MARK_OPEN,
       '<link rel="canonical" href="%s">' % u,
       # The mark changed from orange to white on 2026-09-20 under the SAME
