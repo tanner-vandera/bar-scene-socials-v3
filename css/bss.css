@@ -30,20 +30,29 @@
   --stone:      #7A7A74;   /* the default placeholder photo field */
 
   /* --- accents: orange, green, red. Nothing else. --------- */
-  --orange:     #FF8A4D;   /* THE accent — CTAs, marks, links, live state.
-                              8.1:1 on the black ground, so it is safe as
+  --orange:     #FF7A33;   /* THE accent — CTAs, marks, links, live state.
+                              7.3:1 on the black ground, so it is safe as
                               type here in a way it never was on white.
-                              Was #FF4D14 (5.7:1) — softened to the cooler,
-                              less saturated orange the chips already used. */
-  --orange-on:  #FF8A4D;   /* same value as --orange since the accent was
-                              softened; kept as its own name because the
-                              11px chips mean "the safe orange", not "the
-                              accent", and the two may diverge again. */
+                              History: #FF4D14 (5.7:1) -> #FF8A4D (8.1:1,
+                              too washed out) -> here, a step back toward
+                              the punchier orange without its harshness. */
+  --orange-on:  #FF8A4D;   /* the SOFTER orange, for 11px chips where the
+                              accent is too hot. It diverged from --orange
+                              again when the accent was re-saturated; the
+                              5.9:1 measurement on the chip fill below is
+                              measured on THIS value, so it stays put. */
   --orange-d:   #C93A08;   /* the dark sibling — only for the handful of
                               surfaces that are still light (button hover,
                               the ticket stock, the taped polaroid) */
   --orange-lt:  #FF9152;   /* ticket stock */
   --green:      #00C24E;   /* electric — dark grounds and large elements */
+  --green-band: #18B456;   /* the same hue at S 76% / L 40%. --green is the
+                              SHAMROCK lockup's ink and stays electric; as a
+                              full-bleed GROUND that value shouts, so the
+                              accent band and the torn edges that bracket it
+                              use this instead. Near-black on it is 6.93:1.
+                              The tears reference this token too — if the two
+                              ever drift apart the seam shows as a stripe. */
   --green-d:    #00873A;   /* the deep green field on photo blocks */
   --green-on:   var(--green);  /* green type. Swapped to --green-d inside
                                   .on-white, where --green is 2.24:1 and
@@ -1128,7 +1137,7 @@ img{max-width:100%; height:auto; display:block}
 .hero__media--shot::before{
   content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
   background:linear-gradient(158deg,
-    rgba(255,138,77,.06) 0%, rgba(232,32,42,.04) 45%, rgba(17,17,16,.10) 100%);
+    rgba(255,122,51,.06) 0%, rgba(232,32,42,.04) 45%, rgba(17,17,16,.10) 100%);
   mix-blend-mode:multiply;
 }
 /* print texture over photography, low (style guide calls for 8-15%) */
@@ -1536,6 +1545,10 @@ section{position:relative}
    grounds — and gains a pixel, because a hairline at ink weight is what
    makes the wipe legible rather than the colour alone. */
 .on-accent .listing__row::after{background:var(--acc-ink); height:2px}
+/* .facts sets its markers in --orange-on, which is the same hue as the
+   band underneath them. Inside an accent scope they take the band's ink,
+   like every other mark here. */
+.on-accent .facts li::marker{color:var(--acc-ink)}
 
 .on-accent--orange{
   --acc-bg:var(--orange);  --acc-ink:#111110;
@@ -1543,7 +1556,8 @@ section{position:relative}
   --acc-rule:rgba(17,17,16,.34);
 }
 .on-accent--green{
-  --acc-bg:var(--green);   --acc-ink:#111110;
+  /* NOT var(--green) — see --green-band at the top of this file. */
+  --acc-bg:var(--green-band); --acc-ink:#111110;
   --acc-ink-2:rgba(17,17,16,.80); --acc-ink-3:rgba(17,17,16,.66);
   --acc-rule:rgba(17,17,16,.34);
 }
@@ -1951,7 +1965,8 @@ body.has-hero{padding-top:0}
    reads as a frosted tag on whatever it sits on, and the accent moves to
    the type. --orange-on rather than --orange because this is 11px text —
    the old #FF4D14 accent measured 4.1:1 on the composited fill where
-   #FF8A4D gives 5.9:1. The accent is now #FF8A4D too, so they match. */
+   #FF8A4D gives 5.9:1, which is why --orange-on is still that value even
+   though the accent has since moved on to #FF7A33. */
 .sticker{
   display:inline-flex; align-items:center; gap:7px;
   font:700 11px/1 var(--body); letter-spacing:.05em;
@@ -1965,8 +1980,8 @@ body.has-hero{padding-top:0}
   animation:bss-pulse 2.4s var(--quart) infinite;
 }
 @keyframes bss-pulse{
-  0%,100%{ box-shadow:0 0 0 0 rgba(255,138,77,.55) }
-  55%    { box-shadow:0 0 0 5px rgba(255,138,77,0) }
+  0%,100%{ box-shadow:0 0 0 0 rgba(255,122,51,.55) }
+  55%    { box-shadow:0 0 0 5px rgba(255,122,51,0) }
 }
 @media (prefers-reduced-motion:reduce){
   .sticker--live::before{animation:none}
@@ -2029,7 +2044,7 @@ body.has-hero{padding-top:0}
    page is themed. It USED to end on var(--ink-deep), which inverts to
    #FFFFFF inside .on-white: dropped into a white band the gradient ran
    orange → red → white and the white .photo__cap on top measured 1.06:1. */
-.photo--night{background:linear-gradient(152deg,#FF8A4D 0%,#E8202A 46%,#080807 100%)}
+.photo--night{background:linear-gradient(152deg,#FF7A33 0%,#E8202A 46%,#080807 100%)}
 
 /* A real photograph inside a .photo frame. Same monochrome grade the
    event cards and the section backgrounds already use, so a printed
@@ -2459,6 +2474,67 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .band--ink .facts li{color:rgba(255,255,255,.68)}
 .band--ink .facts li::marker{color:var(--orange-lt)}
 
+/* EVENT PARTNERS — a looping logo carousel
+   Worth being honest in the file about what this is: the motion note on
+   reveal() says nothing moves while you read, and a marquee is exactly
+   that thing. It is here because it was asked for (2026-09-20), it is
+   the second and last exception alongside countUp(), and it carries the
+   two mitigations that make a marquee tolerable:
+     · prefers-reduced-motion drops it to a plain wrapped row. Not a
+       slower loop — no loop.
+     · it pauses on hover and on keyboard focus inside the strip, so
+       anyone trying to actually look at a logo can stop it.
+
+   The track holds the four marks TWICE and translates by exactly -50%,
+   which is seamless only if both halves measure the same. That is why
+   the spacing is margin-right on every item and NOT flex `gap`: with
+   gap, eight items have seven gaps, the halves differ by one gap, and
+   the loop jumps by that much every cycle.
+
+   Logos are matched on HEIGHT, not width — the aspect ratios are 1.76,
+   1.76, 1.00 and 2.23, and matching four logos by width makes the
+   squarest one enormous. --k is the per-mark optical nudge. */
+.partners{
+  position:relative; overflow:hidden;
+  /* fade the two ends so marks enter and leave rather than being clipped */
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+}
+.partners__track{
+  list-style:none; margin:0; padding:0;
+  display:flex; align-items:center; width:max-content;
+  animation:partners-scroll 20s linear infinite;
+}
+.partners:hover .partners__track,
+.partners:focus-within .partners__track{animation-play-state:paused}
+.partners__item{
+  flex:none; display:flex; align-items:center; justify-content:center;
+  margin-right:clamp(48px,7vw,104px);
+}
+.partners__item img{
+  display:block; width:auto;
+  height:calc(clamp(64px,8.4vw,116px) * var(--k,1));
+  opacity:.82;
+}
+.partners__item:nth-child(4n+3) img{--k:1.42}   /* NUTRL is square */
+.partners__item:nth-child(4n+4) img{--k:.98}    /* Sun Cruiser is widest at 2.23 */
+@keyframes partners-scroll{
+  from{transform:translate3d(0,0,0)}
+  to  {transform:translate3d(-50%,0,0)}
+}
+/* No loop under reduced motion — a wrapped, centred row of the same marks.
+   The duplicate half is hidden outright so it is not simply shown twice. */
+@media (prefers-reduced-motion:reduce){
+  .partners{-webkit-mask-image:none; mask-image:none}
+  .partners__track{
+    animation:none; width:auto;
+    flex-wrap:wrap; justify-content:center; row-gap:clamp(28px,5vw,44px);
+  }
+  .partners__item[aria-hidden="true"]{display:none}
+  .partners__item{margin-right:clamp(36px,6vw,80px)}
+  .partners__item:last-of-type{margin-right:0}
+}
+
 /* big stat — .stat and .stat__l went with the old metrics strip; only
    .stat__n survives, on the two charity blocks that still set a figure in
    display type. */
@@ -2530,7 +2606,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    ============================================================ */
 .wash{
   position:relative;
-  --wash:255,138,77;
+  --wash:255,122,51;
   background-image:linear-gradient(var(--wash-angle,90deg),
     rgba(var(--wash),.13) 0%, rgba(var(--wash),.05) 42%, rgba(var(--wash),0) 78%);
 }
@@ -2540,7 +2616,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   border-top:1px solid rgba(var(--wash),.55);
   border-bottom:1px solid rgba(var(--wash),.55);
 }
-.wash--orange{--wash:255,138,77}
+.wash--orange{--wash:255,122,51}
 .wash--green {--wash:0,194,78}
 .wash--red   {--wash:232,32,42}
 /* enters from the right instead — for blocks whose content sits left */
@@ -2625,6 +2701,14 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   margin:0; color:var(--text);
 }
 .listing__where{font:400 15px/1.5 var(--body); color:var(--text-2); margin:0}
+/* .listing is also the Happening Now calendar, which is right as it is, so
+   the larger read is a modifier rather than a change to the base. 20px is
+   the body size the .facts lists on this page already use; the name and the
+   closing note are scaled to sit either side of it. */
+.listing--lg .listing__name{font-size:clamp(32px,3.6vw,50px)}
+.listing--lg .listing__where{font-size:20px; line-height:1.55}
+.listing--lg .listing__row{padding:clamp(24px,3.2vw,40px) 0}
+.listing__note{font-size:18px; line-height:1.65}
 .listing__act{justify-self:end; align-self:center}
 
 /* ours: bleeds out of the column and takes the accent */
@@ -3333,7 +3417,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .field:hover{border-color:rgba(248,248,246,.34)}
 .field:focus{
   outline:none; border-color:var(--orange);
-  box-shadow:0 0 0 4px rgba(255,138,77,.2);
+  box-shadow:0 0 0 4px rgba(255,122,51,.2);
 }
 select.field{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23F8F8F6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -3342,7 +3426,7 @@ select.field{
 textarea.field{min-height:140px; line-height:1.55; resize:vertical}
 .ftr .field{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.28); color:var(--ink)}
 .ftr .field::placeholder{color:rgba(255,255,255,.5)}
-.ftr .field:focus{border-color:var(--orange); box-shadow:0 0 0 4px rgba(255,138,77,.28)}
+.ftr .field:focus{border-color:var(--orange); box-shadow:0 0 0 4px rgba(255,122,51,.28)}
 .capture{display:flex; gap:12px; flex-wrap:wrap}
 .capture .field{flex:1; min-width:220px}
 

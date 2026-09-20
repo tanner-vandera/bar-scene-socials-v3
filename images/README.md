@@ -12,6 +12,21 @@
 | `shamrock-shuffle-card.jpg` | Shamrock event card. |
 | `TicketButtonEmpty.svg` | Source artwork the ticket silhouette in `bss.js` was traced from. Not loaded at runtime. |
 
+## Sponsor logos live in `sponsors/`
+
+`sponsors/budlight.png`, `jameson.png`, `nutrl.png`, `suncruiser.png` — the row
+in the Sponsors section on the Haunted page. **They are white-on-transparent,
+so the band they sit on has to stay dark**; on a light or accent ground every
+one of them vanishes. That is why that section is a plain `.band` sitting
+between an orange one and the closing band, and not an accent block itself.
+
+They are matched on HEIGHT, not width, because their aspect ratios are not
+close (1.76, 1.76, 1.00, 2.23) and matching four logos by width makes the
+squarest one enormous. `.sponsors img` carries a per-mark `--k` nudge for the
+two that need it: NUTRL is square and needs `1.42` to read at the same optical
+size as the wide marks. If a logo is added or reordered, those `:nth-child()`
+rules are positional — check them.
+
 ## Calendar stickers live in `stickers/`
 
 The collage marks on the Happening Now calendar are their own folder,

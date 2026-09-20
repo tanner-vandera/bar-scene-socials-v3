@@ -58,14 +58,24 @@ PAGES = {
    url='/hauntedbarhop', slug='hauntedbarhop',
    title="Haunted Bar Hop 2026 — Milwaukee Halloween Bar Crawl",
    desc=("Saturday 10/31/26 on Brady Street, 3pm–8pm with an afterparty DJ. Ten bars, free cover, "
-         "drink and food specials, costume prizes and a bingo card. From $12.40. 21+."),
+         "drink and food specials, costume prizes and a bingo card. From $13.98. 21+."),
    ogtype='article',
    ld=[event("Haunted Bar Hop on Brady","hauntedbarhop",
         # 10/31/2026 is still CDT — US DST ends Sun 11/01/2026
         "2026-10-31T15:00:00-05:00","2026-10-31T20:00:00-05:00",
         place("Brady Street"), HAUNTED_DESC,
+        # Prices are quoted INCLUSIVE OF FEES, matching what TicketSignup
+        # actually shows a buyer (2026-09-20). The base ticket did not
+        # change — $16.65 is $14.99 + $1.66 fee and $13.98 is $12.40 +
+        # $1.58 — but the site was quoting the pre-fee number, so every
+        # figure on it read low against the checkout page.
         offers={"@type":"AggregateOffer","url":TIX,"priceCurrency":"USD",
-                "lowPrice":"12.40","highPrice":"14.99","offerCount":"2",
+                "lowPrice":"13.98","highPrice":"16.65","offerCount":"2",
+                # TicketSignup publishes a sale END ("Saturday October 31,
+                # 2026 at 11:59am CDT") but no sale START, so validThrough
+                # is a fact and validFrom is not. Do not guess validFrom —
+                # put the real on-sale date here when it is known.
+                "validThrough":"2026-10-31T11:59:00-05:00",
                 "availability":"https://schema.org/InStock"})]),
 
  '12barsofchristmas.html': dict(
@@ -76,7 +86,9 @@ PAGES = {
    ogtype='article',
    # date-only startDate: the running time has not been announced, and a
    # made-up one would be worse than none
-   ld=[event("12 Bars of Christmas","12barsofchristmas","2026-12-12",None,
+   # endDate matches startDate: a one-day event, and no start/end TIME has
+   # ever been published for this one, so a date is all we can honestly say.
+   ld=[event("12 Bars of Christmas","12barsofchristmas","2026-12-12","2026-12-12",
         place(), "Milwaukee's 12 Bars of Christmas bar crawl. Twelve bars, Christmas jumpers, "
                  "a souvenir stein and a DJ. 21+.")]),
 
@@ -86,15 +98,16 @@ PAGES = {
    desc=("Saturday 3/6/27 in Milwaukee — the eighteenth Shamrock Shuffle, the crawl that started "
          "Bar Scene Socials. Not on sale yet. 21+."),
    ogtype='article',
-   ld=[event("Shamrock Shuffle #18","shamrockshuffle","2027-03-06",None,
+   # same as Christmas — date only, so endDate is the same day.
+   ld=[event("Shamrock Shuffle #18","shamrockshuffle","2027-03-06","2027-03-06",
         place(), "Milwaukee's Shamrock Shuffle bar crawl, eighteenth year. Green shirts, ten-plus "
                  "bars and a patio you will not leave. 21+.")]),
 
  'tickets.html': dict(
    url='/tickets', slug='hauntedbarhop',
    title="Tickets — Haunted Bar Hop, Milwaukee 10/31/26",
-   desc=("Haunted Bar Hop tickets, Saturday 10/31/26 on Brady Street: $14.99 single, or $12.40 "
-         "each in a group of four ($49.60 total). 21+."),
+   desc=("Haunted Bar Hop tickets, Saturday 10/31/26 on Brady Street: $16.65 single, or $13.98 "
+         "each in a group of four ($55.92 total). 21+."),
    ogtype='website', ld=[]),
 
  'happeningnow.html': dict(

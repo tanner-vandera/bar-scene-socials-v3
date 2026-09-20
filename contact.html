@@ -49,8 +49,8 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 <meta name="geo.region" content="US-WI">
 <meta name="geo.placename" content="Milwaukee">
 <!-- SEO:end -->
-<link rel="stylesheet" href="css/fonts.css?v=1789924044">
-<link rel="stylesheet" href="css/bss.css?v=1789924044">
+<link rel="stylesheet" href="css/fonts.css?v=1789926612">
+<link rel="stylesheet" href="css/bss.css?v=1789926612">
 </head>
 <body data-page="contact">
 <div id="chrome-header"></div>
@@ -87,6 +87,13 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
   </section>
 </main>
 <div id="chrome-footer"></div>
-<script src="js/bss.js?v=1789924044"></script>
+<!-- Vercel Web Analytics. This is the STATIC-SITE install, not the npm
+     package: there is no package.json, no bundler and no React here, so
+     `npm i @vercel/analytics` + `import { Analytics }` has nothing to
+     import into. Vercel serves /_vercel/insights/script.js itself on a
+     deployment, so there is no key to configure and nothing to build.
+     It 404s harmlessly on localhost — data only appears once deployed. -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="js/bss.js?v=1789926612"></script>
 </body>
 </html>

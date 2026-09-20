@@ -25,15 +25,15 @@ hand-written asides are gone), Space Grotesk (body/UI).
 **Colour** — black and white grounds, three electric accents, nothing else.
 Near-white `#F8F8F6` and near-black `#111110` (never pure `#fff`/`#000`) carry
 every surface; white `#FFFFFF` is for cards, and `#EFEFEC` is the one grey band.
-The accents are **orange `#FF8A4D`** (THE accent — CTAs, marks, links, live
-state; softened from `#FF4D14` on 2026-09-20), **green `#00C24E`** and **red `#E8202A`**, each with a darker sibling
+The accents are **orange `#FF7A33`** (THE accent — CTAs, marks, links, live
+state; `#FF4D14` -> `#FF8A4D` -> here on 2026-09-20), **green `#00C24E`** and **red `#E8202A`**, each with a darker sibling
 (`--orange-d`, `--green-d`, `--red-d`) for text sizes on white.
 
 **One colour rule worth knowing:** the orange is mid-luminance, so *white text
-on it fails AA* — 2.20:1 against the current `#FF8A4D`, and it was already only
-3.3:1 against the old `#FF4D14`. Everything on an orange surface — chips,
-buttons, the orange band — carries **ink type**, which is 8.09:1 and reads
-punchier anyway. Never put white on `--orange`.
+on it fails AA* — 2.6:1 against the current `#FF7A33`, and it was never better
+than 3.3:1 on any orange this site has used. Everything on an orange surface —
+chips, buttons, the orange band — carries **ink type**, which is 7.27:1 and
+reads punchier anyway. Never put white on `--orange`.
 
 **Accent bands (`.on-accent`).** A section can take a flat block of event
 colour: `.on-accent.on-accent--orange` / `--green` / `--red`. It works the same
@@ -41,11 +41,19 @@ way `.on-white` does — the SCOPE remaps the tokens and nothing inside has to
 know what ground it is standing on. `--fx-c` already defaults to `--ink`, so a
 headline follows on its own; only the glow and the grain have to be switched
 off. There are TWO polarities, because the three accents do not share one:
-orange and green are bright and take near-black type (8.09:1, 7.94:1), while
+orange and green are bright and take near-black type (7.27:1, 6.93:1), while
 **red is built on `--red-d`, not `--red`** — `#E8202A` measures 4.20:1 against
 near-black and 4.23:1 against off-white, so *neither* clears the 4.5 floor for
 body copy. `--red-d` gives off-white 6.26:1. If the red band is ever moved back
 to `--red`, the copy on it fails at any text colour.
+
+The green band does NOT use `--green`. `--green` is electric (S 100%) and it is
+the SHAMROCK lockup's ink, which stays as it is; as a full-bleed ground that
+value shouts, so there is a separate `--green-band` (`#18B456`, the same hue at
+S 76% / L 40%). **The torn edges reference `--green-band` too** — the band and
+its edges must name the same token or the seam shows as a stripe of a different
+green. Orange and red need no equivalent: their bands use `--orange` and
+`--red-d` directly, and their tears name the same.
 
 A band that is an accent must be bracketed by torn edges filled with that
 accent (`tear--down` above, `tear--up` below), or the colour ends on a straight
