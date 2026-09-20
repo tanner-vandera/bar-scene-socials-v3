@@ -9,7 +9,7 @@ SITE = 'https://www.barscenesocials.com'
 # Cache-bust token for assets replaced UNDER THEIR EXISTING NAME. Kept in
 # step with the stylesheets by bin-bump.sh, which rewrites every ?v= in the
 # HTML; the value here only matters when this script regenerates the block.
-ASSET_V = '1789938063'
+ASSET_V = '1789938338'
 TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady'
 IG   = 'https://www.instagram.com/barscenesocials/'
 
