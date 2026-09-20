@@ -12,6 +12,16 @@
 | `shamrock-shuffle-card.jpg` | Shamrock event card. |
 | `TicketButtonEmpty.svg` | Source artwork the ticket silhouette in `bss.js` was traced from. Not loaded at runtime. |
 
+## Replacing a photo in place needs a ?v=
+
+Vercel serves this folder with `max-age=86400, stale-while-revalidate=604800`.
+Overwriting a file keeps its URL, so a returning visitor holds the OLD picture
+for a day and the CDN may serve it stale for a week — the image is simply never
+re-fetched. When a photo is replaced under its existing name, add or bump a
+`?v=` on its `src` (the same token the stylesheets use; `bin-bump.sh` rewrites
+every `?v=` in the HTML, so it stays in step). `haunted-bar-hop-polaroid-1.jpg`
+carries one for this reason. A NEW filename needs none.
+
 ## Sponsor logos live in `sponsors/`
 
 `sponsors/budlight.png`, `jameson.png`, `nutrl.png`, `suncruiser.png` — the row
