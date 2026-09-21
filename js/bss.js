@@ -981,29 +981,17 @@
          jobs (follow, scale, spin) are on three nested elements so
          no two ever write the same transform.
      --------------------------------------------------------- */
-  var CURSOR_ART = {
-    /* Ghost — the house shape. Dome, four-scallop hem, two eyes. */
-    ghost:
-      '<path d="M12 1.4c-4.5 0-8.1 3.6-8.1 8.1v10.4c0 .9 1.1 1.4 1.8.7l1.6-1.6 1.7 1.6c.4.4 1 .4 1.4 0l1.6-1.5 1.6 1.5c.4.4 1 .4 1.4 0l1.7-1.6 1.6 1.6c.7.7 1.8.2 1.8-.7V9.5c0-4.5-3.6-8.1-8.1-8.1Z"/>' +
-      '<circle cx="9.2" cy="9.6" r="1.45" fill="#111110"/><circle cx="14.8" cy="9.6" r="1.45" fill="#111110"/>',
-    /* Four-leaf clover. Four lobes on the diagonals plus a stem —
-       round lobes rather than hearts, which turn to mush at 30px. */
-    clover:
-      '<path d="M11.1 11.1C9.4 9.4 5.9 10 4.6 8.7 3.2 7.3 3.6 5 5 3.6c1.4-1.4 3.7-1.8 5.1-.4 1.3 1.3.7 4.8 2.4 6.5"/>' +
-      '<path d="M12.9 11.1c1.7-1.7 1.1-5.2 2.4-6.5 1.4-1.4 3.7-1 5.1.4 1.4 1.4 1.8 3.7.4 5.1-1.3 1.3-4.8.7-6.5 2.4"/>' +
-      '<path d="M12.9 12.9c1.7 1.7 5.2 1.1 6.5 2.4 1.4 1.4 1 3.7-.4 5.1-1.4 1.4-3.7 1.8-5.1.4-1.3-1.3-.7-4.8-2.4-6.5"/>' +
-      '<path d="M11.1 12.9c-1.7 1.7-1.1 5.2-2.4 6.5-1.4 1.4-3.7 1-5.1-.4-1.4-1.4-1.8-3.7-.4-5.1 1.3-1.3 4.8-.7 6.5-2.4"/>',
-    /* Snowflake — three spokes through the centre, barbed. */
-    snowflake:
-      '<g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
-      '<path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/>' +
-      '<path d="M12 5.6 9.9 3.4M12 5.6l2.1-2.2M12 18.4l-2.1 2.2M12 18.4l2.1 2.2"/>' +
-      '<path d="m6.7 8.9-3-.5M6.7 8.9 6.2 5.9M17.3 15.1l3 .5M17.3 15.1l.5 3"/>' +
-      '<path d="m6.7 15.1-3 .5M6.7 15.1l-.5 3M17.3 8.9l3-.5M17.3 8.9l.5-3"/></g>',
-    /* The default: a four-point sparkle. Nothing seasonal, and the
-       only one of the four that is not a literal object. */
-    spark:
-      '<path d="M12 1.6c.9 5.4 3 7.5 8.4 8.4-5.4.9-7.5 3-8.4 8.4-.9-5.4-3-7.5-8.4-8.4 5.4-.9 7.5-3 8.4-8.4Z"/>'
+  /* The four drawn cursors. The art is real SVG files in images/cursors/
+     rather than inline path strings: it is hand-drawn, two-tone (white
+     body, black keyline) and carries far too many nodes to want sitting
+     in this file. Because they are <img>, the native arrow must not be
+     hidden until one has actually loaded — see `ready` in cursor(). */
+  var CURSOR_SRC = {
+    ghost:     'images/cursors/ghost.svg',
+    clover:    'images/cursors/clover.svg',
+    snowflake: 'images/cursors/snowflake.svg',
+    /* the logo mark, and the default — the only one that is not seasonal */
+    logo:      'images/cursors/logo.svg'
   };
   var CURSOR_FOR = {
     home:      'ghost',
@@ -1016,25 +1004,39 @@
     var mq = window.matchMedia;
     if (!mq || !mq('(pointer: fine)').matches) return;
 
-    var art = CURSOR_ART[CURSOR_FOR[page] || 'spark'];
+    var src = CURSOR_SRC[CURSOR_FOR[page] || 'logo'];
     var el = document.createElement('div');
     el.className = 'cur';
     el.setAttribute('aria-hidden', 'true');
     el.innerHTML =
-      '<span class="cur__scale"><span class="cur__spin">' +
-        '<svg viewBox="0 0 24 24" fill="currentColor">' + art + '</svg>' +
+      '<span class="cur__scale"><span class="cur__sway">' +
+        '<img src="' + src + '" alt="" decoding="async">' +
       '</span></span>';
     document.body.appendChild(el);
 
-    /* Anything you can act on. Kept as one string so the hover rule and
-       the CSS that hides the native cursor cannot drift apart. */
-    var HOT = 'a,button,summary,[role="button"],[data-ticket],.ticket,' +
-              '.taped,.event,.card,input,textarea,select,label';
+    /* The art is a file now, so it may not have arrived yet. Hiding the
+       native arrow before it lands would leave a moment with no pointer
+       at all, so the swap waits for the load — and if the file never
+       loads, the arrow simply stays and nothing is lost. The fetch
+       starts here, at boot, not on the first move. */
+    var img = el.querySelector('img');
+    var ready = img.complete && img.naturalWidth > 0;
+    img.addEventListener('load', function () { ready = true; if (on) show(); });
+    img.addEventListener('error', function () { el.remove(); });
+
+    /* Links and controls ONLY — things that actually go somewhere or do
+       something. The site has a lot of furniture that already moves under
+       the pointer (the taped polaroids, the prize rows, the bar photos),
+       and having the cursor open up on all of it spent the gesture on
+       scenery. `a[href]` is the test, so a decorative <a> with no
+       destination and the <span data-ticket> price tiles stay quiet;
+       the event and bar cards are real links and still answer. */
+    var HOT = 'a[href],button,summary,[role="button"]';
     var FIELD = 'input,textarea,select';
 
     var tx = 0, ty = 0, x = 0, y = 0, on = false, ticking = false;
     /* Reduced motion snaps instead of gliding — see the matching CSS,
-       which also drops the spin and the hover growth. */
+       which also drops the sway and the hover growth. */
     var EASE = mq('(prefers-reduced-motion: reduce)').matches ? 1 : 0.28;
 
     function frame() {
@@ -1053,6 +1055,13 @@
       requestAnimationFrame(frame);
     }
 
+    /* Idempotent, and the only place the native arrow is given up. */
+    function show() {
+      if (!ready) return;
+      document.documentElement.classList.add('has-cur');
+      el.classList.add('is-on');
+    }
+
     function place(e) {
       tx = e.clientX; ty = e.clientY;
       if (!on) {
@@ -1060,9 +1069,8 @@
            native cursor is only hidden now, so a browser that never
            reports a pointer never loses it. */
         on = true; x = tx; y = ty;
-        document.documentElement.classList.add('has-cur');
-        el.classList.add('is-on');
       }
+      show();
       queue();
     }
 
@@ -1078,7 +1086,7 @@
     /* Leaving the window hides it; re-entering brings it back on the
        next move, already in the right place. */
     document.addEventListener('mouseleave', function () { el.classList.remove('is-on'); });
-    document.addEventListener('mouseenter', function () { if (on) el.classList.add('is-on'); });
+    document.addEventListener('mouseenter', function () { if (on) show(); });
     window.addEventListener('blur', function () { el.classList.remove('is-on'); });
 
     /* Delegated, so it costs nothing per frame and works on anything

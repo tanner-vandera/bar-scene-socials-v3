@@ -10,6 +10,8 @@
 | `12bars-of-christmas-polaroid.jpg` | The second Christmas polaroid only. |
 | `shamrock-shuffle-hero.jpg` | Shamrock hero. |
 | `shamrock-shuffle-card.jpg` | Shamrock event card. |
+| `skeleton-hand.svg` | The pointing hand anchoring each of the three costume-contest prizes on the Haunted page. Painted as a **CSS mask** (`.prize__hand`), like `bss-logo.svg`, so it takes its colour from the element — do not add a recoloured copy. Cropped tight and pointing UP at 0deg; the three angles are set per column in `bss.css`. |
+| `cursors/*.svg` | The drawn pointer — `logo` (default), `ghost`, `clover`, `snowflake`. One per page, picked by `CURSOR_FOR` in `bss.js`. Two-tone and untinted; see `cursors/README.md`. |
 | `TicketButtonEmpty.svg` | Source artwork the ticket silhouette in `bss.js` was traced from. Not loaded at runtime. |
 
 ## Replacing a photo in place needs a ?v=

@@ -77,6 +77,16 @@
   --red-d:      #B8141C;
   --red-on:     #FF5A62;   /* small red type — --red is 4.20:1 on the page
                               ground and 22px script needs 4.5. */
+  --plum:       #381745;   /* the deep plum ground under the costume
+                              prizes. Sits at --violet's own hue (~283)
+                              several stops down, so the band reads as the
+                              dark end of the Halloween purple rather than
+                              a fourth colour. Chosen for what it carries:
+                              --orange on it is 5.9:1, which is what lets
+                              that band run ORANGE type instead of the
+                              near-black every other accent takes. Push it
+                              any lighter and the orange stops clearing
+                              4.5:1 for body copy. */
   --red-btn:    #D01820;   /* a solid red button: white on --red is exactly
                               4.50:1 and 13px bold needs 4.5 with no margin.
                               This gives 5.48 and still reads 3.45:1 as a
@@ -561,17 +571,22 @@ img{max-width:100%; height:auto; display:block}
    one line each and a sixth is free. The @supports below keeps the old
    two-stop version for anything without color-mix. */
 .fx .ink, .fx{
-  --neon:
+  /* Held as --neon-glow and then assigned, so a scope that switches the
+     glow OFF (every .on-accent band) can switch it back ON by name
+     instead of restating four drop-shadows that would then drift. The
+     plum band is the one that does — see .on-accent--plum. */
+  --neon-glow:
     saturate(1.14) brightness(1.03)
     drop-shadow(0 0 calc(.006em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) calc(100% - var(--neon-lift,.72) * 100%), #FFFFFF))
     drop-shadow(0 0 calc(.011em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) 90%, transparent))
     drop-shadow(0 0 calc(.025em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) 48%, transparent))
     drop-shadow(0 0 calc(.053em * var(--neon-k,1)) color-mix(in srgb, var(--ink-c,var(--fx-c)) 20%, transparent));
+  --neon:var(--neon-glow);
 }
 @supports not (color: color-mix(in srgb, red, blue)){
   .fx .ink, .fx{
-    --neon:drop-shadow(0 0 .017em var(--ink-c,var(--fx-c)))
-           drop-shadow(0 0 .043em var(--ink-c,var(--fx-c)));
+    --neon-glow:drop-shadow(0 0 .017em var(--ink-c,var(--fx-c)))
+                drop-shadow(0 0 .043em var(--ink-c,var(--fx-c)));
   }
 }
 
@@ -1566,6 +1581,26 @@ section{position:relative}
   --acc-ink-2:rgba(248,248,246,.84); --acc-ink-3:rgba(248,248,246,.72);
   --acc-rule:rgba(248,248,246,.38);
 }
+/* The plum band runs off-white type, like the red one — 14.3:1, so the
+   alpha steps have room to do their job. The ORANGE on this band is
+   spent on the things that are not type: the skeleton hands and the
+   rule over each column. An earlier pass had it the other way round and
+   the whole section went one colour. */
+.on-accent--plum{
+  --acc-bg:var(--plum);    --acc-ink:#F8F8F6;
+  --acc-ink-2:rgba(248,248,246,.84); --acc-ink-3:rgba(248,248,246,.72);
+  --acc-rule:rgba(248,248,246,.38);
+}
+/* THE ONE ACCENT BAND THAT KEEPS ITS GLOW. The blanket rule above kills
+   --neon on every accent, and it is right to: a halo is tuned to lift
+   type off a near-black ground, and on a BRIGHT flat colour it only
+   muddies the edge. Plum is not bright — it is darker than the page
+   ground itself — so the halo behaves exactly as it does on the heroes,
+   and the headline would look flat here without it. --neon-lift matches
+   .ink--white, which lifts less than a colour because white starts with
+   less room to blow out toward. */
+.on-accent--plum .fx,
+.on-accent--plum .fx .ink{--neon:var(--neon-glow); --neon-lift:.55}
 
 .cols{display:grid; gap:clamp(24px,3vw,48px)}
 .c-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -2705,10 +2740,110 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    the larger read is a modifier rather than a change to the base. 20px is
    the body size the .facts lists on this page already use; the name and the
    closing note are scaled to sit either side of it. */
-.listing--lg .listing__name{font-size:clamp(32px,3.6vw,50px)}
-.listing--lg .listing__where{font-size:20px; line-height:1.55}
-.listing--lg .listing__row{padding:clamp(24px,3.2vw,40px) 0}
-.listing__note{font-size:18px; line-height:1.65}
+
+/* ============================================================
+   COSTUME PRIZES — the three-up on the Haunted page
+   This was three full-bleed .listing rows stacked down the page:
+   three short lines of copy spread over most of a screen, with the
+   right-hand two thirds of every row empty. It is a SET of three
+   equal things, not a ranked list, so it reads across rather than
+   down — and across, it costs a third of the height.
+
+   Each column is anchored by a skeleton hand pointing down at its
+   own headline. The hand is a CSS mask, the same move .logo makes,
+   so it takes the band's ink and there is no second orange file to
+   keep in step with the palette.
+   ============================================================ */
+.prizes{
+  list-style:none; margin:0; padding:0;
+  display:grid; gap:clamp(20px,2.6vw,40px);
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+/* No rule over the column. The hand is the anchor, and a keyline above
+   it as well gave every column two competing starts. */
+.prize{display:grid; align-content:start; gap:10px}
+
+/* THE HAND. Rotation is visual only — the layout box stays 52x124, so a
+   turned hand spills outside it. Sideways that is the point (it breaks
+   the three columns out of their grid), but DOWNWARD it would reach the
+   headline, so every angle here stays within ~35deg of vertical, where
+   the overhang is about 4px top and bottom, and --gap-under covers it
+   with room to spare. Widen the angles and that stops being true. */
+.prize__hand{
+  display:block; width:52px; height:124px;
+  margin:0 0 18px var(--hand-x,0);
+  background-color:currentColor;
+  /* Explicitly the accent, NOT the band's ink — the type here is
+     off-white and a white hand would disappear into it. */
+  color:var(--orange);
+  transform:rotate(var(--hand-r,180deg));
+  -webkit-mask:url("../images/skeleton-hand.svg") center / contain no-repeat;
+          mask:url("../images/skeleton-hand.svg") center / contain no-repeat;
+}
+/* Three directions, all pointing down INTO the headline, none of them
+   the same. The x-offsets stagger the row so it does not read as three
+   identical stamps; they are indents rather than negative pulls, so the
+   leftmost hand never crosses the shell edge. */
+.prize:nth-child(1) .prize__hand{ --hand-r:147deg; --hand-x:26px }
+.prize:nth-child(2) .prize__hand{ --hand-r:205deg; --hand-x:34% }
+.prize:nth-child(3) .prize__hand{ --hand-r:176deg; --hand-x:16% }
+
+/* The same face and the same tight leading .listing__name ran on — the
+   .62 is Jomhuria's, not a choice, and a normal line-height opens a
+   third of a line of air above every one of these. */
+.prize__name{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(32px,3.4vw,52px); line-height:.62; letter-spacing:.03em;
+  margin:0; color:var(--text);
+}
+.prize__note{
+  font:400 clamp(17px,1.35vw,21px)/1.5 var(--body);
+  color:var(--text-2); margin:0; max-width:32ch;
+}
+/* The standfirst rides alongside the heading instead of closing the
+   section. It is the same words doing the same job, but it fills the
+   empty half of the heading line rather than adding a row of its own. */
+.prizes__head{
+  display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  gap:clamp(18px,3vw,54px); align-items:end;
+  margin-bottom:clamp(20px,2.6vw,36px);
+}
+.prizes__head h2{margin:0}
+/* Overrides .small, which is sized for captions — this is a standfirst
+   sitting next to a 130px headline and has to hold its own. */
+.prizes__lede{
+  margin:0; max-width:46ch;
+  font-size:clamp(16px,1.3vw,20px); line-height:1.55;
+}
+
+@media (max-width:900px){
+  /* One column, and the hand turns to sit BESIDE the text rather than
+     above it — stacked, three tall hands would put back exactly the
+     height this section was rebuilt to lose. */
+  .prizes{grid-template-columns:minmax(0,1fr); gap:clamp(22px,5vw,30px)}
+  .prize{
+    grid-template-columns:auto minmax(0,1fr);
+    column-gap:clamp(14px,3vw,22px); row-gap:6px;
+    align-items:center; padding:0;
+  }
+  .prize__hand{
+    grid-row:span 2; align-self:center;
+    width:34px; height:82px; margin:0;
+    --hand-r:180deg;
+  }
+  .prize:nth-child(1) .prize__hand{ --hand-r:160deg; --hand-x:0 }
+  .prize:nth-child(2) .prize__hand{ --hand-r:200deg; --hand-x:0 }
+  .prize:nth-child(3) .prize__hand{ --hand-r:180deg; --hand-x:0 }
+  .prize__name{align-self:end}
+  .prize__note{align-self:start}
+  .prizes__head{grid-template-columns:minmax(0,1fr); align-items:start}
+}
+/* No narrow-screen step-down for .prize__name. Jomhuria is condensed and
+   sets a small cap for its point size, so the clamp's 32px floor is the
+   point at which the headline still out-weighs its own 17px body copy —
+   shrink it and the name starts reading as the caption. "BEST GROUP" is
+   the longest of the three and runs ~134px at that size, inside a column
+   that has ~280px on a 375px phone. */
 .listing__act{justify-self:end; align-self:center}
 
 /* ours: bleeds out of the column and takes the accent */
@@ -3548,64 +3683,90 @@ a.card:active      { --tx:0px; --ty:0px; --sc:.985; box-shadow:2px 2px 0 var(--i
 /* ============================================================
    THE CURSOR
    One drawn object per page — ghost, clover, snowflake, or the
-   default sparkle — turning slowly, opening up on anything you
-   can act on. Built in bss.js; everything visual is here.
+   logo mark as the default. It sits STILL until the pointer
+   reaches something you can actually follow, and then it grows
+   and swings. Built in bss.js; everything visual is here.
 
    THREE NESTED ELEMENTS, ONE JOB EACH. .cur is moved by the rAF
-   loop, .cur__scale takes the hover growth, .cur__spin takes the
+   loop, .cur__scale takes the hover growth, .cur__sway takes the
    rotation. They all write `transform`, and a CSS animation beats
    a plain declaration on the same element — put two of these jobs
    on one node and the hover silently stops working. This is the
    same trap the polaroid tilts hit.
+
+   The art is a two-tone file (white body, black keyline), so it
+   carries its own colour and there is no per-page tint here any
+   more — the keyline is what holds it together on the white
+   bands, the way the ink colour used to.
    ============================================================ */
 .cur{
   position:fixed; left:0; top:0; z-index:210;   /* over .drop (200) */
-  width:30px; height:30px; margin:-15px 0 0 -15px;
+  /* bigger than it used to be: the art is hand-drawn with real
+     interior detail, and at 30px the clover and the snowflake
+     both closed up into a blob */
+  width:42px; height:42px; margin:-21px 0 0 -21px;
   pointer-events:none;                          /* never eat a click */
   opacity:0; transition:opacity .2s var(--quart);
   will-change:transform;
-  color:var(--cur-c, var(--orange));
 }
 .cur.is-on{opacity:1}
 /* Over a text field the drawn cursor gets out of the way and the real
    I-beam comes back — see the .has-cur rules below. A missing caret is
    a genuine cost; a missing doodle is not. */
 .cur.is-field{opacity:0}
-.cur__scale,.cur__spin{display:block; width:100%; height:100%}
-.cur__scale{transition:transform .3s var(--ease)}
-.cur__spin{animation:cur-spin var(--cur-dur,14s) linear infinite}
-.cur svg{
-  display:block; width:100%; height:100%;
-  /* reads on both grounds: the fill carries it on the dark pages, the
-     shadow gives it an edge inside the white bands */
-  filter:drop-shadow(0 1px 2px rgba(6,6,5,.5)) drop-shadow(0 0 1px rgba(6,6,5,.5));
-}
-/* the open-up. Faster spin AND bigger, which is the whole gesture */
-.cur.is-hot{--cur-dur:2.1s}
-.cur.is-hot .cur__scale{transform:scale(1.62)}
-@keyframes cur-spin{ to{ transform:rotate(360deg) } }
+.cur__scale,.cur__sway{display:block; width:100%; height:100%}
 
-/* Per page. The cursor takes the event's own ink, so it belongs to the
-   page it is on rather than being one more thing in orange. */
-body[data-page="halloween"] .cur{--cur-c:var(--violet)}
-body[data-page="christmas"] .cur{--cur-c:var(--red)}
-body[data-page="shamrock"]  .cur{--cur-c:var(--green)}
+/* The growth. The curve overshoots about 9% and settles back, and that
+   is where the bounce lives — the sway on its own reads too smooth. */
+.cur__scale{transition:transform .42s cubic-bezier(.34,1.56,.64,1)}
+.cur.is-hot .cur__scale{transform:scale(1.34)}
+
+/* The sway, on hover only — at rest the object is completely static.
+   Two poses and nothing else: all the way left, all the way right,
+   repeat. The rhythm comes from there being only two beats; the bounce
+   comes from the curve, which overshoots each pose by about a tenth of
+   the swing and settles back into it, so every end of the arc lands
+   with a small kick instead of easing flat. It hangs from near the top
+   rather than turning about its middle, so it swings like something on
+   a string. Leaving drops the animation and it returns to upright. */
+.cur__sway{transform-origin:50% 18%}
+.cur.is-hot .cur__sway{
+  animation:cur-sway 1.4s cubic-bezier(.34,1.56,.64,1) infinite;
+}
+@keyframes cur-sway{
+  0%,100%{ transform:rotate(-13deg) }
+  50%    { transform:rotate(13deg) }
+}
+
+.cur img{
+  display:block; width:100%; height:100%;
+  /* the four are not the same shape — the logo is wide, the ghost is
+     tall — so they are fitted, not stretched */
+  object-fit:contain;
+  /* lifts the white body off the white bands, where the keyline alone
+     is a little thin. Spread, not density — the alpha stays low and the
+     blur does the work, so it reads as the object sitting above the page
+     rather than as a dark outline stuck to it. */
+  filter:drop-shadow(0 3px 9px rgba(6,6,5,.45));
+}
 
 /* The native cursor is hidden ONLY once the drawn one is really on
-   screen — .has-cur is added on the first mousemove, not at boot. A
-   browser that never fires one keeps its arrow.
-   Fields keep theirs: `cursor:auto` here beats the inherited none. */
+   screen — .has-cur is added on the first mousemove AND only after the
+   art file has loaded (bss.js gates both on the same `ready`). A
+   browser that never fires a move, or a fetch that never lands, keeps
+   its arrow. Fields keep theirs: `cursor:auto` here beats the
+   inherited none. */
 @media (pointer: fine){
   html.has-cur, html.has-cur *{cursor:none}
   html.has-cur input,
   html.has-cur textarea,
   html.has-cur select{cursor:auto}
 }
-/* Reduced motion keeps the object and drops the movement: no spin, no
+/* Reduced motion keeps the object and drops the movement: no sway, no
    growth, and the follow snaps rather than glides (bss.js reads the same
    query for the lerp). */
 @media (prefers-reduced-motion: reduce){
-  .cur__spin{animation:none}
+  .cur.is-hot .cur__sway{animation:none}
   .cur.is-hot .cur__scale{transform:none}
 }
 
