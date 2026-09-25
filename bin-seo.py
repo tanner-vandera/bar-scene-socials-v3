@@ -9,7 +9,7 @@ SITE = 'https://www.barscenesocials.com'
 # Cache-bust token for assets replaced UNDER THEIR EXISTING NAME. Kept in
 # step with the stylesheets by bin-bump.sh, which rewrites every ?v= in the
 # HTML; the value here only matters when this script regenerates the block.
-ASSET_V = '1789956230'
+ASSET_V = '1790378889'
 TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady'
 IG   = 'https://www.instagram.com/barscenesocials/'
 
@@ -46,8 +46,7 @@ def event(name,slug,start,end,loc,desc,offers=None,status="EventScheduled"):
     return e
 
 HAUNTED_DESC = ("Milwaukee's only Halloween bar crawl on Brady Street. Ten bars, free cover at all "
-                "of them, drink and food specials, costume prizes, daytime DJs and an official "
-                "afterparty. 21+.")
+                "of them, drink and food specials, costume prizes and daytime DJs. 21+.")
 
 PAGES = {
  'index.html': dict(
@@ -64,7 +63,7 @@ PAGES = {
  'hauntedbarhop.html': dict(
    url='/hauntedbarhop', slug='hauntedbarhop',
    title="Haunted Bar Hop 2026 — Milwaukee Halloween Bar Crawl",
-   desc=("Saturday 10/31/26 on Brady Street, 3pm–8pm with an afterparty DJ. Ten bars, free cover, "
+   desc=("Saturday 10/31/26 on Brady Street, 3pm–8pm. Ten bars, free cover, "
          "drink and food specials, costume prizes and a bingo card. From $13.98. 21+."),
    ogtype='article',
    ld=[event("Haunted Bar Hop on Brady","hauntedbarhop",
