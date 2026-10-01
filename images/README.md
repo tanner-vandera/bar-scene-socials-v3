@@ -147,11 +147,12 @@ quality 50-70, which lands each file between 150KB and 520KB.
 
 ## Bar photography
 
-Seven real bars, all `bar-<slug>.jpg`, all 900px on the long edge:
+Eight real bars, all `bar-<slug>.jpg`, all 900px on the long edge:
 `water-street-brewery`, `jacks-american-pub`, `jo-cats`, `deer-camp`,
-`burnhearts`, `finks`, `the-sofie`.
+`burnhearts`, `finks`, `the-sofie`, `up-down` (Up-Down Arcade Bar, added
+2026-10-01).
 
-The first four also run as the polaroid strip on the homepage; all seven are the
+The first four also run as the polaroid strip on the homepage; all eight are the
 Featured Bars grid. Those cards are **photo and name only** — the neighbourhood
 line, the write-up and the route chip came off, because there is nothing written
 up yet and a card carrying three lines of invented copy under a real photograph
