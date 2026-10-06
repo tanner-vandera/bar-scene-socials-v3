@@ -2,7 +2,8 @@
 
 | File | Where it is used |
 |---|---|
-| `bss-logo.svg` | The logo. Painted as a **CSS mask** (`.logo`), so it takes its colour from the element. Do not add recoloured copies. |
+| `bss-logo.png` | The logo (2026-10). White on transparent, cropped tight. Painted as a **CSS mask** (`.logo`), so it takes its colour from the element. Do not add recoloured copies. |
+| `bss-logo.svg` | The previous logo. No page draws it; kept as the source of `favicon.svg` and as the structured-data logo (dark-on-white contexts). |
 | `haunted-bar-hop-hero.jpg` | **The official Haunted picture.** Homepage hero, Haunted page hero, and every Haunted event card (homepage, about, Christmas and Shamrock pitch cards). Three crawlers in Spider-Man suits. Portrait 2:3 — see the crop note below. |
 | `haunted-bar-hop-polaroid-1/2/3.jpg` | The three taped prints, on BOTH the homepage and the Haunted page. Those two rows are deliberately identical — change one, change the other. |
 | `haunted-bar-hop-crowd.jpg` | Both `.band--shot` backgrounds (homepage "Next up", Haunted "What you get") AND the square taped print on the tickets page, captioned "The floor". |
@@ -10,7 +11,7 @@
 | `12bars-of-christmas-polaroid.jpg` | The second Christmas polaroid only. |
 | `shamrock-shuffle-hero.jpg` | Shamrock hero. |
 | `shamrock-shuffle-card.jpg` | Shamrock event card. |
-| `skeleton-hand.svg` | The pointing hand anchoring each of the three costume-contest prizes on the Haunted page. Painted as a **CSS mask** (`.prize__hand`), like `bss-logo.svg`, so it takes its colour from the element — do not add a recoloured copy. Cropped tight and pointing UP at 0deg; the three angles are set per column in `bss.css`. |
+| `skeleton-hand.svg` | The pointing hand anchoring each of the three costume-contest prizes on the Haunted page. Painted as a **CSS mask** (`.prize__hand`), like `bss-logo.png`, so it takes its colour from the element — do not add a recoloured copy. Cropped tight and pointing UP at 0deg; the three angles are set per column in `bss.css`. |
 | `cursors/*.svg` | The drawn pointer — `logo` (default), `ghost`, `clover`, `snowflake`. One per page, picked by `CURSOR_FOR` in `bss.js`. Two-tone and untinted; see `cursors/README.md`. |
 | `TicketButtonEmpty.svg` | Source artwork the ticket silhouette in `bss.js` was traced from. Not loaded at runtime. |
 
@@ -26,18 +27,23 @@ carries one for this reason. A NEW filename needs none.
 
 ## Sponsor logos live in `sponsors/`
 
-`sponsors/budlight.png`, `jameson.png`, `nutrl.png`, `suncruiser.png` — the row
-in the Sponsors section on the Haunted page. **They are white-on-transparent,
-so the band they sit on has to stay dark**; on a light or accent ground every
-one of them vanishes. That is why that section is a plain `.band` sitting
-between an orange one and the closing band, and not an accent block itself.
+`sponsors/budlight.png`, `jameson.png`, `nutrl.png`, `suncruiser.png`,
+`saintbrady.png` (Saint Brady Green T), `skrewball.png` — the Event partners
+carousel, which appears on BOTH the homepage (below the Brady Street bars) and
+the Haunted page. The two lists are copies: add or remove a partner in both.
+**They are white-on-transparent, so the band they sit on has to stay dark**;
+on a light or accent ground every one of them vanishes.
 
 They are matched on HEIGHT, not width, because their aspect ratios are not
-close (1.76, 1.76, 1.00, 2.23) and matching four logos by width makes the
-squarest one enormous. `.sponsors img` carries a per-mark `--k` nudge for the
-two that need it: NUTRL is square and needs `1.42` to read at the same optical
-size as the wide marks. If a logo is added or reordered, those `:nth-child()`
-rules are positional — check them.
+close (1.00 for NUTRL up to 2.75 for Saint Brady). `.partners__item img`
+carries a per-mark `--k` nudge for the ones that need it, keyed on the file
+name (`img[src$="nutrl.png"]`), not on position, so adding or reordering
+partners does not move a nudge onto the wrong logo. The loop runs 5s per
+mark (30s for six) — raise the duration on `.partners__track` when adding one,
+or the carousel speeds up.
+
+Each list carries its marks TWICE (the second set `aria-hidden`): the loop is
+a translate of exactly -50%, so both halves must match.
 
 ## Calendar stickers live in `stickers/`
 
@@ -45,7 +51,8 @@ The collage marks on the Happening Now calendar are their own folder,
 `images/stickers/`, with their own README covering naming, format and the two
 rules that are easy to get wrong (they sit on a WHITE sheet, and none of them
 may be orange). Slots are keyed by the `mark` field on an event or span in
-`MONTH` in `js/bss.js`.
+`MONTH` in `js/bss.js`. Two of them, `sticker-bucks.png` and `sticker-admirals.png`,
+are also the prize stickers on the Haunted page costume contest.
 
 ## The Halloween photographs are not from Brady Street
 

@@ -176,7 +176,8 @@ strips `.html`, then the rename redirect fires. **That middle hop is why
 cleanUrls strips the extension before the redirect table is consulted, so the
 `.html` rule never matches and only the bare rule saves the URL from a 404.
 
-`favicon.svg` is the linked-O element from `images/bss-logo.svg` — the only part
+`favicon.svg` is the linked-O element from the previous logo, `images/bss-logo.svg`
+(kept for that, and as the structured-data logo — see below) — the only part
 of the lockup that survives at 16px. `apple-touch-icon.png` is that SVG rendered
 at 180. `sitemap.xml` lists all nine URLs and is referenced from `robots.txt`.
 
@@ -186,21 +187,28 @@ at 180. `sitemap.xml` lists all nine URLs and is referenced from `robots.txt`.
 so all nine pages stay in sync. Edit the `NAV` and `MORE` arrays at the top of
 that file to change navigation everywhere.
 
-**The logo is the real one** — `images/bss-logo.svg`, a stacked
-"BAR SCENE / SOCIALS" wordmark with the O and C of SOCIALS fused into a single
-lozenge. It replaced the three-wave placeholder that stood in through the whole
-build.
+**The logo is the real one** — `images/bss-logo.png`, the 2026-10 stacked
+"BAR SCENE / SOCIALS" wordmark with the O and C of SOCIALS joined into a single
+lozenge. White on transparent, cropped tight, 1200px wide; only its shape is
+used. It replaced `bss-logo.svg` on 2026-10-06.
 
 It is painted as a **CSS mask**, never as an `<img>`, so one file serves every
 placement and takes its colour from whatever it sits in — white in the header,
 white over a hero, white in the footer, `currentColor` in the loader. See
-`.logo` in `bss.css`; `logo()` in `bss.js` only emits the box and its
-accessible name. To recolour it anywhere, set `color` on the container. Never
-add a second, recoloured copy of the artwork.
+`.logo` in `bss.css` (which also holds its 1200:389 aspect ratio — update it
+if the artwork is ever swapped for a different shape); `logo()` in `bss.js`
+only emits the box and its accessible name. To recolour it anywhere, set
+`color` on the container. Never add a second, recoloured copy of the artwork.
 
 Three placements: `.lockup__logo` (header, 126px), `.ftr__logo` (the footer
-sign-off, at wordmark scale with "Local Milwaukee Bar Events" under it in the script
+sign-off, at wordmark scale with "Local Milwaukee Social Events" under it in the script
 face), and `.drop__logo` (the falling-ticket loader).
+
+**Two places still point at the old `bss-logo.svg`, on purpose:** the favicon
+(above) and the Organization `logo` in the structured data (`bin-seo.py`,
+stamped into `index.html`). Google shows that logo on a white results page,
+where a white-on-transparent PNG would vanish. Swap it when a dark version of
+the new mark exists.
 
 **"On Brady" is part of the Haunted Bar Hop mark**, not a caption — it ships on
 the two heroes and the two section lockups, in `--orange` in the script face.
@@ -447,8 +455,13 @@ anything on?", not a listings archive. If more months are ever added, `MONTH`
 becomes an array and the switcher comes back with real destinations.
 
 **The route.** Headed "Milwaukee's best bars on Brady Street" (was "Ten stops,
-one street" until 2026-09-20). The route is ten named bars — Nomad World Pub through
-HiHat Lounge — and every "sixteen bars" on the site went with the placeholders.
+one street" until 2026-09-20). The route is thirteen named bars — Nomad World Pub through
+Hosed on Brady (Up-Down Arcade Bar, Nashville North and Hosed on Brady joined
+on 2026-10-06) — and every "sixteen bars" on the site went with the placeholders.
+The same list appears on the homepage and the Haunted page, and the count is
+spelled out in copy ("Thirteen bars") on the Haunted page meta descriptions, the
+homepage Haunted card and the tickets page: change all of them together.
+Check-in is 2:30pm–4:00pm at Up-Down Arcade Bar (Halloween day list).
 The rows carry names only; the one-line captions under them ("Bingo stamp here",
 "DJ 4-7pm") were invented colour under placeholder names, and with a real route
 in they would be ten more things to keep true.

@@ -61,3 +61,13 @@ that says where to be and when, but they do not get restyled, recoloured or
 combined with the BSS logo — and they are decoration, not endorsement. Each one
 is `alt=""` in the markup for the same reason: the name is already in the label
 beside it, and a screen reader should not read the collage twice.
+
+## Also used outside the calendar
+
+| File | Where | Notes |
+|---|---|---|
+| `sticker-bucks.png` | Haunted Bar Hop, Best duo prize | Built from `source/buckslogo.png` with a #FFFDF7 die-cut edge baked in |
+| `sticker-admirals.png` | Haunted Bar Hop, Best group prize | Built from `source/admiralslogo.png`, same edge |
+
+`source/` holds the original team artwork the stickers were cut from. The
+pages never load it; it is here so a sticker can be re-cut at another size.

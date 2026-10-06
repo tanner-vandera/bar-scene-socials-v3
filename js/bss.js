@@ -158,7 +158,7 @@
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
   /* ---------------------------------------------------------
-     THE LOGO — the real one now (images/bss-logo.svg), a stacked
+     THE LOGO — the real one now (images/bss-logo.png), a stacked
      "BAR SCENE / SOCIALS" wordmark with the O and C of SOCIALS
      fused into a single lozenge. It replaces the three-wave
      placeholder that stood in here for the whole build.

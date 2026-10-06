@@ -1761,7 +1761,8 @@ body.has-hero{padding-top:0}
 @media (max-width:640px){ .hdr__in{padding:11px 18px; gap:14px} }
 
 /* ── THE LOGO ────────────────────────────────────────────────────────
-   images/bss-logo.svg is a single-colour "BAR SCENE / SOCIALS" wordmark.
+   images/bss-logo.png is a single-colour "BAR SCENE / SOCIALS" wordmark
+   (white on transparent; only its shape is used).
    It is painted as a MASK with the colour supplied by the element, not
    as an <img>, for one reason: the same artwork has to be white in the
    header, white floating over a hero photo, white in the footer, and
@@ -1772,12 +1773,12 @@ body.has-hero{padding-top:0}
    Sized by width alone — aspect-ratio holds the height, so no placement
    can squash the mark by getting one of the two numbers wrong. The
    mask is centred and `contain`, which means an element wider or taller
-   than 592:197 letterboxes the artwork rather than distorting it. */
+   than 1200:389 letterboxes the artwork rather than distorting it. */
 .logo{
-  display:block; width:100%; aspect-ratio:592 / 197;
+  display:block; width:100%; aspect-ratio:1200 / 389;
   background-color:currentColor;
-  -webkit-mask:url("../images/bss-logo.svg") center / contain no-repeat;
-          mask:url("../images/bss-logo.svg") center / contain no-repeat;
+  -webkit-mask:url("../images/bss-logo.png") center / contain no-repeat;
+          mask:url("../images/bss-logo.png") center / contain no-repeat;
 }
 
 /* The header mark. 126px wide reads as ~42px tall, which fits inside the
@@ -2526,9 +2527,11 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    gap, eight items have seven gaps, the halves differ by one gap, and
    the loop jumps by that much every cycle.
 
-   Logos are matched on HEIGHT, not width — the aspect ratios are 1.76,
-   1.76, 1.00 and 2.23, and matching four logos by width makes the
-   squarest one enormous. --k is the per-mark optical nudge. */
+   Logos are matched on HEIGHT, not width — the aspect ratios run from
+   1.00 (NUTRL) to 2.75 (Saint Brady), and matching six logos by width
+   makes the squarest one enormous. --k is the per-mark optical nudge,
+   keyed to the file rather than the position so adding a partner does
+   not shift every nudge onto the wrong logo. */
 .partners{
   position:relative; overflow:hidden;
   /* fade the two ends so marks enter and leave rather than being clipped */
@@ -2538,7 +2541,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .partners__track{
   list-style:none; margin:0; padding:0;
   display:flex; align-items:center; width:max-content;
-  animation:partners-scroll 20s linear infinite;
+  animation:partners-scroll 30s linear infinite;   /* 5s per mark — keep in step when adding one */
 }
 .partners:hover .partners__track,
 .partners:focus-within .partners__track{animation-play-state:paused}
@@ -2551,8 +2554,10 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   height:calc(clamp(64px,8.4vw,116px) * var(--k,1));
   opacity:.82;
 }
-.partners__item:nth-child(4n+3) img{--k:1.42}   /* NUTRL is square */
-.partners__item:nth-child(4n+4) img{--k:.98}    /* Sun Cruiser is widest at 2.23 */
+.partners__item img[src$="nutrl.png"]{--k:1.42}       /* NUTRL is square */
+.partners__item img[src$="suncruiser.png"]{--k:.98}   /* Sun Cruiser is wide at 2.23 */
+.partners__item img[src$="saintbrady.png"]{--k:.84}   /* Saint Brady is widest at 2.75 */
+.partners__item img[src$="skrewball.png"]{--k:1.16}   /* Skrewball is a tall stack, sheep over type */
 @keyframes partners-scroll{
   from{transform:translate3d(0,0,0)}
   to  {transform:translate3d(-50%,0,0)}
@@ -2800,6 +2805,60 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   font:400 clamp(17px,1.35vw,21px)/1.5 var(--body);
   color:var(--text-2); margin:0; max-width:32ch;
 }
+/* THE WINNER CARD — what each category wins, as a team sticker slapped
+   onto a quiet panel at the foot of the column.
+
+   The sticker is the calendar's pin, brought over whole: a die-cut file
+   with its own white edge baked in (images/stickers/sticker-*.png), set
+   at a tilt with the same drop shadow, so the two read as one sheet of
+   stickers used in two places. Sized by HEIGHT so a tall crest (Bucks)
+   and a wide one (Admirals) read as the same size. The negative block
+   margin lets it overrun the panel top and bottom — slapped on, not
+   framed in a box.
+
+   The note sits ABOVE the card: you read what the category is, then
+   what it wins. Every column carries a card, Best solo included, with a
+   dashed "?" blank until its prize is confirmed, so the three columns
+   are the same shape and the cards sit level across the row. The
+   sticker is decorative (alt="") — the label says the team. */
+.prize__win{
+  display:flex; align-items:center; gap:clamp(12px,1.2vw,18px);
+  margin:clamp(6px,.8vw,12px) 0 0; padding:12px 18px 12px 14px;
+  border-radius:16px;
+  background:rgba(248,248,246,.06);
+  box-shadow:inset 0 0 0 1px rgba(248,248,246,.14);
+  font:600 clamp(16px,1.25vw,19px)/1.25 var(--body); color:var(--text);
+}
+.prize__sticker{
+  flex:none; width:auto; height:clamp(66px,6vw,84px); max-width:none;
+  margin:-16px 0;
+  transform:rotate(var(--tilt,-7deg));
+  filter:drop-shadow(0 2px 3px rgba(17,17,16,.35));
+}
+.prize:nth-child(3) .prize__sticker{--tilt:6deg}
+/* The blank: a dashed die-cut outline with nothing pasted in yet. */
+.prize__sticker--tba{
+  display:grid; place-items:center; aspect-ratio:1;
+  border:2px dashed var(--acc-ink-3); border-radius:50%;
+  font:400 clamp(40px,3.6vw,52px)/1 var(--display); color:var(--acc-ink-3);
+  filter:none; --tilt:-4deg;
+}
+.prize__win--tba{color:var(--text-2)}
+.prize__kicker{
+  display:block; margin-bottom:3px;
+  font-size:.7em; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--orange);
+}
+/* Desktop: the three columns share one set of rows (subgrid), so the
+   names, the notes and the cards each line up straight across, however
+   many lines one note wraps to. The 1fr on the note row is what pushes
+   all three cards down to the same baseline. */
+@media (min-width:901px){
+  .prizes{grid-template-rows:auto auto 1fr auto; row-gap:12px}
+  .prize{grid-row:span 4; grid-template-rows:subgrid; gap:0}
+  .prize__hand{margin-bottom:18px}
+  .prize__name{margin-bottom:12px}
+}
 /* The standfirst rides alongside the heading instead of closing the
    section. It is the same words doing the same job, but it fills the
    empty half of the heading line rather than adding a row of its own. */
@@ -2834,7 +2893,11 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   .prize:nth-child(1) .prize__hand{ --hand-r:160deg; --hand-x:0 }
   .prize:nth-child(2) .prize__hand{ --hand-r:200deg; --hand-x:0 }
   .prize:nth-child(3) .prize__hand{ --hand-r:180deg; --hand-x:0 }
+  /* name, note and winner card: three rows, so the hand spans three */
+  .prize__hand{grid-row:span 3}
   .prize__name{align-self:end}
+  .prize__win{margin:8px 0 0; padding:10px 14px 10px 12px; max-width:420px}
+  .prize__sticker{height:62px; margin:-12px 0}
   .prize__note{align-self:start}
   .prizes__head{grid-template-columns:minmax(0,1fr); align-items:start}
 }
