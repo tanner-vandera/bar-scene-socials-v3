@@ -2541,7 +2541,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .partners__track{
   list-style:none; margin:0; padding:0;
   display:flex; align-items:center; width:max-content;
-  animation:partners-scroll 30s linear infinite;   /* 5s per mark — keep in step when adding one */
+  animation:partners-scroll 18s linear infinite;   /* 3s per mark — keep in step when adding one */
 }
 .partners:hover .partners__track,
 .partners:focus-within .partners__track{animation-play-state:paused}
