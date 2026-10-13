@@ -51,9 +51,9 @@ HAUNTED_DESC = ("Milwaukee's only Halloween bar crawl on Brady Street. Fourteen 
 PAGES = {
  'index.html': dict(
    url='/', slug='default',
-   title="Bar Scene Socials — Milwaukee Bar Crawls Since 2018",
-   desc=("Milwaukee bar crawls run by people who actually go. The Haunted Bar Hop, "
-         "12 Bars of Christmas and the Shamrock Shuffle. Three days a year, since 2018."),
+   title="Bar Scene Socials — Milwaukee's Most Anticipated Bar Crawls",
+   desc=("Hosting Milwaukee holiday bar crawl traditions; Shamrock Shuffle, "
+         "12 Bars of Christmas, Haunted Bar Hop on Brady"),
    ogtype='website',
    ld=[{"@context":"https://schema.org","@graph":[
         ORG,
@@ -163,6 +163,13 @@ def block(cfg):
     img = SITE + '/images/og/' + cfg['slug'] + '.jpg' + '?v=' + ASSET_V
     L = [MARK_OPEN,
       '<link rel="canonical" href="%s">' % u,
+      # Search engines do not read SVG icons. Google Search only takes raster
+      # formats, so with the SVG alone it fell back to apple-touch-icon.png;
+      # Bing found nothing at all and showed its grey globe. favicon.ico is
+      # the raster copy for them. sizes="32x32" (not "any") keeps browsers
+      # that understand SVG on the sharper SVG below. No ?v= — Google wants a
+      # stable favicon URL, and Bing probes the bare /favicon.ico path anyway.
+      '<link rel="icon" href="/favicon.ico" sizes="32x32">',
       # The mark changed from orange to white on 2026-09-20 under the SAME
       # filename, and favicon.svg is served max-age=604800 — a whole week of
       # the old icon for anyone who had already loaded the site. A ?v= is the
@@ -210,4 +217,4 @@ if __name__ == '__main__':
             i = s.index(anchor)
             s = s[:i] + block(cfg) + '\n' + s[i:]
         io.open(f, 'w', encoding='utf-8').write(s)
-        print('%-24s title/desc + %d meta + %d json-ld' % (f, 21, len(cfg['ld'])))
+        print('%-24s title/desc + %d meta + %d json-ld' % (f, 22, len(cfg['ld'])))

@@ -181,6 +181,25 @@ cleanUrls strips the extension before the redirect table is consulted, so the
 of the lockup that survives at 16px. `apple-touch-icon.png` is that SVG rendered
 at 180. `sitemap.xml` lists all nine URLs and is referenced from `robots.txt`.
 
+**Search engines never see `favicon.svg`.** Google Search accepts raster icons
+only, so for its result-page icon it was falling back to `apple-touch-icon.png`;
+Bing found nothing and showed a grey globe. `favicon.ico` (16/32/48) is the raster
+copy for both. **All three are the same mark — re-render the two rasters whenever
+the SVG changes.** The SVG went orange → white on 2026-09-20 and the PNG was missed,
+so Google showed the old orange icon for weeks while every browser tab was white:
+
+```sh
+W=$(mktemp -d)
+for s in 16 32 48; do rsvg-convert -w $s -h $s favicon.svg -o $W/$s.png; done
+magick $W/16.png $W/32.png $W/48.png favicon.ico
+rsvg-convert -w 180 -h 180 -b '#111110' favicon.svg -o $W/t.png
+magick $W/t.png -alpha off -strip apple-touch-icon.png   # full-bleed: iOS rounds it
+```
+
+Search engines re-fetch icons on their own schedule — days to weeks. Request
+indexing of the homepage in Google Search Console and Bing Webmaster Tools to
+hurry it.
+
 ## Shared pieces
 
 `js/bss.js` holds the header, footer, logo, ticket, and the hand-drawn marks,
