@@ -29,7 +29,7 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 <!-- SEO:begin — generated, see README "Search & sharing" -->
 <link rel="canonical" href="https://www.barscenesocials.com/happeningnow">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=1791494603" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=1792604420" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#111110">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
@@ -39,19 +39,19 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 <meta property="og:url" content="https://www.barscenesocials.com/happeningnow">
 <meta property="og:title" content="Happening Now — Milwaukee Events, October 2026">
 <meta property="og:description" content="A very short answer to “is anything on in Milwaukee?” — what is worth leaving the house for this month, picked by the people who run the bar crawls.">
-<meta property="og:image" content="https://www.barscenesocials.com/images/og/default.jpg?v=1791494603">
+<meta property="og:image" content="https://www.barscenesocials.com/images/og/default.jpg?v=1792604420">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Happening Now — Milwaukee Events, October 2026">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Happening Now — Milwaukee Events, October 2026">
 <meta name="twitter:description" content="A very short answer to “is anything on in Milwaukee?” — what is worth leaving the house for this month, picked by the people who run the bar crawls.">
-<meta name="twitter:image" content="https://www.barscenesocials.com/images/og/default.jpg?v=1791494603">
+<meta name="twitter:image" content="https://www.barscenesocials.com/images/og/default.jpg?v=1792604420">
 <meta name="geo.region" content="US-WI">
 <meta name="geo.placename" content="Milwaukee">
 <!-- SEO:end -->
-<link rel="stylesheet" href="css/fonts.css?v=1791494603">
-<link rel="stylesheet" href="css/bss.css?v=1791494603">
+<link rel="stylesheet" href="css/fonts.css?v=1792604420">
+<link rel="stylesheet" href="css/bss.css?v=1792604420">
 </head>
 <body data-page="happening">
 <div id="chrome-header"></div>
@@ -64,7 +64,10 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
       </div>
 
       <div class="sheet" data-reveal>
-        <p class="kicker" style="margin-bottom:14px" data-month-label>October 2026</p>
+        <!-- The month switcher. bss.js draws the month name, the arrows
+             and a tab per month in here, and the grid below follows it —
+             see monthSwitch() and MONTHS. -->
+        <div data-month-switch></div>
         <div data-calendar></div>
       </div>
     </div>
@@ -96,12 +99,13 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
        exactly one thing on this page — copy describing a listings section
        that does not exist yet reads as a broken promise rather than a
        plan. The editorial line stays, because it is still true and it is
-       the reason the page is this short. -->
+       the reason the page is this short.
+       Left-aligned with the headline and the calendar above it: the empty
+       label column that held it in from the left is gone, so it is the
+       grid's only child and spans the shell (see .c-offset > :only-child). -->
   <section class="band">
     <div class="shell">
       <div class="cols c-offset" data-reveal>
-        <div>
-        </div>
         <div class="stack stack--lg">
           <h2 class="d3 fx" style="max-width:16ch">More coming <em class="scr">soon</em></h2>
           <p class="lede" style="max-width:48ch">If we would not go ourselves, it does not go on the calendar. That is the entire editorial policy, and it is why this month is short.</p>
@@ -118,6 +122,6 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
      deployment, so there is no key to configure and nothing to build.
      It 404s harmlessly on localhost — data only appears once deployed. -->
 <script defer src="/_vercel/insights/script.js"></script>
-<script src="js/bss.js?v=1791494603"></script>
+<script src="js/bss.js?v=1792604420"></script>
 </body>
 </html>

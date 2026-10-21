@@ -109,6 +109,13 @@
   --stick-sky:   #BEDDEE;
   --stick-lime:  #00C24E;
   --stick-blush: #F9D7D6;   /* the default, if a tone is ever missed */
+  --stick-brew:  #FFC52F;   /* the Brewers' own yellow, for the World Series
+                               run — the team's colour, not ours, so it sits
+                               with the sticker inks. Brewers navy on it is
+                               9.3:1; it is --stick-navy, which was always
+                               the team's navy. Brighter and greener than
+                               --stick-gold, so the two never read as one
+                               tape when a month carries both. */
   --stick-edge:  #FFFDF7;   /* the die-cut border every sticker carries */
 
   /* --- pinned: type sitting ON an accent or a light surface -------
@@ -3031,10 +3038,11 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
      reading as three things stacked with air between them. */
   --pinband:58px;
   /* Space held at the foot of every square for the tape lanes. Sized to
-     the tallest case — a two-line gold strip on lane 1 over a thin navy
-     one on lane 0 — because a strip is positioned from the bottom and
-     ignores padding, so this is the only thing keeping a label off it. */
-  --laneband:86px;
+     the tallest case — a two-line gold strip on lane 0 — because a strip
+     is positioned from the bottom and ignores padding, so this is the
+     only thing keeping a label off it. It was 86px while the playoff
+     strip held lane 0 under it; the World Series run rides the top. */
+  --laneband:62px;
   /* pins are authored at a desktop size and scaled from there, so one
      number per breakpoint moves all of them together */
   --pin-scale:1;
@@ -3124,6 +3132,22 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .cal .stick--blush{background:var(--stick-blush); color:var(--on-accent)}
 .cal .stick--navy {background:var(--stick-navy);  color:#FFFDF7}
 .cal .stick--navy em{color:rgba(255,253,247,.82)}
+/* The World Series title. Brewers navy with the name in Brewers yellow
+   (9.3:1). The name is in the same label type as every other sticker —
+   it was briefly in the display face, and that made it read as one of
+   ours; the colour, the glove and the run of game tags already make it
+   the loudest thing on the grid that is not ours. */
+.cal .stick--brew{background:var(--stick-navy); color:var(--stick-brew)}
+.cal .stick--brew em{color:rgba(255,253,247,.86)}
+.cal .stick--big{padding:7px 9px 8px}
+/* A detail line in label type under the handwriting — the kick-off time
+   that would otherwise be repeated on every game. */
+.cal .stick small{
+  display:block; margin-top:5px;
+  font:700 9px/1.25 var(--body); text-transform:uppercase; letter-spacing:.1em;
+}
+.cal .stick--brew small{color:var(--stick-brew)}
+.cal .stick small + small{margin-top:2px; opacity:.8}
 
 /* ── THE PASTED-ON PICTURES ──────────────────────────────────────────
    Real die-cut stickers, laid in the square at an angle. Each one is
@@ -3283,6 +3307,103 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .cal .span--sky {background:var(--stick-sky);  color:var(--on-accent)}
 .cal .span--lime{background:var(--stick-lime); color:var(--on-accent)}
 
+/* ── THE WORLD SERIES RUN ───────────────────────────────────────────
+   The one strip that runs along the TOP of its squares, right under the
+   dates, so that every game's tag can sit under its own numeral — see
+   the note on the span in bss.js for why the bottom does not work for
+   this one.
+
+   Plain Brewers yellow. It carried a dashed navy "stitch" along each
+   edge for a while; that came off (2026-10-21) — the dashes read as a
+   rule through the strip rather than as binding, and dashed is already
+   what "if necessary" means on the game tags sitting on it. */
+.cal{
+  --wst-top:33px;   /* where the strip starts: just clear of the numerals' ink */
+  --wst-h:30px;     /* and how tall it is */
+}
+.cal .span--brew{background:var(--stick-brew); color:var(--stick-navy)}
+.cal .span--top{
+  top:var(--wst-top); bottom:auto; height:var(--wst-h); padding:0;
+  box-shadow:0 1px 0 rgba(17,17,16,.2), 0 3px 8px rgba(17,17,16,.16);
+}
+/* The words on a top strip are held to the one square they sit in —
+   --at squares along — so they never run on under the next game's tag.
+   (100% + 6px) / --n is one square: the strip is 6px short of its
+   squares, see .cal .span. */
+/* The handwriting after the name is allowed to WRAP, onto a second row
+   that starts a full strip-height down and so falls outside the box and
+   is clipped whole. That way it shows wherever the square is wide enough
+   for both and quietly drops out wherever it is not, instead of being
+   cut off mid-word at whichever width happens to be in between. */
+.cal .span__label{
+  position:absolute; top:0; bottom:0;
+  left:calc(var(--at) * (100% + 6px) / var(--n) + 10px);
+  max-width:calc((100% + 6px) / var(--n) - 18px);
+  display:flex; flex-wrap:wrap; align-items:center; align-content:flex-start;
+  column-gap:6px; row-gap:var(--wst-h); overflow:hidden;
+}
+.cal .span__label b,
+.cal .span__label em{line-height:var(--wst-h)}
+
+/* A square under the strip holds its own content below it: the numeral
+   carries the strip's height as bottom PADDING, so a sticker or a caption
+   in that square starts under the gold rather than behind it. Padding
+   and not margin — a margin collapses into the sticker's own top margin
+   below it and the larger of the two simply wins, which put the World
+   Series title straight over the glove it is meant to caption. */
+.cal td.under-top .dnum{
+  padding-bottom:calc(var(--wst-top) + var(--wst-h) - var(--cal-pad-y) - 15px);
+  pointer-events:none;
+}
+.cal td.under-top .pin:not(.pin--bottom){
+  top:calc(var(--sy) + var(--wst-top) + var(--wst-h) + 2px);
+}
+
+/* THE GAME TAGS. A navy chip printed on the strip, in its own day's
+   square, with "home" or "away" handwritten after it. Above the strip
+   and the pictures (z 5), under the numerals (6).
+   The chip name is the display face — it is the number people are
+   scanning for — at the size where its cap band fills the chip. */
+.cal .game{
+  position:absolute; z-index:5;
+  left:calc(var(--cal-pad-x) - 1px);
+  top:calc(var(--wst-top) + var(--wst-h) / 2);
+  transform:translateY(-50%) rotate(-.35deg);
+  display:flex; align-items:center; gap:6px;
+  pointer-events:none; white-space:nowrap;
+}
+.cal .game b{
+  display:block; font-family:var(--display); font-weight:400;
+  font-size:27px; line-height:.5; letter-spacing:.04em; text-transform:uppercase;
+  padding:7px 7px 3px; border-radius:2px;
+  background:var(--stick-navy); color:var(--stick-brew);
+  border:1.5px solid var(--stick-navy);
+}
+.cal .game b i{font-style:normal}
+.cal .game em{
+  font-style:normal; font-family:var(--script); font-size:17px; line-height:1;
+  color:var(--stick-navy);
+}
+/* If necessary: the same chip, not yet filled in — a dashed outline on
+   the gold, the way a pencilled-in date would be. Navy on the strip's
+   yellow is 9.3:1. */
+.cal .game--maybe b{
+  background:transparent; color:var(--stick-navy);
+  border-style:dashed;
+}
+/* Our own square drops its card below the strip, and so do the paint,
+   the halftone and the lights — all of them hang from --oc-top (see THE
+   BOX). Its numeral comes down to the grid's own size so the Game 7 tag
+   has room beside it rather than under it. */
+.cal td.ours.under-top{--oc-top:calc(var(--wst-top) + var(--wst-h) + 7px)}
+.cal td.ours.under-top .dnum{font-size:33px; line-height:.455}
+
+/* text for a screen reader alone */
+.sr{
+  position:absolute; width:1px; height:1px; overflow:hidden;
+  clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+}
+
 
 
 
@@ -3368,7 +3489,7 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   /* The gold tape carries one line here rather than two, so it is about
      22px shorter than on a desktop, and the lockup riding its top edge
      comes down to match. */
-  .cal .pin--right{bottom:60px}
+  .cal .pin--right{bottom:28px}
   /* The two tape marks are the one thing that cannot keep its full size
      here. They sit at opposite ends of the same corner of the grid — the
      glove at the start of the navy run, the lockup at the end of the
@@ -3446,12 +3567,14 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    their dates covered when it overruns across them. */
 .cal td.ours{
   --oc-min:188px;
+  /* where the box starts: just under the numeral */
+  --oc-top:32px;
   --oc-box:max(calc(100% - 6px), var(--oc-min));
 }
 .cal td.ours::before,
 .cal td.ours::after,
 .cal td.ours .ourcard{
-  position:absolute; inset:32px 3px 4px auto; width:var(--oc-box);
+  position:absolute; inset:var(--oc-top) 3px 4px auto; width:var(--oc-box);
   transform:rotate(-1.4deg);
 }
 .cal td.ours::before{
@@ -3533,6 +3656,44 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   font:700 8.5px/1 var(--body); text-transform:uppercase;
   letter-spacing:.12em; padding:5px 8px 4px; border-radius:999px;
 }
+/* ── 12 BARS OF CHRISTMAS ─────────────────────────────────────────────
+   The same card in the red its own page is built on. --red-d rather than
+   --red, for the same reason the red band on that page is: type on --red
+   is stuck at 4.2:1 whichever way round, and off-white on --red-d is
+   6.26:1. So this card flips the orange one's rule — light type on the
+   field, and the pill goes dark with the light red in it (6.2:1). */
+.cal td.ours--red::before{background:var(--red-d)}
+.cal td.ours--red .ourcard,
+.cal td.ours--red .ourcard__name{color:#F8F8F6}
+.cal td.ours--red .ourcard__meta{color:rgba(248,248,246,.88)}
+.cal td.ours--red .ourcard__chip{background:var(--on-accent); color:var(--red-on)}
+.cal td.ours--red .ourcard__shot{background:#7E0E14}
+
+/* The string of lights across the top of it — see CALLIGHTS in bss.js.
+   It hangs from the card's own top corners, so it follows the card's
+   box and its 1.4deg, and lets its bulbs dip over the edge of the
+   photograph the way a real string would hang in front of it. */
+.cal__lights{
+  position:absolute; z-index:4; pointer-events:none; overflow:visible;
+  right:3px; top:var(--oc-top); width:var(--oc-box); height:auto;
+  /* the cord's ends sit 12% down the drawing; lift it by that so they
+     land on the card's top corners at any width */
+  transform:translateY(-12%) rotate(-1.4deg);
+}
+.cal__cord{
+  fill:none; stroke:var(--on-accent); stroke-width:1.7;
+  stroke-linecap:round; vector-effect:non-scaling-stroke;
+}
+.cal__lights ellipse{stroke:var(--on-accent); stroke-width:1; vector-effect:non-scaling-stroke}
+
+/* The snowflake confetti: the 12 Bars cursor, inked by mask. */
+.cal .pin--snow{aspect-ratio:137 / 157}
+.cal .pin--snow i{
+  display:block; width:100%; height:100%; background:var(--mk);
+  -webkit-mask:url(../images/cursors/snowflake.svg) center / contain no-repeat;
+          mask:url(../images/cursors/snowflake.svg) center / contain no-repeat;
+}
+
 .cal td.ours .ourcard:hover .ourcard__name{text-decoration:underline}
 .cal td.ours .ourcard:hover .ourcard__shot img{transform:scale(1.04)}
 .cal td.ours .ourcard__shot img{transition:transform .5s var(--ease)}
@@ -3565,10 +3726,19 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
    desktop rule. So the card came out 238% wide and still pinned by its
    LEFT edge; over-constrained, `right` was ignored, and it ran straight
    off the sheet. */
+@media (max-width:1260px){
+  /* The card is wider than its square from here down and overruns far
+     enough into the one before it to reach the crowded confetti there.
+     It steps left out of the way first ... */
+  .cal .pin--crowded{left:4%}
+}
 @media (max-width:900px){
   /* the sheet itself is narrower here, so the floor comes down with it —
      188px against a 96px column was two thirds of the week */
   .cal td.ours{--oc-min:152px}
+  /* ... and here there is no room left beside the card at all; at 800 it
+     lay across the venue line. The ticket in the row above stays. */
+  .cal .pin--crowded{display:none}
 }
 @media (max-width:760px){
   /* 86px is about 1.9 columns at a 48px square — the 31st plus a small
@@ -3582,6 +3752,9 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
   .cal td.ours .ourcard__shot{margin-bottom:7px}
   .cal td.ours .ourcard__meta{font-size:8.5px; letter-spacing:.08em; margin-top:5px}
   .cal td.ours .ourcard__chip{font-size:7.5px; padding:4px 6px 3px; margin-top:6px}
+  /* "Tickets soon" is the longest pill so far and broke onto two lines at
+     the card's 86px; a pill is one line or it stops reading as a pill. */
+  .cal td.ours .ourcard__chip{white-space:nowrap; letter-spacing:.05em; padding:4px 5px 3px}
   /* The loose ticket the widened card now lands on. One stays — the one
      in the row above — which is enough to read as confetti. */
   .cal .pin--crowded{display:none}
@@ -3597,8 +3770,163 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .cal__arrow--in{left:-46%; top:6%; width:58%; height:auto}
 .cal__arrow--down{right:9%; top:-30%; width:20%; height:auto}
 /* Below 760px a cell is ~48px wide and the arrows are bigger than the
-   thing they point at. The paint carries it on its own down there. */
-@media (max-width:760px){ .cal__arrow{display:none} }
+   thing they point at. The paint carries it on its own down there — and
+   so the confetti tickets go with them: at that size they were clutter
+   in squares that are already carrying a card, a strip and game tags. */
+@media (max-width:760px){
+  .cal__arrow,
+  .cal .pin--ticket{display:none}
+}
+/* When the card has dropped below a top strip, the arrow sweeping in from
+   the left comes down with it, so it still lands on the card and not on
+   the strip. */
+.cal td.ours.under-top .cal__arrow--in{top:30%}
+
+/* ── WORLD SERIES, NARROWER ─────────────────────────────────────────
+   The tags lose words in the order they matter least: the handwritten
+   home/away goes first, then "ame" out of "Game", until a phone square
+   carries just "G1". The full text is still in the markup either way. */
+@media (max-width:1100px){
+  .cal .game b{font-size:25px}
+  /* The strip's own label is one square wide, and from here down "World
+     Series" alone can outgrow it, so the name may take two lines inside
+     the strip's height rather than being cut off mid-word. */
+  .cal .span__label em{display:none}
+  .cal .span__label{align-content:center}
+  .cal .span__label b{font-size:12px; line-height:1.05; white-space:normal}
+}
+@media (max-width:900px){
+  .cal .game em{display:none}
+}
+@media (max-width:760px){
+  .cal{--wst-top:29px; --wst-h:22px}
+  /* The phone rules for strips above let a strip grow to its words and
+     pin it from the bottom. A top strip carries no words down here and
+     is pinned from the top, so it takes both of those back — left with
+     a top AND a bottom it stretched to fill the whole square. */
+  .cal .span--top{bottom:auto; height:var(--wst-h); min-height:0; padding:0}
+  .cal .game__long{display:none}
+  .cal .game{left:2px; transform:translateY(-50%)}
+  .cal .game b{font-size:22px; padding:6px 4px 2px; letter-spacing:.02em}
+  .cal .game--maybe b{border-width:1px}
+  .cal .span__label{display:none}
+  .cal td.under-top .pin:not(.pin--bottom){
+    top:calc(var(--wst-top) + var(--wst-h) + 4px + var(--sy) * .3);
+  }
+  /* The title sticker keeps its kick-off time down here — the only place
+     the time is written — and is allowed to overrun further than the
+     other labels, into the empty body of the 24th, so "if necessary"
+     still fits on a line. */
+  .cal .stick--big{padding:4px 6px 5px; max-width:150%}
+  .cal .stick small{font-size:7px; letter-spacing:.02em; margin-top:4px}
+}
+/* On the smallest phones a square is ~40px, and "NECESSARY" alone is
+   wider than 150% of one. */
+@media (max-width:400px){
+  .cal .stick--big{max-width:200%}
+}
+
+/* ── THE MONTH SWITCHER ──────────────────────────────────────────────
+   Crisp controls, not printed paper — the same rule .btn follows: the
+   things people click sit level and clean under the artwork. The month's
+   name is the one big piece, in the display face, so you always know
+   which sheet you are looking at. */
+.monthbar{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  flex-wrap:wrap; gap:16px 24px; margin-bottom:clamp(18px,2.4vw,28px);
+}
+.monthbar__label{
+  margin:0; padding-top:.22em;
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(44px,5vw,72px); line-height:.46; letter-spacing:.02em;
+  color:var(--ink);
+}
+.monthbar__label span{
+  font:500 11.5px/1 var(--body); letter-spacing:.24em; color:var(--text-3);
+  vertical-align:.5em; margin-left:.35em;
+}
+.monthbar__nav{display:flex; align-items:center; gap:8px}
+.mtabs{display:flex; gap:6px}
+.mtab,
+.mstep{
+  -webkit-appearance:none; appearance:none; cursor:pointer;
+  height:44px; border-radius:999px; background:transparent; color:var(--ink);
+  border:1.5px solid rgba(17,17,16,.42);
+  transition:background .2s var(--quart), color .2s var(--quart), border-color .2s var(--quart);
+}
+.mtab{
+  position:relative; min-width:66px; padding:0 18px;
+  font:700 12.5px/1 var(--body); text-transform:uppercase; letter-spacing:.14em;
+}
+.mtab[aria-selected="true"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+/* A night of ours is in this month, in its own colour. */
+.mtab__dot{
+  position:absolute; top:6px; right:8px; width:7px; height:7px; border-radius:50%;
+}
+.mstep{width:44px; display:grid; place-items:center; padding:0; flex:none}
+.mstep svg{width:22px; height:auto; overflow:visible}
+.mstep path{
+  fill:none; stroke:currentColor; stroke-width:2.6;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.mstep:disabled{opacity:.28; cursor:default}
+@media (hover:hover){
+  .mtab:not([aria-selected="true"]):hover,
+  .mstep:not(:disabled):hover{border-color:var(--ink); background:rgba(17,17,16,.06)}
+}
+.mtab:active,.mstep:not(:disabled):active{transform:scale(.96)}
+/* At the calendar's phone width the back/forward arrows come off: with
+   three months the tabs already reach every one in a tap, and the row is
+   better spent on bigger tabs. Keyboard users keep the arrow keys on the
+   tabs themselves. */
+@media (max-width:760px){
+  .mstep{display:none}
+}
+/* On a phone the controls take a row of their own under the name, and
+   the three tabs share it evenly. */
+@media (max-width:560px){
+  .monthbar{align-items:stretch; flex-direction:column; gap:14px}
+  .monthbar__nav{width:100%}
+  .mtabs{flex:1}
+  .mtab{flex:1; min-width:0; padding:0 8px}
+}
+
+/* Turning to another month: the new grid slides in a little way from
+   the side you moved toward. Off for reduced motion in bss.js. */
+[data-calendar]{position:relative}
+[data-calendar].is-turning{animation:calTurn .34s var(--ease)}
+@keyframes calTurn{
+  from{opacity:0; transform:translateX(var(--turn,0px))}
+  to{opacity:1; transform:none}
+}
+
+/* ── A MONTH WITH NOTHING ON IT YET ─────────────────────────────────
+   A note taped over the middle of the grid, so a blank month reads as
+   "not yet" and not as a page that failed to load. Same paper and the
+   same powder-blue tape as the taped photographs. */
+.cal__empty{
+  position:absolute; z-index:7; left:50%; top:54%; margin:0;
+  transform:translate(-50%,-50%) rotate(-2deg);
+  display:grid; justify-items:center; gap:8px; text-align:center;
+  width:max-content; max-width:calc(100% - 32px);
+  padding:22px clamp(20px,3vw,34px) 18px;
+  background:#FFFDF7; color:var(--on-accent);
+  box-shadow:0 1px 0 rgba(17,17,16,.16), 0 10px 26px rgba(17,17,16,.14);
+}
+.cal__empty::before{
+  content:""; position:absolute; top:-11px; left:50%; width:84px; height:22px;
+  transform:translateX(-50%) rotate(3deg);
+  background:rgba(207,227,238,.78);
+  border-left:1px dashed rgba(17,17,16,.16); border-right:1px dashed rgba(17,17,16,.16);
+}
+.cal__empty b{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(30px,3.4vw,44px); line-height:.5; letter-spacing:.03em; padding-top:.2em;
+}
+.cal__empty em{
+  font-style:normal; font-family:var(--script);
+  font-size:clamp(19px,1.9vw,24px); line-height:1; color:rgba(17,17,16,.72);
+}
 
 
 /* ============================================================

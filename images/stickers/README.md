@@ -4,22 +4,25 @@ Drop the collage assets for the Happening Now calendar in this folder.
 
 ## Naming
 
-`sticker-<slug>.png` — named in the `pins` block of `MONTH` (js/bss.js), keyed
-by the day of the month it sits on. A pin does not have to belong to an event:
-the Brewers glove sits on Oct 1 with no event of its own, because what it marks
-is the playoff run crossing that fortnight.
+`sticker-<slug>.png` — named in the `pins` block of a month in `MONTHS`
+(js/bss.js), keyed by the day of the month it sits on. A pin does not have to
+belong to an event: the Oktoberfest lockup sits on Oct 3 with no event of its
+own, because what it marks is the run crossing that week.
 
 In use now:
 
 | File | Day | Notes |
 |---|---|---|
-| `sticker-brewers.png` | Oct 1 | Bottom-anchored so it sits ON the navy playoffs strip |
+| `sticker-brewers.png` | Oct 23 | Heads the World Series title sticker, under the gold strip (it was on Oct 1, on the old navy playoffs strip) |
 | `sticker-oktoberfest.png` | Oct 3 | A 2.4:1 banner, not a square badge — see Format |
 | `sticker-chance-the-rapper.png` | Oct 4 | |
 | `sticker-chief-keef.png` | Oct 14 | |
 
 The two purple tickets by Oct 31 are not files — they are the homepage
 curtain's own silhouette (`miniTicket()` in js/bss.js), reused as confetti.
+The green ticket and the blue snowflake by Dec 12 are the same idea: the
+ticket silhouette in another ink, and the 12 Bars cursor
+(`images/cursors/snowflake.svg`) inked by CSS mask.
 
 To swap one, keep the filename and drop the new file in. To add one, any new
 name works; it needs a line in `pins`.

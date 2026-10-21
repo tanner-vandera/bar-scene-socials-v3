@@ -34,9 +34,17 @@
   ];
 
   /* ---------------------------------------------------------
-     THE ACTIVE MONTH — one definition, rendered on both the
-     homepage and Happening Now so the two can never drift apart.
-     Oct 1 2026 falls on a Thursday, hence four leading blanks.
+     THE MONTHS — one definition, rendered on both the homepage
+     and Happening Now so the two can never drift apart.
+
+     Each month names its year and month and nothing else about
+     the grid: the leading blanks and the day count are worked out
+     from the date (see grid() below), so a new month is
+     `{ y: 2027, m: 1, events: {} }` and cannot be mis-counted.
+
+     Happening Now carries a switcher across all of them. The
+     homepage shows one — the month today falls in, clamped to the
+     ends of this list. See activeIndex().
      --------------------------------------------------------- */
   /* Two kinds of thing go on this month.
 
@@ -61,25 +69,64 @@
 
      `tilt` is authored per item, not randomised at runtime. A fresh
      angle on every navigation reads as a rendering bug rather than a
-     hand. */
-  var MONTH = {
-    label: 'October 2026',
-    lead: 4,
-    days: 31,
+     hand.
+
+     OUR OWN DATES carry their event's own colour as `theme`. Haunted
+     Bar Hop is the orange it always was; 12 Bars of Christmas is the
+     red its own page is built on. Both are painted photo cards, which
+     is what still separates ours from everybody else's stickers. */
+  var MONTHS = [{
+    y: 2026, m: 10,
     events: {
       4:  { name: 'Chance the Rapper', where: 'Landmark CU Live',
             tone: 'sky',  tilt: -2.4 },
       14: { name: 'Chief Keef',        where: 'Landmark CU Live',
             tone: 'lime', tilt:  1.9 },
+      /* The title of the World Series run: a navy sticker in Brewers
+         yellow, set in the same label type as every other sticker, with
+         the kick-off time and the "if necessary" key under it. It is not
+         orange — the colour is the team's, not ours. */
+      23: { name: 'World Series', where: 'Brewers vs. Rays',
+            note: ['Every game 7pm CT', '* if necessary'], tone: 'brew', big: true, tilt: -2.2 },
       31: { name: 'Haunted Bar Hop',   where: 'Brady St · 3pm',
             ours: true, href: '/hauntedbarhop', chip: 'On sale',
             shot: 'haunted-bar-hop-crowd.jpg' }
     },
     spans: [
-      /* The playoffs are a backdrop, not a night out — the thinnest
-         strip on the grid, running under everything else. */
-      { from: 1, to: 14, name: 'MLB Playoffs', where: 'Go Brewers', tone: 'navy',
-        lane: 0, tilt: -0.5, thin: true, lead: 150, marked: true },
+      /* THE WORLD SERIES. The playoff strip that used to run under the
+         first fortnight is this now: Brewers gold, and laid along the TOP
+         of the squares, directly under the dates, instead of along the
+         bottom like every other strip.
+
+         That is what lets each game carry its own callout. A tag on a
+         bottom strip sits right above the NEXT week's numerals — Game 1
+         on the 23rd would have read as Game 1 on the 30th — whereas up
+         here every tag sits under its own date. It also keeps clear of
+         our own card on the 31st, which drops below the strip rather than
+         fighting it for the bottom of the square.
+
+         `games` are keyed by day and drawn in that day's own square (see
+         gameTag()), not inside the strip, so a screen reader hears the
+         game with its date. Every game is 7pm Central — Games 3-5 are
+         listed at 8pm Eastern from Tampa — so the time is said once, on
+         the title sticker, rather than seven times. `maybe` is "if
+         necessary".
+
+         The name rides the first square of the run with no game in it
+         (the 25th, a travel day), because the 23rd and 24th are both
+         taken by tags. Rows with no free square stay unlabelled — the
+         title sticker on the 23rd already says what this is. */
+      { from: 23, to: 31, name: 'World Series', where: 'Go Crew!', tone: 'brew',
+        top: true, tilt: -0.35, labelOn: 25,
+        games: {
+          23: { n: 1, home: true },
+          24: { n: 2, home: true },
+          26: { n: 3 },
+          27: { n: 4 },
+          28: { n: 5, maybe: true },
+          30: { n: 6, home: true, maybe: true },
+          31: { n: 7, home: true, maybe: true }
+        } },
       /* Two lines, and no reserved opening. This run is only two squares
          wide — about 390px at a full desktop and barely 220px at 1024 —
          and "OKTOBERFEST" beside "Henry Maier Festival Park" does not
@@ -87,9 +134,11 @@
          as a stack it fits everywhere, and a chunkier two-line tape is
          a better anchor for the row than a thin one. The lockup rests
          on its far END rather than its opening (see the pin), so the
-         words keep the left and nothing needs holding clear. */
+         words keep the left and nothing needs holding clear.
+         Lane 0 since the playoff strip under it moved to the World
+         Series — left on lane 1 it floated a lane above nothing. */
       { from: 2, to: 4,  name: 'Oktoberfest', where: 'Henry Maier Festival Park',
-        tone: 'gold', lane: 1, tilt: 1.4, stack: true, marked: true }
+        tone: 'gold', lane: 0, tilt: 1.4, stack: true, marked: true }
     ],
     /* The pasted-on layer. A pin is a PICTURE and nothing else — no
        name, no date, no link — so it is alt="" and the label in the cell
@@ -97,9 +146,9 @@
        "Chief Keef" twice in one square would be reading the collage, not
        the calendar.
 
-       Pins are keyed by day and are INDEPENDENT of events: the Brewers
-       glove sits on the 7th, which has no event of its own, because
-       what it marks is the playoff run crossing that week.
+       Pins are keyed by day and are INDEPENDENT of events: the
+       Oktoberfest lockup sits on the 3rd, which has no event of its
+       own, because what it marks is the run crossing that week.
 
        x / y / size / rot are authored one at a time so no two sit the
        same way, and they are sized to OVERRUN their squares — this grid
@@ -119,23 +168,29 @@
          lockup is a 2.4:1 banner rather than a square badge, so its
          number is much larger than the others for a mark that is
          actually SHORTER on the page. */
-      1:  { img: 'sticker-brewers.png',           x:  4, size: 132, rot: -7,
-            anchor: 'bottom', y: 14 },
       /* Anchored to its RIGHT edge, on the last square of the gold run,
          so it comes to rest on the far end of the tape and overruns
-         BACKWARDS across Oct 2. Two reasons it is not at the opening
-         like the glove: the words on this tape are long and need the
-         left, and Oct 3 is a Saturday — a mark this wide hung off the
-         left edge of that square would run off the sheet entirely.
-         y rests it on the TOP edge of lane 1 rather than in the middle of
-         it, the way the glove sits in lane 0. Both are touching their
-         tape; this one has to touch it from above, because this tape is
-         the one carrying two lines of words and a mark lying across
-         them takes the venue off the end of the line. */
+         BACKWARDS across Oct 2. Two reasons it is not at the opening:
+         the words on this tape are long and need the left, and Oct 3 is
+         a Saturday — a mark this wide hung off the left edge of that
+         square would run off the sheet entirely.
+         y rests it on the TOP edge of the tape rather than in the middle
+         of it, because this tape is the one carrying two lines of words
+         and a mark lying across them takes the venue off the end of the
+         line. */
       3:  { img: 'sticker-oktoberfest.png',       x:  3, size: 176, rot: -7,
-            anchor: 'bottom', align: 'right', y: 97 },
+            anchor: 'bottom', align: 'right', y: 67 },
       4:  { img: 'sticker-chance-the-rapper.png', x: 38, y:  0, size: 108, rot:  7 },
       14: { img: 'sticker-chief-keef.png',        x: 36, y:  0, size: 106, rot: 10 },
+      /* The glove came with the run: it used to open the playoff strip
+         on the 1st and now heads the World Series title on the 23rd. It
+         hangs from the top like the artists' cut-outs, below the gold
+         strip rather than on it — the strip up there is carrying the
+         Game 1 tag. Far enough right that it overruns into the 24th and
+         the title only catches its lower-left edge: the title is the
+         widest sticker on the grid, and any further in it would bury
+         the glove it is captioning. */
+      23: { img: 'sticker-brewers.png',           x: 64, y:  0, size: 100, rot: -8 },
       /* Two of the curtain's tickets, come to rest either side of our own
          square — one in the day above it, one in the day beside it. They
          are not ON the orange block: that block is the loudest thing on
@@ -151,7 +206,68 @@
       30: [{ mark: 'ticket', x: 48, size: 62, rot: -18, anchor: 'bottom', y: 34,
              cls: 'pin--crowded' }]
     }
-  };
+  }, {
+    /* Empty for now — dates go in `events` as they are confirmed. Until
+       then the grid prints with a "nothing yet" note on it rather than
+       as a blank month that looks like it failed to load. */
+    y: 2026, m: 11,
+    events: {}
+  }, {
+    y: 2026, m: 12,
+    events: {
+      /* Ours, so a painted photo card like the Haunted one on Oct 31 —
+         in the red the 12 Bars page is built on rather than the orange.
+         The 12th is a Saturday, the same last-column square the 31st is,
+         so the card hangs and overruns exactly the way that one does.
+         No venue yet, so the line under the name is the city. */
+      12: { name: '12 Bars of Christmas', where: 'Milwaukee · 21+',
+            ours: true, theme: 'red', href: '/12barsofchristmas',
+            chip: 'Tickets soon', shot: '12bars-of-christmas-hero.jpg',
+            pos: '50% 38%' }
+    },
+    pins: {
+      /* Same move as the purple tickets either side of Oct 31: confetti
+         just outside our square, pointing at it, never on it. Here it is
+         a snowflake above (the 12 Bars page's own cursor) and a green
+         ticket beside. */
+      5:  [{ mark: 'snow',   x: 14, size: 54, rot:  12, anchor: 'bottom', y: 18,
+             ink: '#5DA4F0' }],
+      11: [{ mark: 'ticket', x: 46, size: 62, rot: -16, anchor: 'bottom', y: 34,
+             ink: '#91EC8E', cls: 'pin--crowded' }]
+    }
+  }];
+
+  var MONTH_NAMES = ['January','February','March','April','May','June','July',
+                     'August','September','October','November','December'];
+
+  /* The grid facts for one month, from the calendar rather than by hand:
+     `lead` is the blank squares before the 1st (Sunday-first), `days` the
+     length. Filled in once, the first time a month is drawn. */
+  function grid(mo) {
+    if (mo.days) return mo;
+    mo.lead  = new Date(mo.y, mo.m - 1, 1).getDay();
+    mo.days  = new Date(mo.y, mo.m, 0).getDate();
+    mo.name  = MONTH_NAMES[mo.m - 1];
+    mo.label = mo.name + ' ' + mo.y;
+    mo.slug  = mo.name.toLowerCase();
+    return mo;
+  }
+  MONTHS.forEach(grid);
+
+  /* Which month to open on: the one today is in. Before the first month
+     it is the first; after the last it stays on the last rather than
+     showing nothing. On Happening Now a #november (or #december …) in
+     the address wins over both, so a month can be linked to. */
+  function activeIndex() {
+    var hash = (location.hash || '').slice(1).toLowerCase();
+    for (var i = 0; i < MONTHS.length; i++) if (MONTHS[i].slug === hash) return i;
+    var now = new Date(), t = now.getFullYear() * 12 + now.getMonth() + 1;
+    for (var j = MONTHS.length - 1; j >= 0; j--) {
+      if (MONTHS[j].y * 12 + MONTHS[j].m <= t) return j;
+    }
+    return 0;
+  }
+  var MONTH = MONTHS[activeIndex()];
 
   var page = document.body.getAttribute('data-page') || '';
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
@@ -378,14 +494,30 @@
       '<path d="M6 58 21 82 39 66"/>' +
     '</svg>';
 
+  /* A string of lights drawn across the top of the 12 Bars card — the
+     same pen as the arrows, sagging between three points the way a real
+     string does, with a bulb hanging off each dip and rise. Drawn in the
+     calendar's own inks rather than Christmas primaries, so it is a
+     doodle on the print and not clip art stuck to it. */
+  var CALLIGHTS =
+    '<svg class="cal__lights" viewBox="0 0 200 34" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path class="cal__cord" d="M1 5C30 25 66 26 100 9 134 26 170 25 199 4"/>' +
+      [[17, 14, '#F2B01E'], [42, 20, '#91EC8E'], [70, 19, '#F8F8F6'],
+       [123, 18, '#5DA4F0'], [152, 21, '#F2B01E'], [180, 15, '#91EC8E']]
+        .map(function (b, i) {
+          return '<ellipse cx="' + b[0] + '" cy="' + (b[1] + 5) + '" rx="3.2" ry="4.6" fill="' + b[2] +
+            '" transform="rotate(' + (i % 2 ? 9 : -9) + ' ' + b[0] + ' ' + (b[1] + 5) + ')"/>';
+        }).join('') +
+    '</svg>';
+
   /* A week row is the only grouping the grid actually knows about, so a
      run of days that crosses a Saturday has to be drawn as two strips.
      Returns { startDay: columnsCovered } — one entry per row the run
      touches. */
-  function segments(sp) {
+  function segments(sp, mo) {
     var out = {}, d = sp.from;
     while (d <= sp.to) {
-      var col = (MONTH.lead + d - 1) % 7;
+      var col = (mo.lead + d - 1) % 7;
       var n = Math.min(7 - col, sp.to - d + 1);
       out[d] = n;
       d += n;
@@ -400,17 +532,39 @@
      that belongs to it sits. (A narrow first segment will clip its own
      label; the strip hides the overflow rather than letting it spill
      across the squares either side.) */
-  function strip(sp, n, labelled) {
+  function strip(sp, n, labelled, at) {
+    var words = labelled
+      ? (sp.name ? '<b>' + esc(sp.name) + '</b>' : '') +
+        (sp.where ? '<em>' + esc(sp.where) + '</em>' : '')
+      : '';
+    /* A top strip shares its squares with the game tags, so its words are
+       held to the one square they sit in (--at columns along) instead of
+       running on underneath the next tag. */
+    if (sp.top && words) {
+      words = '<span class="span__label" style="--at:' + (at || 0) + '">' + words + '</span>';
+    }
     return '<span class="span span--' + sp.tone + (sp.thin ? ' span--thin' : '') +
       (sp.stack ? ' span--stack' : '') + (sp.marked ? ' span--marked' : '') +
+      (sp.top ? ' span--top' : '') +
       (sp.lead && labelled ? ' span--lead' : '') + '"' +
       ' style="--n:' + n + ';--lane:' + (sp.lane || 0) + ';--tilt:' + (sp.tilt || 0) + 'deg' +
       (sp.lead ? ';--lead:' + sp.lead + 'px' : '') + '">' +
-      (labelled
-        ? (sp.name ? '<b>' + esc(sp.name) + '</b>' : '') +
-          (sp.where ? '<em>' + esc(sp.where) + '</em>' : '')
-        : '') +
+      words +
       '</span>';
+  }
+
+  /* One game of a run, in its own day's square, laid on the strip above.
+     "Game 1" at full width and "G1" once a square is too narrow for the
+     word — the same text, with the middle of it hidden, so a screen
+     reader always hears the whole of it. An "if necessary" game is the
+     dashed one with the star, and says so out loud. */
+  function gameTag(g) {
+    return '<span class="game' + (g.maybe ? ' game--maybe' : '') + '">' +
+      '<b>G<span class="game__long">ame </span>' + g.n +
+        (g.maybe ? '<i aria-hidden="true">*</i>' : '') + '</b>' +
+      '<em>' + (g.home ? 'home' : 'away') + '</em>' +
+      (g.maybe ? '<span class="sr">, if necessary</span>' : '') +
+    '</span>';
   }
 
   /* A pin normally hangs from the top of the square, under the numeral.
@@ -430,8 +584,16 @@
        shape that navigated somewhere would be a promise the calendar
        cannot keep. */
     if (p.mark === 'ticket') {
-      return '<span class="' + cls + '" aria-hidden="true" style="' + st + '">' +
-        miniTicket(TIX_INK) + '</span>';
+      return '<span class="' + cls + ' pin--ticket" aria-hidden="true" style="' + st + '">' +
+        miniTicket(p.ink || TIX_INK) + '</span>';
+    }
+    /* The 12 Bars cursor's snowflake, inked by mask rather than recoloured
+       — the file is white, for a dark page, and would vanish on the sheet.
+       The mask sits on an inner box so the pin's drop shadow (a filter,
+       which runs before the mask) is not cut away with the background. */
+    if (p.mark === 'snow') {
+      return '<span class="' + cls + ' pin--snow" aria-hidden="true" style="' + st +
+        ';--mk:' + (p.ink || '#5DA4F0') + '"><i></i></span>';
     }
     return '<img class="' + cls + '" src="images/stickers/' + p.img + '" alt="" ' +
       'loading="lazy" decoding="async" style="' + st + '">';
@@ -460,7 +622,8 @@
     return '<a class="ourcard" href="' + (ev.href || '#') + '">' +
       (ev.shot
         ? '<span class="ourcard__shot"><img src="images/' + ev.shot + '" alt="" ' +
-          'loading="lazy" decoding="async"></span>'
+          'loading="lazy" decoding="async"' +
+          (ev.pos ? ' style="object-position:' + ev.pos + '"' : '') + '></span>'
         : '') +
       '<span class="ourcard__name">' + esc(ev.name) + '</span>' +
       '<span class="ourcard__meta">' + esc(ev.where) + '</span>' +
@@ -473,35 +636,45 @@
      than no link — same call as the dead forms that came off the event
      pages. */
   function sticker(ev) {
-    return '<span class="stick stick--' + (ev.tone || 'blush') + '"' +
+    return '<span class="stick stick--' + (ev.tone || 'blush') + (ev.big ? ' stick--big' : '') + '"' +
       ' style="--tilt:' + (ev.tilt || 0) + 'deg">' +
       '<b>' + esc(ev.name) + '</b>' +
       (ev.where ? '<em>' + esc(ev.where) + '</em>' : '') +
+      [].concat(ev.note || []).map(function (n) { return '<small>' + esc(n) + '</small>'; }).join('') +
     '</span>';
   }
 
-  function calendar() {
+  function calendar(mo) {
+    mo = grid(mo || MONTH);
     var head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
       .map(function (d) { return '<th>' + d + '</th>'; }).join('');
 
-    /* Which strips begin on which day. Built first so a cell can be
-       rendered in one pass. */
-    var starts = {};
-    (MONTH.spans || []).forEach(function (sp) {
-      var seg = segments(sp), k;
-      for (k in seg) (starts[k] = starts[k] || []).push(strip(sp, seg[k], +k === sp.from));
+    /* Which strips begin on which day, which days sit under a top strip,
+       and which carry a game. Built first so a cell can be rendered in
+       one pass. */
+    var starts = {}, under = {}, games = {};
+    (mo.spans || []).forEach(function (sp) {
+      var seg = segments(sp, mo), k, d;
+      var tag = sp.labelOn || sp.from;
+      for (k in seg) {
+        var on = tag >= +k && tag < +k + seg[k];
+        (starts[k] = starts[k] || []).push(strip(sp, seg[k], on, tag - k));
+      }
+      if (sp.top) for (d = sp.from; d <= sp.to; d++) under[d] = true;
+      for (d in sp.games || {}) games[d] = sp.games[d];
     });
 
     var cells = [];
-    for (var i = 0; i < MONTH.lead; i++) cells.push('<td></td>');
-    for (var d = 1; d <= MONTH.days; d++) {
-      var ev = MONTH.events[d];
-      var pn = (MONTH.pins || {})[d];
+    for (var i = 0; i < mo.lead; i++) cells.push('<td></td>');
+    for (var d = 1; d <= mo.days; d++) {
+      var ev = mo.events[d];
+      var pn = (mo.pins || {})[d];
       var strips = starts[d] ? starts[d].join('') : '';
       var cls = [];
       if (ev) cls.push('has');
       if (pn && pn.anchor !== 'bottom') cls.push('has-pin');
-      if (ev && ev.ours) cls.push('ours');
+      if (ev && ev.ours) cls.push('ours', 'ours--' + (ev.theme || 'orange'));
+      if (under[d]) cls.push('under-top');
       /* The ring is opt-in now. It used to be on every event cell, which
          was invisible while the month held one painted square and would
          have drawn a circle round all four stickers the moment it did
@@ -510,6 +683,7 @@
       if (strips) cls.push('has-span');
 
       var body = '<span class="dnum">' + d + '</span>';
+      if (games[d]) body += gameTag(games[d]);
       if (pn) body += [].concat(pn).map(pin).join('');
       if (ev && ev.ours) {
         body += ourCard(ev);
@@ -525,7 +699,156 @@
     var rows = '';
     for (var r = 0; r < cells.length; r += 7) rows += '<tr>' + cells.slice(r, r + 7).join('') + '</tr>';
 
-    return '<table class="cal"><thead><tr>' + head + '</tr></thead><tbody>' + rows + '</tbody></table>';
+    /* A month with nothing on it yet gets a note pinned over the grid, so
+       an empty November reads as "not yet" rather than as broken. It goes
+       the moment the month has a single event or run in it. */
+    var empty = !Object.keys(mo.events || {}).length && !(mo.spans || []).length;
+
+    return '<table class="cal" aria-label="' + esc(mo.label) + '"><thead><tr>' + head +
+      '</tr></thead><tbody>' + rows + '</tbody></table>' +
+      (empty
+        ? '<p class="cal__empty"><b>Nothing pinned up yet</b>' +
+          '<em>dates landing soon</em></p>'
+        : '');
+  }
+
+  /* The doodles that ride on top of a drawn month: the ring round a
+     must-go, the arrows at our own date, and the string of lights over a
+     12 Bars card. Run after every draw, not once at boot, because the
+     switcher redraws the grid. */
+  function decorate(el) {
+    /* The ring is for OTHER people's events — ours gets the painted cell
+       and the arrows instead, and a ring drawn on top of a solid block
+       would only read as a smudge. */
+    [].forEach.call(el.querySelectorAll('td.must-ring:not(.ours)'), function (td) {
+      td.insertAdjacentHTML('afterbegin', CALRING);
+    });
+    [].forEach.call(el.querySelectorAll('td.ours'), function (td) {
+      td.insertAdjacentHTML('beforeend', CALARROWS);
+    });
+    [].forEach.call(el.querySelectorAll('td.ours--red'), function (td) {
+      td.insertAdjacentHTML('beforeend', CALLIGHTS);
+    });
+  }
+
+  /* ---------------------------------------------------------
+     THE MONTH SWITCHER — Happening Now only. The month's name,
+     a back and a forward arrow, and one tab per month. A tab
+     carries a dot in the colour of any event of ours inside it,
+     so you can see which month has a night of ours on it before
+     you open it.
+
+     Tabs in the ARIA sense: the left and right arrow keys move
+     between them, and the grid below is the panel they control.
+     The month name is a live region, so a screen reader hears
+     where it has landed.
+     --------------------------------------------------------- */
+  var DOT = { orange: 'var(--orange)', red: 'var(--red)' };
+
+  function monthSwitch(host, cal) {
+    var cur = activeIndex();
+    var calId = cal.id || (cal.id = 'cal-panel');
+    cal.setAttribute('role', 'tabpanel');
+
+    var tabs = MONTHS.map(function (mo, i) {
+      var dot = '';
+      for (var d in mo.events) {
+        if (mo.events[d].ours) { dot = DOT[mo.events[d].theme || 'orange']; break; }
+      }
+      return '<button type="button" role="tab" class="mtab" id="mtab-' + mo.slug + '"' +
+        ' aria-controls="' + calId + '" data-i="' + i + '">' +
+        mo.name.slice(0, 3) +
+        (dot ? '<i class="mtab__dot" style="background:' + dot + '" aria-hidden="true"></i>' : '') +
+        '</button>';
+    }).join('');
+
+    var ARW = function (d) {
+      return '<svg viewBox="0 0 40 24" aria-hidden="true">' +
+        (d < 0 ? '<path d="M37 13C27 11 15 12 4 12"/><path d="M13 3 3 12 13 21"/>'
+               : '<path d="M3 11C13 13 25 12 36 12"/><path d="M27 3 37 12 27 21"/>') +
+        '</svg>';
+    };
+
+    host.innerHTML =
+      '<div class="monthbar">' +
+        '<h2 class="monthbar__label" aria-live="polite"></h2>' +
+        '<div class="monthbar__nav">' +
+          '<button type="button" class="mstep" data-step="-1" aria-label="Previous month">' + ARW(-1) + '</button>' +
+          '<div class="mtabs" role="tablist" aria-label="Choose a month">' + tabs + '</div>' +
+          '<button type="button" class="mstep" data-step="1" aria-label="Next month">' + ARW(1) + '</button>' +
+        '</div>' +
+      '</div>';
+
+    var label = host.querySelector('.monthbar__label');
+    var btns  = [].slice.call(host.querySelectorAll('.mtab'));
+    var steps = host.querySelectorAll('.mstep');
+    var still = window.matchMedia &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function show(i, dir, focus) {
+      if (i < 0 || i >= MONTHS.length) return;
+      var mo = MONTHS[i];
+      cur = i;
+      label.innerHTML = esc(mo.name) + ' <span>' + mo.y + '</span>';
+      btns.forEach(function (b, j) {
+        b.setAttribute('aria-selected', String(j === i));
+        b.tabIndex = j === i ? 0 : -1;
+      });
+      if (focus) btns[i].focus();
+      var held = document.activeElement;
+      steps[0].disabled = i === 0;
+      steps[1].disabled = i === MONTHS.length - 1;
+      /* An arrow that has just run out of months goes dead under the
+         keyboard; hand focus to the month it arrived at instead of
+         dropping it back to the top of the page. */
+      if ((held === steps[0] || held === steps[1]) && held.disabled) btns[i].focus();
+      cal.setAttribute('aria-labelledby', btns[i].id);
+      cal.innerHTML = calendar(mo);
+      decorate(cal);
+      /* A short slide in from the side you moved toward, so the change
+         reads as turning a page rather than the grid blinking. */
+      if (dir && !still) {
+        cal.classList.remove('is-turning');
+        cal.style.setProperty('--turn', (dir > 0 ? 18 : -18) + 'px');
+        void cal.offsetWidth;
+        cal.classList.add('is-turning');
+      }
+      /* The address follows along so a month can be shared, without
+         adding a history entry per click. */
+      if (history.replaceState) {
+        history.replaceState(null, '', location.pathname + location.search + '#' + mo.slug);
+      }
+    }
+
+    host.addEventListener('click', function (e) {
+      var t = e.target.closest('.mtab, .mstep');
+      if (!t || t.disabled) return;
+      var to = t.classList.contains('mtab') ? +t.getAttribute('data-i')
+                                             : cur + +t.getAttribute('data-step');
+      if (to !== cur) show(to, to - cur);
+    });
+    host.querySelector('.mtabs').addEventListener('keydown', function (e) {
+      var to = { ArrowLeft: cur - 1, ArrowRight: cur + 1, Home: 0, End: MONTHS.length - 1 }[e.key];
+      if (to === undefined) return;
+      e.preventDefault();
+      to = Math.max(0, Math.min(MONTHS.length - 1, to));
+      if (to !== cur) show(to, to - cur, true);
+    });
+
+    /* A #month link followed from this same page does not reload it, so
+       follow the address when it changes under us too. */
+    window.addEventListener('hashchange', function () {
+      var to = activeIndex();
+      if (to !== cur) show(to, to - cur);
+    });
+
+    /* Opening on the month in the address: render without the slide, and
+       without writing a #hash into a plain /happeningnow on first load. */
+    var hadHash = !!location.hash;
+    show(cur, 0);
+    if (!hadHash && history.replaceState) {
+      history.replaceState(null, '', location.pathname + location.search);
+    }
   }
 
   /* ---------------------------------------------------------
@@ -1145,8 +1468,16 @@
       }
     }
 
+    /* Happening Now: the switcher draws the grid it controls. Anywhere
+       else (the homepage) the grid is drawn once, on the month today is
+       in, under a plain label. */
+    var sw = document.querySelector('[data-month-switch]');
+    var swCal = sw && document.querySelector('[data-calendar]');
+    if (sw && swCal) monthSwitch(sw, swCal);
     [].forEach.call(document.querySelectorAll('[data-calendar]'), function (el) {
-      el.innerHTML = calendar();
+      if (el === swCal) return;
+      el.innerHTML = calendar(MONTH);
+      decorate(el);
     });
     [].forEach.call(document.querySelectorAll('[data-month-label]'), function (el) {
       el.textContent = MONTH.label;
@@ -1177,16 +1508,6 @@
     ignite();
     cursor();
     drift();
-    /* The ring is for OTHER people's events — ours gets the painted cell
-       and the arrows instead, and a ring drawn on top of a solid orange
-       block would only read as a smudge. The mechanism stays for when
-       there are other events on the calendar again. */
-    [].forEach.call(document.querySelectorAll('td.must-ring:not(.ours)'), function (el) {
-      el.insertAdjacentHTML('afterbegin', CALRING);
-    });
-    [].forEach.call(document.querySelectorAll('td.ours'), function (el) {
-      el.insertAdjacentHTML('beforeend', CALARROWS);
-    });
 
     var more = document.querySelector('.more');
     if (more) {

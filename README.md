@@ -461,17 +461,53 @@ in code; everything else is literal in the markup.
 
 ## The calendar
 
-`MONTH` at the top of `js/bss.js` is the single definition of the active month.
-Both the homepage section and Happening Now render from it through
-`[data-calendar]`, so they cannot drift apart. Edit that object to change the
-month or its events. It is October 2026 — the month the season actually starts,
-not today's date.
+`MONTHS` at the top of `js/bss.js` is the single definition of the calendar —
+October, November and December 2026 as of 2026-10-21. Both the homepage section
+and Happening Now render from it through `[data-calendar]`, so they cannot
+drift apart. A month names only its year and month (`{ y: 2026, m: 11 }`); the
+blank squares before the 1st and the day count are worked out from the date, so
+adding a month cannot mis-count the grid.
 
-**One month, no switcher.** Happening Now used to carry six dashed month tabs
-(October through March). They are gone: only October has data, so five of the
-six led nowhere, and the page is meant to be a very short answer to "is
-anything on?", not a listings archive. If more months are ever added, `MONTH`
-becomes an array and the switcher comes back with real destinations.
+**Which month shows.** The month today falls in, clamped to the ends of the
+list — so the homepage turns over to November on Nov 1 by itself, and stays on
+December after the last month runs out rather than showing nothing. Happening
+Now also honours a `#november`-style address, which is how to link straight to
+a month.
+
+**The switcher (Happening Now only).** The month's name in the display face,
+back/forward arrows, and one pill tab per month (`monthSwitch()` in bss.js).
+A tab carries a dot in the colour of any event of ours inside it. It is an ARIA
+tablist — arrow keys, Home and End move between months, the grid is the panel
+— and the address follows along via `replaceState`, without a history entry
+per click. It came back once there were real months to switch to; the old six
+dashed tabs went because five of them led nowhere.
+
+**A month with nothing on it** prints with a taped note over the grid
+("Nothing pinned up yet") so it reads as "not yet" rather than as a page that
+failed to load. It disappears as soon as the month has one event or run.
+
+**The World Series run.** The navy "MLB Playoffs" strip across Oct 1–14 became
+the World Series, Oct 23–31, in the Brewers' own yellow (`--stick-brew`). It is
+the one strip laid along the TOP of its squares (`top: true`), directly under
+the dates, because each game carries its own tag (`games` on the span, drawn by
+`gameTag()` in that day's square): on a bottom strip a Game 1 tag sat right
+above the NEXT week's numerals. Dashed tags with a star are "if necessary".
+Every game is 7pm Central (Games 3–5 are 8pm Eastern from Tampa), so the time is
+said once, on the title sticker on the 23rd (navy, Brewers yellow, the same
+label type as every other sticker). The strip itself is plain yellow — a dashed
+"stitch" along its edges came off, because dashed already means "if necessary"
+on the tags. Oct 31 is both Game 7 (if necessary) and Haunted Bar Hop; our card
+drops below the strip there rather than fighting it.
+
+**On phones (≤760px)** the purple confetti tickets come off the grid along with
+the doodled arrows, and the switcher drops its back/forward arrows so the three
+month tabs share the row.
+
+**Our own dates take their event's colour.** `theme` on an event of ours:
+Haunted Bar Hop is the orange card; 12 Bars of Christmas (Dec 12) is the same
+card in `--red-d` with off-white type (6.26:1), a doodled string of lights and
+snowflake/green-ticket confetti. What separates ours from everyone else's is
+still the painted photo card, not orange alone.
 
 **The route.** Headed "Milwaukee's best bars on Brady Street" (was "Ten stops,
 one street" until 2026-09-20). The route is thirteen named bars — Nomad World Pub through
