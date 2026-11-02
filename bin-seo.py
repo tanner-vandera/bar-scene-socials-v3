@@ -9,7 +9,7 @@ SITE = 'https://www.barscenesocials.com'
 # Cache-bust token for assets replaced UNDER THEIR EXISTING NAME. Kept in
 # step with the stylesheets by bin-bump.sh, which rewrites every ?v= in the
 # HTML; the value here only matters when this script regenerates the block.
-ASSET_V = '1792604420'
+ASSET_V = '1793654911'
 TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady'
 IG   = 'https://www.instagram.com/barscenesocials/'
 
@@ -18,10 +18,44 @@ ORG = {"@type":"Organization","@id":SITE+"/#org","name":"Bar Scene Socials",
        "email":"barscenesocials@gmail.com","sameAs":[IG],
        "areaServed":{"@type":"City","name":"Milwaukee","addressRegion":"WI"}}
 
-def place(street=None):
+def place(street=None, name=None):
     a={"@type":"PostalAddress","addressLocality":"Milwaukee","addressRegion":"WI","addressCountry":"US"}
     if street: a["streetAddress"]=street; a["postalCode"]="53202"
-    return {"@type":"Place","name":street or "Milwaukee","address":a}
+    return {"@type":"Place","name":name or street or "Milwaukee","address":a}
+
+# ── 12 Bars of Christmas ticket links ──────────────────────────────
+# One TicketSignup event PER STREET — decoded from the owners' three QR
+# codes on 11/2/26. The same three URLs are on every [data-street] link in
+# the HTML (12barsofchristmas, index, tickets); change all four together.
+# If any is emptied the Event carries NO offers — see trap 2 in README
+# "Search & sharing": a fake InStock offer is worse than none.
+XMAS_TIX = {
+    'brady': ('Brady Street', 'https://www.ticketsignup.io/TicketEvent/12barsofchristmasBradySt'),
+    'water': ('Water Street', 'https://www.ticketsignup.io/TicketEvent/12BarsOfChristmasWaterSt'),
+    'mlk':   ('MLK & Third',  'https://www.ticketsignup.io/TicketEvent/12BarsOfChristmasThirdSt'),
+}
+# EARLY BIRD, quoted WITH the fee like the Haunted prices: TicketSignup
+# shows "$11 incl. $1 Fee" on all three. It ends when general admission
+# opens, which TicketSignup publishes as "Mon November 16, 2026 at
+# 12:00am EST" — 11pm Central on the 15th, so that is validThrough.
+# No validFrom: the links were live on 11/2 though the owners said 11/3,
+# and a guessed start date is worse than none.
+# WHEN EARLY BIRD ENDS: change XMAS_PRICE to the general admission price
+# TicketSignup then shows (with fee), and drop XMAS_UNTIL.
+XMAS_PRICE = '11.00'
+XMAS_UNTIL = '2026-11-15T23:00:00-06:00'
+
+def xmas_offers():
+    if not all(u for _, u in XMAS_TIX.values()):
+        return None
+    out = []
+    for name, url in XMAS_TIX.values():
+        o = {"@type":"Offer","name":"12 Bars of Christmas — "+name,"url":url,
+             "price":XMAS_PRICE,"priceCurrency":"USD",
+             "availability":"https://schema.org/InStock"}
+        if XMAS_UNTIL: o["validThrough"] = XMAS_UNTIL
+        out.append(o)
+    return out
 
 def event(name,slug,start,end,loc,desc,offers=None,status="EventScheduled"):
     e={"@context":"https://schema.org","@type":"Event","name":name,
@@ -50,10 +84,14 @@ HAUNTED_DESC = ("Milwaukee's only Halloween bar crawl on Brady Street. Fourteen 
 
 PAGES = {
  'index.html': dict(
-   url='/', slug='default',
+   # The share card follows the headline event (12 Bars from 11/2/26):
+   # default.jpg is a Halloween frame, and a link pasted into a group chat
+   # in December should not open on Spider-Men. Back to 'default' after.
+   url='/', slug='12barsofchristmas',
    title="Bar Scene Socials — Milwaukee's Most Anticipated Bar Crawls",
-   desc=("Hosting Milwaukee holiday bar crawl traditions; Shamrock Shuffle, "
-         "12 Bars of Christmas, Haunted Bar Hop on Brady"),
+   # Leads with whichever event is on sale — 12 Bars from 11/2/26.
+   desc=("12 Bars of Christmas, Saturday 12/12/26 — Milwaukee's ugly sweater bar crawl on "
+         "three streets, benefiting Toys for Tots. $11 early bird through 11/15. 21+."),
    ogtype='website',
    ld=[{"@context":"https://schema.org","@graph":[
         ORG,
@@ -63,40 +101,43 @@ PAGES = {
  'hauntedbarhop.html': dict(
    url='/hauntedbarhop', slug='hauntedbarhop',
    title="Haunted Bar Hop 2026 — Milwaukee Halloween Bar Crawl",
-   desc=("Saturday 10/31/26 on Brady Street, 3pm–8pm. Fourteen bars, free cover, "
-         "drink and food specials, costume prizes and a bingo card. From $13.98. 21+."),
+   # Past tense since 11/2/26: the 2026 crawl has happened, and a snippet
+   # that reads as a live sale sends people to a page with no tickets.
+   desc=("Milwaukee's Halloween bar crawl on Brady Street, 3pm–8pm. Fourteen bars, free "
+         "cover, specials and costume prizes. 2026 was a wrap — join us next year. 21+."),
    ogtype='article',
    ld=[event("Haunted Bar Hop on Brady","hauntedbarhop",
         # 10/31/2026 is still CDT — US DST ends Sun 11/01/2026
         "2026-10-31T15:00:00-05:00","2026-10-31T20:00:00-05:00",
-        place("Brady Street"), HAUNTED_DESC,
-        # Prices are quoted INCLUSIVE OF FEES, matching what TicketSignup
-        # actually shows a buyer (2026-09-20). The base ticket did not
-        # change — $16.65 is $14.99 + $1.66 fee and $13.98 is $12.40 +
-        # $1.58 — but the site was quoting the pre-fee number, so every
-        # figure on it read low against the checkout page.
-        offers={"@type":"AggregateOffer","url":TIX,"priceCurrency":"USD",
-                "lowPrice":"13.98","highPrice":"16.65","offerCount":"2",
-                # TicketSignup publishes a sale END ("Saturday October 31,
-                # 2026 at 11:59am CDT") but no sale START, so validThrough
-                # is a fact and validFrom is not. Do not guess validFrom —
-                # put the real on-sale date here when it is known.
-                "validThrough":"2026-10-31T11:59:00-05:00",
-                "availability":"https://schema.org/InStock"})]),
+        # No offers since 11/2/26: the crawl has happened and the page no
+        # longer sells tickets. The 2026 AggregateOffer ($13.98–$16.65,
+        # quoted with fees, validThrough 10/31 11:59am CDT) is in git
+        # history for next year.
+        place("Brady Street"), HAUNTED_DESC)]),
 
  '12barsofchristmas.html': dict(
    url='/12barsofchristmas', slug='12barsofchristmas',
-   title="12 Bars of Christmas 2026 — Milwaukee Bar Crawl",
-   desc=("Saturday 12/12/26 in Milwaukee. Twelve bars, terrible jumpers and a souvenir stein. "
-         "Tickets are not on sale yet — the date breaks on Instagram first. 21+."),
+   # "Ugly sweater bar crawl" is what people actually search for in
+   # December; "12 Bars of Christmas" alone is a phrase many cities share,
+   # so Milwaukee goes in the title, not just the description.
+   title="12 Bars of Christmas 2026 — Milwaukee Ugly Sweater Bar Crawl",
+   desc=("Saturday 12/12/26, 12–5pm. Pick Brady Street, Water Street or MLK & Third. "
+         "Holiday mug, lanyard, donation to Toys for Tots. $11 early bird to 11/15. 21+."),
    ogtype='article',
-   # date-only startDate: the running time has not been announced, and a
-   # made-up one would be worse than none
-   # endDate matches startDate: a one-day event, and no start/end TIME has
-   # ever been published for this one, so a date is all we can honestly say.
-   ld=[event("12 Bars of Christmas","12barsofchristmas","2026-12-12","2026-12-12",
-        place(), "Milwaukee's 12 Bars of Christmas bar crawl. Twelve bars, Christmas jumpers, "
-                 "a souvenir stein and a DJ. 21+.")]),
+   # 12pm start confirmed by TicketSignup (11/2). PLACEHOLDER: the 5pm
+   # finish is last year's, shown on the page too until the owners confirm
+   # this year's. 12/12/26 is CST, -06:00.
+   # One Place for the whole crawl, named for the three streets: Google's
+   # event results take a single location, and three separate Events for
+   # one ticketed night would read as three events.
+   ld=[event("12 Bars of Christmas 2026","12barsofchristmas",
+        "2026-12-12T12:00:00-06:00","2026-12-12T17:00:00-06:00",
+        place(name="Brady Street, Water Street and MLK Drive / Third Street, Milwaukee"),
+        "The thirteenth annual 12 Bars of Christmas, Milwaukee's ugly sweater bar crawl. "
+        "Choose from three streets — Brady, Water or MLK & Third. Every ticket includes a "
+        "holiday drinking mug, a passport lanyard with food and drink specials, no cover, and a "
+        "donation to Toys for Tots, which this crawl has raised over $22,000 for since 2013. 21+.",
+        offers=xmas_offers())]),
 
  'shamrockshuffle.html': dict(
    url='/shamrockshuffle', slug='shamrockshuffle',
@@ -110,15 +151,15 @@ PAGES = {
                  "bars and a patio you will not leave. 21+.")]),
 
  'tickets.html': dict(
-   url='/tickets', slug='hauntedbarhop',
-   title="Tickets — Haunted Bar Hop, Milwaukee 10/31/26",
-   desc=("Haunted Bar Hop tickets, Saturday 10/31/26 on Brady Street: $16.65 single, or $13.98 "
-         "each in a group of four ($55.92 total). 21+."),
+   url='/tickets', slug='12barsofchristmas',
+   title="Tickets — 12 Bars of Christmas, Milwaukee 12/12/26",
+   desc=("12 Bars of Christmas tickets, 12/12/26: choose Brady Street, Water Street or "
+         "MLK & Third. $11 early bird through 11/15, with a holiday mug and lanyard. 21+."),
    ogtype='website', ld=[]),
 
  'happeningnow.html': dict(
    url='/happeningnow', slug='default',
-   title="Happening Now — Milwaukee Events, October 2026",
+   title="Happening Now — Milwaukee Events, November & December 2026",
    desc=("A very short answer to “is anything on in Milwaukee?” — what is worth leaving "
          "the house for this month, picked by the people who run the bar crawls."),
    ogtype='website', ld=[]),
@@ -133,8 +174,8 @@ PAGES = {
  'about.html': dict(
    url='/about', slug='default',
    title="About — Bar Scene Socials, Milwaukee Bar Crawls",
-   desc=("We host Milwaukee’s most anticipated bar crawl traditions: the Haunted Bar Hop, "
-         "12 Bars of Christmas and the Shamrock Shuffle. Local organizers, 21+."),
+   desc=("We host Milwaukee’s most anticipated bar crawl traditions: 12 Bars of Christmas, "
+         "the Shamrock Shuffle and the Haunted Bar Hop. Local organizers, 21+."),
    ogtype='website', ld=[]),
 
  'contact.html': dict(

@@ -4232,3 +4232,66 @@ body[data-page="home"] .incl__row > div > .h4{ font-size:clamp(38px,4.3vw,62px) 
    14% step costs a column, and it is the one thing on this page that is
    a table rather than a poster. */
 body[data-page="home"] .sheet .kicker{ font-size:11.5px }
+
+/* ============================================================
+   12 BARS OF CHRISTMAS — THE STREET PICKER
+   One TicketSignup event per street, so the price tiers become streets:
+   the same torn .stub cards, three across, all equal. There is no
+   .stub--pick here — no street is the recommended one — so every card
+   carries the torn strip, in the red the page is built on.
+
+   The tier is a street name now, not "Single", and "MLK & Third" has
+   to hold one line in a third of the shell. The display size steps
+   down to fit; at phone width the cards stack and get room back.
+   ============================================================ */
+.stubs--streets{grid-template-columns:repeat(3, minmax(0,1fr)); align-items:stretch}
+.stubs--streets .stub{display:flex; flex-direction:column}
+.stubs--streets .stub .ticket{margin-top:auto; padding-top:clamp(14px,1.8vw,22px)}
+.stubs--streets .stub__tier{font-size:clamp(50px,5.4vw,78px)}
+.stubs--streets .stub::before{
+  content:""; position:absolute; left:0; right:0; top:0;
+  height:clamp(7px,.8vw,10px); background:var(--red);
+}
+.stubs--streets .stub:focus-visible{outline-color:var(--red)}
+@media (max-width:900px){
+  .stubs--streets{grid-template-columns:minmax(0,1fr)}
+  .stubs--streets .stub__tier{font-size:clamp(54px,12vw,84px)}
+}
+
+/* The street picker is reached by #streets from every "Get tickets" on
+   the Christmas pages and from the header. Without this the fixed header
+   covers the section's own headline when the jump lands. */
+#streets{scroll-margin-top:var(--hdr-h, 80px)}
+
+/* THE BARS ON EACH STREET, inside its stub. One run-on line rather than a
+   list: fifteen names stacked would make Brady twice the height of Water
+   (nine), and the three cards are meant to read as a matched set. Names
+   are as TicketSignup lists them, apostrophes added. */
+.stubs--streets .stub__bars{
+  font:400 13.5px/1.5 var(--body); color:var(--text-2);
+  margin:clamp(10px,1.2vw,14px) 0 0;
+}
+.stubs--streets .stub__bars b{
+  display:block; margin-bottom:3px;
+  font:600 11.5px/1.2 var(--body); letter-spacing:.16em; text-transform:uppercase;
+  color:var(--red-d);
+}
+
+/* THE TOYS FOR TOTS LOGO under the $22,000+ figure. The official file is
+   red on a SOLID WHITE box (no transparency), and the band is the warm
+   off-white, so drawn as-is it would show as a white rectangle.
+   multiply drops the white out and leaves the red — no recoloured copy of
+   a mark we do not own. Sized on width; the file is 1119x343. */
+.t4t-logo{
+  display:block; width:min(300px, 72%); height:auto;
+  margin:clamp(26px,3vw,40px) auto 0;
+  mix-blend-mode:multiply;
+}
+
+/* OUR LISTING IN RED. The 12 Bars row on Happening Now, matching its red
+   card on the calendar above. Same row as the orange one; only the day
+   numeral and the hairline change hue. --red-d, not --red or --red-on:
+   the list sits on Happening Now's white sheet, where --red-d is the red
+   that carries (6.3:1) and the lighter two wash out. */
+.listing__row--red .listing__day{color:var(--red-d)}
+.listing__row--red::after{background:var(--red)}

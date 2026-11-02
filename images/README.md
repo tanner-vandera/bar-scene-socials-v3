@@ -9,6 +9,7 @@
 | `haunted-bar-hop-crowd.jpg` | Both `.band--shot` backgrounds (homepage "Next up", Haunted "What you get") AND the square taped print on the tickets page, captioned "The floor". |
 | `12bars-of-christmas-hero.jpg` | Christmas hero, every Christmas event card, and the larger of the two Christmas polaroids. |
 | `12bars-of-christmas-polaroid.jpg` | The second Christmas polaroid only. |
+| `toys-for-tots-logo.webp` | The official Toys for Tots logo (owners cleared it, 11/2/26), under the $22,000+ figure on the 12 Bars page and homepage. Red on a SOLID WHITE box — drawn with `mix-blend-mode:multiply` (`.t4t-logo`) so the white drops out. Not our mark: do not recolour or crop it. |
 | `shamrock-shuffle-hero.jpg` | Shamrock hero. |
 | `shamrock-shuffle-card.jpg` | Shamrock event card. |
 | `skeleton-hand.svg` | The pointing hand anchoring each of the three costume-contest prizes on the Haunted page. Painted as a **CSS mask** (`.prize__hand`), like `bss-logo.png`, so it takes its colour from the element — do not add a recoloured copy. Cropped tight and pointing UP at 0deg; the three angles are set per column in `bss.css`. |

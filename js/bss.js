@@ -9,10 +9,23 @@
      mean hunting through the footer and the contact page separately. */
   var IG   = 'https://www.instagram.com/barscenesocials/';
   var MAIL = 'barscenesocials@gmail.com';
-  /* Ticketing is not on this site — every buy CTA hands off to TicketSignup,
-     which owns inventory, fees and the confirmation email. One constant so a
-     new event URL is a one-line change rather than a hunt through nine pages. */
-  var TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady';
+  /* Where the header "Get tickets" and the drawer ticket go. Checkout is
+     TicketSignup, not this site — but 12 Bars of Christmas sells ONE
+     TicketSignup event PER STREET, so there is no single checkout to send
+     the chrome to. It goes to the street picker on the event page instead,
+     and the three street cards there hand off to TicketSignup.
+     Internal, so it opens in the same tab (see TIX_EXT below). When the
+     next event sells through one link, point this at it again and set
+     TIX_EXT back to true. Was the Haunted Bar Hop checkout until 11/2/26. */
+  var TIX     = '/12barsofchristmas#streets';
+  var TIX_EXT = false;
+  var TIX_SUB = '12 Bars of Christmas · 12/12/26';
+  /* The date printed on a ticket's two stubs when the markup gives none.
+     The Haunted page's tickets carry their own data-date="10/31/26". */
+  var TIX_DATE = '12/12/26';
+  function tixAttrs() {
+    return TIX_EXT ? ' target="_blank" rel="noopener noreferrer"' : '';
+  }
 
   /* The three events sit in the desktop nav at wordmark size, in the
      display face — the closest thing the brand has to a per-event logo
@@ -20,10 +33,13 @@
      notes explicitly rule out. They used to carry each event's identity
      colour; they are now flat white on every page, so the only colour in
      the header is the real logo and the ticket. */
+  /* In season order from today: the one on sale first, then the next one,
+     then the one that just wrapped. Haunted stays in the nav because its
+     page is still up (the owners have not decided what it becomes). */
   var NAV = [
-    { href: '/hauntedbarhop', label: 'Haunted Bar Hop',      key: 'halloween' },
-    { href: '/12barsofchristmas',       label: '12 Bars of Christmas', key: 'christmas', soon: true },
-    { href: '/shamrockshuffle',        label: 'Shamrock Shuffle',     key: 'shamrock',  soon: true }
+    { href: '/12barsofchristmas',       label: '12 Bars of Christmas', key: 'christmas' },
+    { href: '/shamrockshuffle',        label: 'Shamrock Shuffle',     key: 'shamrock' },
+    { href: '/hauntedbarhop', label: 'Haunted Bar Hop',      key: 'halloween' }
   ];
   var MORE = [
     { href: '/tickets',       label: 'All tickets',   key: 'tickets' },
@@ -89,7 +105,7 @@
       23: { name: 'World Series', where: 'Brewers vs. Rays',
             note: ['Every game 7pm CT', '* if necessary'], tone: 'brew', big: true, tilt: -2.2 },
       31: { name: 'Haunted Bar Hop',   where: 'Brady St · 3pm',
-            ours: true, href: '/hauntedbarhop', chip: 'On sale',
+            ours: true, href: '/hauntedbarhop', chip: 'That’s a wrap',
             shot: 'haunted-bar-hop-crowd.jpg' }
     },
     spans: [
@@ -207,11 +223,29 @@
              cls: 'pin--crowded' }]
     }
   }, {
-    /* Empty for now — dates go in `events` as they are confirmed. Until
-       then the grid prints with a "nothing yet" note on it rather than
-       as a blank month that looks like it failed to load. */
+    /* The 12 Bars ticket month. More dates go in `events` as they are
+       confirmed. */
     y: 2026, m: 11,
-    events: {}
+    events: {
+      /* The day the early bird closes and full price starts. A sticker and
+         not a painted card: it is a date to know, not a night out, and the
+         painted square stays the one thing that means "come to this".
+         TicketSignup opens general admission and the team-of-four ticket
+         at 12:00am Eastern on Mon 11/16 — 11pm Central on the 15th, but
+         the 16th is the day a Milwaukee buyer sees it change. */
+      16: { name: '12 Bars GA', where: 'Full price from today',
+            tone: 'blush', tilt: 1.6 }
+    },
+    spans: [
+      /* THE EARLY BIRD, 11/3 (the owners' on-sale date) through 11/15,
+         laid across the squares the way Oktoberfest is in October. It
+         keeps the homepage's November — the month it opens on until Dec 1
+         — from printing as an empty grid, and it says what the owners
+         most want said this month: buy before the 15th. Crosses two
+         Saturdays, so it draws as three strips; the name rides the first. */
+      { from: 3, to: 15, name: '12 Bars early bird', where: '$11 · three streets',
+        tone: 'sky', lane: 0, tilt: -0.6 }
+    ]
   }, {
     y: 2026, m: 12,
     events: {
@@ -220,9 +254,10 @@
          The 12th is a Saturday, the same last-column square the 31st is,
          so the card hangs and overruns exactly the way that one does.
          No venue yet, so the line under the name is the city. */
-      12: { name: '12 Bars of Christmas', where: 'Milwaukee · 21+',
+      /* PLACEHOLDER time: 12pm is last year's start, until confirmed. */
+      12: { name: '12 Bars of Christmas', where: '3 streets · 12pm',
             ours: true, theme: 'red', href: '/12barsofchristmas',
-            chip: 'Tickets soon', shot: '12bars-of-christmas-hero.jpg',
+            chip: 'Early bird till 11/15', shot: '12bars-of-christmas-hero.jpg',
             pos: '50% 38%' }
     },
     pins: {
@@ -370,7 +405,7 @@
     var sold  = el.getAttribute('data-state') === 'sold';
     var label = el.getAttribute('data-main') || 'Get tickets';
     var note  = el.getAttribute('data-sub') || '';
-    var date  = el.getAttribute('data-date') || '10/31/26';
+    var date  = el.getAttribute('data-date') || TIX_DATE;
     var id    = 'tk' + (++TK);
 
     var W = TICKET_W, H = TICKET_H;
@@ -879,7 +914,7 @@
         '<div class="more__menu">' + moreLinks + '</div></div>' +
       '</nav>' +
       '<div class="hdr__cta" style="flex:none">' +
-        '<a class="btn btn--white" href="' + TIX + '" target="_blank" rel="noopener noreferrer">Get tickets</a>' +
+        '<a class="btn btn--white" href="' + TIX + '"' + tixAttrs() + '>Get tickets</a>' +
       '</div>' +
       '<button class="burger" type="button" data-burger>Menu</button>' +
     '</div>' +
@@ -889,9 +924,9 @@
       '<span class="kicker">Menu</span>' +
       '<button class="btn" type="button" data-close>Close</button></div>' +
       drawerLinks +
-      '<a class="ticket ticket--flat" href="' + TIX + '" target="_blank" rel="noopener noreferrer" ' +
+      '<a class="ticket ticket--flat" href="' + TIX + '"' + tixAttrs() + ' ' +
         'style="margin-top:26px" data-ticket data-main="Get tickets" ' +
-        'data-sub="Haunted Bar Hop · 10/31/26"></a>' +
+        'data-sub="' + esc(TIX_SUB) + '" data-fill="#91EC8E"></a>' +
       '</div>';
   }
 
@@ -899,8 +934,9 @@
     return '' +
     '<footer class="ftr grain grain--dark"><div class="shell" style="padding-top:clamp(44px,5vw,76px)">' +
       '<div class="ftr__grid">' +
-        '<div><p class="ftr__h">When</p><p class="small">Saturday 10/31/26<br>3–8pm</p></div>' +
-        '<div><p class="ftr__h">Where</p><p class="small">Brady Street<br>Milwaukee, Wisconsin</p></div>' +
+        // PLACEHOLDER time — last year's 12–5pm, until this year's is confirmed.
+        '<div><p class="ftr__h">When</p><p class="small">Saturday 12/12/26<br>12–5pm</p></div>' +
+        '<div><p class="ftr__h">Where</p><p class="small">Brady, Water &amp; MLK/Third<br>Milwaukee, Wisconsin</p></div>' +
         '<div><p class="ftr__h">Who</p><p class="small">21 and over<br>You\'re never too old for fun</p></div>' +
         '<div><p class="ftr__h">Find us</p><p class="small">' +
           // rel on the external link: noopener closes the window.opener
@@ -1317,7 +1353,7 @@
     logo:      'images/cursors/logo.svg'
   };
   var CURSOR_FOR = {
-    home:      'ghost',
+    home:      'snowflake',
     halloween: 'ghost',
     shamrock:  'clover',
     christmas: 'snowflake'
@@ -1536,6 +1572,13 @@
     if (drawer && burger) {
       burger.addEventListener('click', function () { drawer.classList.add('is-open'); });
       drawer.querySelector('[data-close]').addEventListener('click', function () { drawer.classList.remove('is-open'); });
+      /* Any link in the drawer closes it. A link to another page never
+         needed this, but the ticket now goes to /12barsofchristmas#streets,
+         and tapped ON that page it is a same-page jump: the drawer stayed
+         open over the street picker and the page never moved under it. */
+      drawer.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('a[href]')) drawer.classList.remove('is-open');
+      });
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') drawer.classList.remove('is-open');
       });

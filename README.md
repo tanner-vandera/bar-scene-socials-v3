@@ -6,11 +6,14 @@ Nine pages, raw HTML/CSS/JS, no build step. The architecture from
 ## Run it
 
 ```
-python3 -m http.server 5181
+/usr/bin/python3 _serve.py 5173
 ```
 
-Then <http://localhost:5181>. Or use the `bar-scene-socials-v3` config in
-`.claude/launch.json`.
+Then <http://localhost:5173>. Or use the `bar-scene-socials` config in
+`.claude/launch.json`, which runs the same thing. `_serve.py` reads
+`vercel.json`, so extension-less URLs and the redirects behave as they do on
+Vercel — a plain `http.server` 404s on `/12barsofchristmas`. (Plain `python3`
+in this folder can fail on an asdf version check; `/usr/bin/python3` avoids it.)
 
 ## Direction
 
@@ -145,10 +148,12 @@ Two traps already hit, do not undo them:
 1. **`organizer` is inlined on each event, not `{"@id": ".../#org"}`.** The
    Organization node only exists on the homepage, and a crawler parsing an event
    page on its own cannot resolve a cross-document `@id`.
-2. **Christmas and Shamrock carry a date-only `startDate` and NO `offers`.**
-   Their running times are not announced and they are not on sale; a guessed time
-   or a fake `InStock` offer is worse than an absent one. Add both together, when
-   they are real.
+2. **Shamrock carries a date-only `startDate` and NO `offers`.** Its running
+   time is not announced and it is not on sale; a guessed time or a fake
+   `InStock` offer is worse than an absent one. **12 Bars of Christmas now has
+   times** (12–5pm, last year's, placeholder until confirmed) **and gets
+   `offers` automatically** once all three `XMAS_TIX` links in `bin-seo.py` are
+   filled — see "12 Bars of Christmas" below.
 
 **Timezones are hand-checked, not guessed.** `2026-10-31T15:00:00-05:00` is CDT
 because US DST ends Sun 11/01/2026 — the day AFTER the crawl. 12/12/26 and
@@ -455,9 +460,11 @@ images never load in an offscreen iframe, so anything auditing cards must force
 
 ## Dates
 
-All dates are **MM/DD/YY** — including the ticket stubs. `MONTH` in `js/bss.js`
-and the `data-date` default on the ticket are the two places a date is defined
-in code; everything else is literal in the markup.
+All dates are **MM/DD/YY** — including the ticket stubs. `MONTHS` in `js/bss.js`
+and `TIX_DATE` (the date a ticket prints on its stubs when the markup gives no
+`data-date`) are the two places a date is defined in code; everything else is
+literal in the markup. `TIX_DATE` is 12/12/26 from 11/2/26, so the Haunted page's
+four tickets carry their own `data-date="10/31/26"`.
 
 ## The calendar
 
@@ -547,6 +554,142 @@ on, and this cell is not themed. Excluding it there is the fix — out-specifyin
 it does not work, because `.sheet.sheet .cal .dnum` is (0,4,0) and beats
 `.cal td.ours .dnum` at (0,3,1). That is exactly how the numeral first shipped
 at 2.32:1 on the orange.
+
+## 12 Bars of Christmas (2026-11-02)
+
+**The headline event from 11/2/26**, the way Haunted Bar Hop was through
+October. The owners asked for three things: make it the main page, match the
+homepage to it, and show what a ticket includes. Sources: the owners' message,
+last year's poster and last year's attendee sheet, which they said to use.
+
+**The facts, and where each came from.**
+
+- 13th annual, Saturday 12/12/26, 21+ — owners.
+- Choose from three streets: Brady Street, Water Street, MLK Drive / Third
+  Street — owners (three streets) + last year's sheet (which three).
+- Ticket includes: holiday drinking mug, passport lanyard with food & drink
+  specials, donation to Toys for Tots — owners. "No cover with your lanyard"
+  and "the best Christmas party in the city" — last year's sheet.
+- Early bird **$11 including TicketSignup's $1 fee** ($10 + $1), on sale 11/3/26,
+  **until 11/15** — owners (on-sale date, end date) + the three TicketSignup
+  pages (price). General admission and a "team of 4" ticket open Mon 11/16 at
+  12:00am Eastern; their prices are not shown yet.
+- The bars on each street, and this year's pickup bars and window (Up-Down,
+  Brothers, The New Fashioned, 10:30–11:30am) — the TicketSignup pages, 11/2.
+  The 12pm start is confirmed there too. The bar names are as TicketSignup
+  lists them, with apostrophes added (Pourman's, McGillycuddy's, Uncle Buck's)
+  and matched to the spellings the rest of the site already uses: Jo-Cats,
+  HiHat, Up-Down, and Water Street Brewery for TicketSignup's "The Brewery".
+- Over $22,000 raised for Toys for Tots since 2013 — owners.
+- No refunds (mugs and lanyards are ordered in advance), have your QR code
+  ready, ugliest sweaters encouraged — last year's sheet.
+
+**PLACEHOLDERS — last year's, until the owners confirm this year's.** Each is
+marked `PLACEHOLDER` in a comment next to it:
+
+| what | value shown | where it lives |
+| --- | --- | --- |
+| finish time | 5pm (12pm start is confirmed) | hero + closing on `12barsofchristmas.html` and `index.html`, `tickets.html`, Happening Now listing, footer + calendar in `bss.js`, `endDate` in `bin-seo.py` |
+
+The pickup bars, pickup window, bar lists and Toys for Tots logo were
+placeholders until 11/2 and are now real. The logo is
+`images/toys-for-tots-logo.webp`, the official file the owners supplied: red on
+a solid white box, so `.t4t-logo` in `bss.css` draws it with
+`mix-blend-mode:multiply` to drop the white onto the off-white band. Do not
+recolour it — it is not our mark.
+
+**"Thirteenth annual" is spelled out.** The owners flagged that the 13th year on
+December 12th is confusing when both are numerals, so the year is words and the
+date stays MM/DD/YY like the rest of the site. Keep it that way in new copy.
+
+**Three streets means three checkouts.** TicketSignup has one event per street,
+so there is no single ticket link any more:
+
+- Every "Get tickets" for 12 Bars — the hero, the closing, the header button,
+  the drawer ticket, Shamrock's "one to join now", the Happening Now row — goes
+  to the **street picker**, `#streets` on `/12barsofchristmas` (or `#streets`
+  on the homepage, which has its own copy). `TIX` in `bss.js` is now that
+  internal address, with `TIX_EXT = false` so the header no longer opens a new
+  tab. The drawer closes itself on any link tap, because on the 12 Bars page
+  that ticket is a same-page jump and the open drawer used to swallow it.
+- The street picker is the `.stubs--streets` block: the same torn `.stub`
+  cards as the Haunted price tiers, three across, red strip, no "pick" card.
+  It appears on **three pages** — `12barsofchristmas.html`, `index.html`,
+  `tickets.html` — copied verbatim.
+
+**The three ticket links** (in on 11/2, decoded from the owners' QR codes):
+
+| street | TicketSignup |
+| --- | --- |
+| Brady Street | `https://www.ticketsignup.io/TicketEvent/12barsofchristmasBradySt` |
+| Water Street | `https://www.ticketsignup.io/TicketEvent/12BarsOfChristmasWaterSt` |
+| MLK & Third | `https://www.ticketsignup.io/TicketEvent/12BarsOfChristmasThirdSt` |
+
+They are on every `[data-street]` link (three on each of `12barsofchristmas.html`,
+`index.html`, `tickets.html`) and in `XMAS_TIX` in `bin-seo.py`, which now writes
+one `Offer` per street into the Event markup: $11.00, `validThrough`
+11/15 11pm Central (= TicketSignup's 12:00am Eastern switch to general
+admission). Ask Google to re-crawl `/12barsofchristmas` in Search Console.
+
+**When early bird ends (11/16)**, everything that says "Early bird till 11/15"
+or $11 has to move to general admission:
+
+1. The three stubs ×3 pages — the `stub__amt` figure, its "early bird" label,
+   and the ticket `data-sub`. (The "Early bird is $11…" line that sat under
+   them came off all three pages on 11/2.)
+2. The "Early bird till 11/15" stickers: hero and street-picker heading on the
+   12 Bars page and homepage, the homepage event card, tickets, About; the
+   Happening Now row's `data-sub`.
+3. `bss.js`: the Dec 12 calendar chip. The November strip and 11/16 sticker
+   can stay — they are history by then.
+4. `bin-seo.py`: `XMAS_PRICE` to the general admission price (with fee),
+   `XMAS_UNTIL = ''`, and the three descriptions. Re-run it, then
+   `./bin-bump.sh`.
+
+`grep -rn "11/15\|\$11" *.html js/bss.js bin-seo.py` finds all of it.
+
+**The homepage** sections 01–05 are the 12 Bars page's own, verbatim: hero,
+the red "Ugly sweaters for a good cause" band with last year's two prints,
+"Your ticket includes", the street picker and the $22,000+ figure (which the
+owners asked to look like the Shamrock one). The event row leads with 12 Bars;
+Haunted moved to the small slot, locked, with a "That's a wrap" sticker. The
+**Event partners** carousel came off the homepage (owners' call, 11/2) and is
+not on the 12 Bars page — those are the Halloween partners, and nobody has
+confirmed them for Christmas. It still runs on the Haunted page. The Haunted-era homepage is in git history.
+
+**The Haunted page itself is mostly unchanged** (the owners are deciding what
+it becomes). Since 11/2: its tickets carry their own date, the hero line reads
+"Join us next year! · 3pm–8pm · 21+" instead of the date, and it sells nothing:
+the hero and closing tickets, the "Join the bar crawl, bring friends" price
+tiers and the Event `offers` in `bin-seo.py` are all gone (git history has them
+for next year). The hero's "On sale" sticker is the same "That's a wrap" the
+Haunted cards carry elsewhere. Best solo's prize is "Gift cards & merch", with
+`images/stickers/sticker-gift-card.svg`. The orange "Halloween day" band
+(check-in, rules) is gone, and the page now ends on Shamrock's "One to join now"
+12 Bars pitch, copied verbatim — change the two together. The header's "Get
+tickets" is the site-wide 12 Bars one and stays. Everywhere else
+it reads as wrapped: last in the nav, "That's a wrap" on its cards and its
+calendar square, off the Happening Now list.
+
+**The calendar.** Dec 12 reads "3 streets · 12pm" / "Early bird till 11/15".
+November (the month the homepage opens on until Dec 1) carries a sky-blue
+"12 Bars early bird · $11 · three streets" strip from 11/3 to 11/15, and a pink
+"12 Bars GA · Full price from today" sticker on 11/16 — strips and stickers,
+not painted squares, because they are dates to know rather than nights out.
+
+**Search & sharing.** New titles and descriptions for the homepage, 12 Bars,
+tickets, Happening Now and About, all in `bin-seo.py`. The 12 Bars title says
+"Ugly Sweater Bar Crawl" and "Milwaukee" because that is what people search in
+December, and "12 Bars of Christmas" alone is a phrase many cities share. The
+Event is one `Place` named for all three streets rather than three Events:
+Google's event results take a single location. **New share card**:
+`images/og/12barsofchristmas.jpg`, rendered from `_og-12bars.html` (local-only and git-ignored, like `_og-card.html`); the homepage
+and tickets page use it too while 12 Bars is the headline (the default card is a
+Halloween frame). `sitemap.xml` moves 12 Bars to priority 1.0 and Haunted to 0.6.
+
+**Brand note.** Last year's poster is the "legacy Swarmm-Events" look the brand
+guide says to move away from (3D clip-art Santa, bubble lettering). It was used
+for its facts only, not its look — "Swarmm Events presents" is not on the site.
 
 ## Two layout traps in this stylesheet
 
@@ -724,6 +867,17 @@ overlay onto the tape labels.
 links to. It was "What's worth leaving for".
 
 ## Still open
+
+- **12 Bars, from the owners:** this year's finish time (5pm is last year's)
+  and the general admission and team-of-four prices from 11/16.
+- **On the owners' own TicketSignup pages** (not ours to fix, worth telling
+  them): the Water Street page says "Saturday, December 13th" — the event is
+  the 12th; the Brady Street page says "raised over $20,000" where the other
+  two and this site say $22,000.
+- **What becomes of the Haunted page** now that the crawl has happened.
+- `images/og/default.jpg` says "Since 2018" over a Halloween frame. 12 Bars is
+  in its thirteenth year (since 2013) and Shamrock its eighteenth, so "since
+  2018" reads oddly next to them — worth checking with the owners.
 
 - **Tickets as a page or a header button?** Both exist right now — the page,
   and the persistent Admit One button in the header. Not yet decided.

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="22 72 386 286" width="386" height="286">
+  <!-- Cut from source/gift-card.svg (the "wired-flat 1369 gift card" icon):
+       cropped from its 430x430 frame to the card itself, the duplicate
+       animation frames dropped, and the same #FFFDF7 die-cut edge the Bucks
+       and Admirals stickers carry, 8 units wide around the card. -->
+  <rect x="22" y="72" width="386" height="286" rx="28" fill="#FFFDF7"/>
+  <path fill="#FFC738" d="M50 80c-11.046 0-20 8.954-20 20v230c0 11.046 8.954 20 20 20h330c11.046 0 20-8.954 20-20V100c0-11.046-8.954-20-20-20H50z"/>
+  <path fill="#FFC738" opacity=".5" style="mix-blend-mode:multiply" d="M29.598 100.65c-.039-11.047 8.883-20.032 19.93-20.07l30-.106c-11.047.039-19.97 9.024-19.93 20.07l.806 229.999c.04 11.046 9.025 19.968 20.07 19.93l-30 .105c-11.045.038-20.03-8.884-20.07-19.93l-.806-229.999z"/>
+  <path fill="none" stroke="#F24C00" stroke-width="20" d="M30.002 215h200m0 0h170m-250-25V80m0 270.417L150.004 190"/>
+  <path fill="none" stroke="#3A3347" stroke-linecap="round" stroke-width="7" d="M360.002 310h-40m-30 0h-100"/>
+  <g fill="#F24C00">
+    <path d="M230.009 244.887v-59.774c0-11.35-12.118-18.588-22.111-13.207l-40.231 21.663v42.862l40.231 21.663c9.993 5.381 22.111-1.857 22.111-13.207zm-160.009 0v-59.774c0-11.35 12.118-18.588 22.111-13.207l40.231 21.663v42.862l-40.231 21.663C82.118 263.475 70 256.237 70 244.887z"/>
+    <path fill-opacity=".5" style="mix-blend-mode:multiply" transform="translate(101.171 238.333)" d="M-31.171 6.717v-20c0 11.35 12.118 18.588 22.111 13.207l40.231-21.662v20L-9.06 19.924c-9.993 5.381-22.111-1.857-22.111-13.207z"/>
+    <path fill-opacity=".5" style="mix-blend-mode:multiply" transform="matrix(-1 0 0 1 198.838 238.333)" d="M-31.171 6.717v-20c0 11.35 12.118 18.588 22.111 13.207l40.231-21.662v20L-9.06 19.924c-9.993 5.381-22.111-1.857-22.111-13.207z"/>
+    <path d="M139.671 190c-5.523 0-10 4.477-10 10v30c0 5.523 4.477 10 10 10h20c5.523 0 10-4.477 10-10v-30c0-5.523-4.477-10-10-10h-20z"/>
+    <path fill-opacity=".5" style="mix-blend-mode:multiply" transform="translate(149.671 215)" d="M-10-25c-5.523 0-10 4.477-10 10v30c0 5.523 4.477 10 10 10h20c5.523 0 10-4.477 10-10v-30c0-5.523-4.477-10-10-10h-20z"/>
+    <path fill-opacity=".5" style="mix-blend-mode:multiply" transform="translate(140.004 215)" d="M-10 15c0 5.523 4.477 10 10 10h10v-50H0c-5.523 0-10 4.477-10 10v30z"/>
+  </g>
+</svg>

@@ -71,6 +71,7 @@ beside it, and a screen reader should not read the collage twice.
 |---|---|---|
 | `sticker-bucks.png` | Haunted Bar Hop, Best duo prize | Built from `source/buckslogo.png` with a #FFFDF7 die-cut edge baked in |
 | `sticker-admirals.png` | Haunted Bar Hop, Best group prize | Built from `source/admiralslogo.png`, same edge |
+| `sticker-gift-card.svg` | Haunted Bar Hop, Best solo prize ("Gift cards & merch") | Cut from `source/gift-card.svg` (the "wired-flat 1369 gift card" icon): cropped from its 430px square to the card, duplicate animation frames dropped, same #FFFDF7 edge. Landscape, so at the shared sticker height it runs wider than the two team marks |
 
 `source/` holds the original team artwork the stickers were cut from. The
 pages never load it; it is here so a sticker can be re-cut at another size.
