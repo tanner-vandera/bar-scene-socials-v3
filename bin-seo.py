@@ -9,7 +9,7 @@ SITE = 'https://www.barscenesocials.com'
 # Cache-bust token for assets replaced UNDER THEIR EXISTING NAME. Kept in
 # step with the stylesheets by bin-bump.sh, which rewrites every ?v= in the
 # HTML; the value here only matters when this script regenerates the block.
-ASSET_V = '1793654911'
+ASSET_V = '1794878090'
 TIX  = 'https://www.ticketsignup.io/TicketEvent/HauntedBarHopOnBrady'
 IG   = 'https://www.instagram.com/barscenesocials/'
 
@@ -34,16 +34,16 @@ XMAS_TIX = {
     'water': ('Water Street', 'https://www.ticketsignup.io/TicketEvent/12BarsOfChristmasWaterSt'),
     'mlk':   ('MLK & Third',  'https://www.ticketsignup.io/TicketEvent/12BarsOfChristmasThirdSt'),
 }
-# EARLY BIRD, quoted WITH the fee like the Haunted prices: TicketSignup
-# shows "$11 incl. $1 Fee" on all three. It ends when general admission
-# opens, which TicketSignup publishes as "Mon November 16, 2026 at
-# 12:00am EST" — 11pm Central on the 15th, so that is validThrough.
-# No validFrom: the links were live on 11/2 though the owners said 11/3,
-# and a guessed start date is worse than none.
-# WHEN EARLY BIRD ENDS: change XMAS_PRICE to the general admission price
-# TicketSignup then shows (with fee), and drop XMAS_UNTIL.
-XMAS_PRICE = '11.00'
-XMAS_UNTIL = '2026-11-15T23:00:00-06:00'
+# GENERAL ADMISSION since 11/16/26, quoted WITH the fee like the Haunted
+# prices: TicketSignup shows "$15.63 incl. $1.63 Fee" on all three streets
+# ($14.00 base). The "Team of 4" ticket ($52.67 incl. $2.67 fee, $50.00
+# base) is shown on the pages but not offered here: one Offer per street
+# at the single price keeps Google's "from" price honest.
+# No validThrough: GA runs to the event, and TicketSignup gives no end.
+# Early bird was $11.00 (incl. $1 fee), validThrough 2026-11-15T23:00-06:00
+# — in git history.
+XMAS_PRICE = '15.63'
+XMAS_UNTIL = ''
 
 def xmas_offers():
     if not all(u for _, u in XMAS_TIX.values()):
@@ -91,7 +91,7 @@ PAGES = {
    title="Bar Scene Socials — Milwaukee's Most Anticipated Bar Crawls",
    # Leads with whichever event is on sale — 12 Bars from 11/2/26.
    desc=("12 Bars of Christmas, Saturday 12/12/26 — Milwaukee's ugly sweater bar crawl on "
-         "three streets, benefiting Toys for Tots. $11 early bird through 11/15. 21+."),
+         "three streets, benefiting Toys for Tots. Tickets $15.63. 21+."),
    ogtype='website',
    ld=[{"@context":"https://schema.org","@graph":[
         ORG,
@@ -122,7 +122,7 @@ PAGES = {
    # so Milwaukee goes in the title, not just the description.
    title="12 Bars of Christmas 2026 — Milwaukee Ugly Sweater Bar Crawl",
    desc=("Saturday 12/12/26, 12–5pm. Pick Brady Street, Water Street or MLK & Third. "
-         "Holiday mug, lanyard, donation to Toys for Tots. $11 early bird to 11/15. 21+."),
+         "Holiday mug, lanyard, donation to Toys for Tots. Tickets $15.63. 21+."),
    ogtype='article',
    # 12pm start confirmed by TicketSignup (11/2). PLACEHOLDER: the 5pm
    # finish is last year's, shown on the page too until the owners confirm
@@ -153,8 +153,8 @@ PAGES = {
  'tickets.html': dict(
    url='/tickets', slug='12barsofchristmas',
    title="Tickets — 12 Bars of Christmas, Milwaukee 12/12/26",
-   desc=("12 Bars of Christmas tickets, 12/12/26: choose Brady Street, Water Street or "
-         "MLK & Third. $11 early bird through 11/15, with a holiday mug and lanyard. 21+."),
+   desc=("12 Bars of Christmas tickets, 12/12/26: Brady Street, Water Street or MLK & Third. "
+         "$15.63, or $52.67 for a team of four. Mug and lanyard included. 21+."),
    ogtype='website', ld=[]),
 
  'happeningnow.html': dict(
