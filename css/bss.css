@@ -2989,6 +2989,10 @@ a.card:hover{--tx:-3px; --ty:-3px; box-shadow:6px 7px 0 var(--ink)}
 .stub__amt sup{font-size:.8em; vertical-align:.18em; letter-spacing:0; margin-right:.06em}
 .stub__ea{font:500 12px/1 var(--body); letter-spacing:.16em;
   text-transform:uppercase; color:var(--text-3); margin-left:.5em; vertical-align:0}
+/* Two prices on one card (12 Bars GA: single, then team of four) read as
+   one pair, so the second sits tight under the first instead of taking
+   the full gap that separates the price from the tier name. */
+.stub__amt + .stub__amt{margin-top:6px}
 .stub__note{font:400 15px/1.5 var(--body); color:var(--text-2); margin:clamp(10px,1.2vw,16px) 0 0}
 .stub .ticket{margin-top:clamp(14px,1.8vw,22px); pointer-events:none}
 

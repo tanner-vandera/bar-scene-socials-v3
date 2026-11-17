@@ -254,10 +254,12 @@
          The 12th is a Saturday, the same last-column square the 31st is,
          so the card hangs and overruns exactly the way that one does.
          No venue yet, so the line under the name is the city. */
-      /* PLACEHOLDER time: 12pm is last year's start, until confirmed. */
+      /* PLACEHOLDER time: 12pm is last year's start, until confirmed.
+         The chip read "Early bird till 11/15" until general admission
+         opened on 11/16; it now matches the "On sale now" stickers. */
       12: { name: '12 Bars of Christmas', where: '3 streets · 12pm',
             ours: true, theme: 'red', href: '/12barsofchristmas',
-            chip: 'Early bird till 11/15', shot: '12bars-of-christmas-hero.jpg',
+            chip: 'On sale now', shot: '12bars-of-christmas-hero.jpg',
             pos: '50% 38%' }
     },
     pins: {

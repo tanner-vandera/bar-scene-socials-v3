@@ -570,10 +570,16 @@ last year's poster and last year's attendee sheet, which they said to use.
 - Ticket includes: holiday drinking mug, passport lanyard with food & drink
   specials, donation to Toys for Tots — owners. "No cover with your lanyard"
   and "the best Christmas party in the city" — last year's sheet.
-- Early bird **$11 including TicketSignup's $1 fee** ($10 + $1), on sale 11/3/26,
-  **until 11/15** — owners (on-sale date, end date) + the three TicketSignup
-  pages (price). General admission and a "team of 4" ticket open Mon 11/16 at
-  12:00am Eastern; their prices are not shown yet.
+- **General admission since Mon 11/16/26** (TicketSignup switched at 12:00am
+  Eastern), the same on all three streets — read off the three TicketSignup
+  pages on 11/16:
+  - Single: **$15.63 including TicketSignup's $1.63 fee** ($14.00 + $1.63).
+  - Team of 4: **$52.67 including a $2.67 fee** ($50.00 + $2.67), $13.17 each.
+    TicketSignup also prints a strikethrough "$58.85" next to it; the site does
+    not repeat that, and does not quote a saving, because $58.85 is not four
+    singles (4 × $15.63 = $62.52) and the two numbers would disagree.
+- Early bird was **$11 including a $1 fee** ($10 + $1), 11/3/26 to 11/15 —
+  owners (dates) + TicketSignup (price).
 - The bars on each street, and this year's pickup bars and window (Up-Down,
   Brothers, The New Fashioned, 10:30–11:30am) — the TicketSignup pages, 11/2.
   The 12pm start is confirmed there too. The bar names are as TicketSignup
@@ -627,26 +633,33 @@ so there is no single ticket link any more:
 
 They are on every `[data-street]` link (three on each of `12barsofchristmas.html`,
 `index.html`, `tickets.html`) and in `XMAS_TIX` in `bin-seo.py`, which now writes
-one `Offer` per street into the Event markup: $11.00, `validThrough`
-11/15 11pm Central (= TicketSignup's 12:00am Eastern switch to general
-admission). Ask Google to re-crawl `/12barsofchristmas` in Search Console.
+one `Offer` per street into the Event markup: $15.63 general admission, no
+`validThrough` (it runs to the event). The team-of-four ticket is on the pages
+but not in the markup, so Google's "from" price is the single ticket. Ask
+Google to re-crawl `/12barsofchristmas` in Search Console after a price change.
 
-**When early bird ends (11/16)**, everything that says "Early bird till 11/15"
-or $11 has to move to general admission:
+**Early bird → general admission, done 11/16/26.** What moved, so the next
+price change (or next year's early bird) knows where to look:
 
-1. The three stubs ×3 pages — the `stub__amt` figure, its "early bird" label,
-   and the ticket `data-sub`. (The "Early bird is $11…" line that sat under
-   them came off all three pages on 11/2.)
-2. The "Early bird till 11/15" stickers: hero and street-picker heading on the
-   12 Bars page and homepage, the homepage event card, tickets, About; the
-   Happening Now row's `data-sub`.
-3. `bss.js`: the Dec 12 calendar chip. The November strip and 11/16 sticker
-   can stay — they are history by then.
-4. `bin-seo.py`: `XMAS_PRICE` to the general admission price (with fee),
-   `XMAS_UNTIL = ''`, and the three descriptions. Re-run it, then
-   `./bin-bump.sh`.
+1. The three street stubs ×3 pages (`12barsofchristmas.html`, `index.html`,
+   `tickets.html`) now carry **two** `stub__amt` lines: "$15.63 general
+   admission" and "$52.67 team of four". `.stub__amt + .stub__amt` in
+   `bss.css` pulls the second one up under the first so they read as a pair.
+   The ticket `data-sub` on each stub reads "On sale now".
+2. The status stickers that said "Early bird till 11/15" now say **"On sale
+   now"**: the hero on the 12 Bars page and homepage, the homepage event card,
+   the tickets-page pitch row, About, and the Happening Now row's `data-sub`.
+   The sticker beside the "Choose from three streets" heading (12 Bars page
+   and homepage) says **"Fees included"** instead, because it sits right
+   above the prices and that is the thing a buyer wants to know there.
+3. `bss.js`: the Dec 12 calendar chip reads "On sale now". The November
+   early-bird strip (11/3–11/15) and the 11/16 "12 Bars GA" sticker stay as
+   history.
+4. `bin-seo.py`: `XMAS_PRICE = '15.63'`, `XMAS_UNTIL = ''`, and the homepage,
+   12 Bars and tickets descriptions. Re-run it, then `./bin-bump.sh`.
 
-`grep -rn "11/15\|\$11" *.html js/bss.js bin-seo.py` finds all of it.
+`grep -rn '15\.63\|52\.67\|On sale now\|Fees included' *.html js/bss.js bin-seo.py`
+finds all of it.
 
 **The homepage** sections 01–05 are the 12 Bars page's own, verbatim: hero,
 the red "Ugly sweaters for a good cause" band with last year's two prints,
@@ -671,7 +684,8 @@ tickets" is the site-wide 12 Bars one and stays. Everywhere else
 it reads as wrapped: last in the nav, "That's a wrap" on its cards and its
 calendar square, off the Happening Now list.
 
-**The calendar.** Dec 12 reads "3 streets · 12pm" / "Early bird till 11/15".
+**The calendar.** Dec 12 reads "3 streets · 12pm" / "On sale now" (it said
+"Early bird till 11/15" until general admission opened on 11/16).
 November (the month the homepage opens on until Dec 1) carries a sky-blue
 "12 Bars early bird · $11 · three streets" strip from 11/3 to 11/15, and a pink
 "12 Bars GA · Full price from today" sticker on 11/16 — strips and stickers,
@@ -868,8 +882,9 @@ links to. It was "What's worth leaving for".
 
 ## Still open
 
-- **12 Bars, from the owners:** this year's finish time (5pm is last year's)
-  and the general admission and team-of-four prices from 11/16.
+- **12 Bars, from the owners:** this year's finish time (5pm is last year's).
+  (The general admission and team-of-four prices came in 11/16 — see "12 Bars
+  of Christmas".)
 - **On the owners' own TicketSignup pages** (not ours to fix, worth telling
   them): the Water Street page says "Saturday, December 13th" — the event is
   the 12th; the Brady Street page says "raised over $20,000" where the other
