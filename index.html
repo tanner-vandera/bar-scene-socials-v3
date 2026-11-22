@@ -29,7 +29,7 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 <!-- SEO:begin — generated, see README "Search & sharing" -->
 <link rel="canonical" href="https://www.barscenesocials.com/">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=1795373822" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=1795375914" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#111110">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
@@ -39,20 +39,20 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
 <meta property="og:url" content="https://www.barscenesocials.com/">
 <meta property="og:title" content="Bar Scene Socials — Milwaukee's Most Anticipated Bar Crawls">
 <meta property="og:description" content="12 Bars of Christmas, Saturday 12/12/26 — Milwaukee's ugly sweater bar crawl on three streets, benefiting Toys for Tots. Tickets $15.63. 21+.">
-<meta property="og:image" content="https://www.barscenesocials.com/images/og/12barsofchristmas.jpg?v=1795373822">
+<meta property="og:image" content="https://www.barscenesocials.com/images/og/12barsofchristmas.jpg?v=1795375914">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bar Scene Socials — Milwaukee's Most Anticipated Bar Crawls">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bar Scene Socials — Milwaukee's Most Anticipated Bar Crawls">
 <meta name="twitter:description" content="12 Bars of Christmas, Saturday 12/12/26 — Milwaukee's ugly sweater bar crawl on three streets, benefiting Toys for Tots. Tickets $15.63. 21+.">
-<meta name="twitter:image" content="https://www.barscenesocials.com/images/og/12barsofchristmas.jpg?v=1795373822">
+<meta name="twitter:image" content="https://www.barscenesocials.com/images/og/12barsofchristmas.jpg?v=1795375914">
 <meta name="geo.region" content="US-WI">
 <meta name="geo.placename" content="Milwaukee">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.barscenesocials.com/#org","name":"Bar Scene Socials","url":"https://www.barscenesocials.com/","logo":"https://www.barscenesocials.com/images/bss-logo.svg","email":"barscenesocials@gmail.com","sameAs":["https://www.instagram.com/barscenesocials/"],"areaServed":{"@type":"City","name":"Milwaukee","addressRegion":"WI"}},{"@type":"WebSite","@id":"https://www.barscenesocials.com/#site","url":"https://www.barscenesocials.com/","name":"Bar Scene Socials","publisher":{"@id":"https://www.barscenesocials.com/#org"},"inLanguage":"en-US"}]}</script>
 <!-- SEO:end -->
-<link rel="stylesheet" href="css/fonts.css?v=1795373822">
-<link rel="stylesheet" href="css/bss.css?v=1795373822">
+<link rel="stylesheet" href="css/fonts.css?v=1795375914">
+<link rel="stylesheet" href="css/bss.css?v=1795375914">
 </head>
 <body data-page="home" class="has-hero">
 <div id="chrome-header"></div>
@@ -65,13 +65,17 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
        The Haunted version of this page is in git history (before
        11/2/26) if it is ever wanted back for next October.
 
-       --hero-b: this frame is flash-lit and much brighter than the street
+       --hero-b / --hero-pos: re-measured 11/22/26 for 12bars-of-christmas-
+       hero-2.jpg with _audit.js at 1440x900. At the old .7 / 50% the red
+       "Christmas" scored 2.87 against a 3:1 floor (the lit faces sit right
+       behind it); 70% / .62 puts it at 3.25, level with the old photo's
+       3.29. This frame is flash-lit and much brighter than the street
        shots the .93 default was set for. See the note on
        .hero--shot:has(.fx--red) > .hero__scrim — the two were measured
        together and only work as a pair. -->
-  <section class="hero hero--shot grain" style="--hero-b:.7">
+  <section class="hero hero--shot grain" style="--hero-b:.62; --hero-pos:70%">
     <div class="hero__media hero__media--shot">
-      <img src="images/12bars-of-christmas-hero.jpg" alt="Five people crowded together in a Milwaukee bar on the 12 Bars of Christmas, all in Christmas sweaters, holding green holiday mugs under strings of lights" decoding="async" fetchpriority="high" width="1800" height="1199">
+      <img src="images/12bars-of-christmas-hero-2.jpg" alt="Friends in ugly Christmas sweaters cheering in a Milwaukee bar on the 12 Bars of Christmas, two of them laughing with red cups raised under a glowing copper ceiling" decoding="async" fetchpriority="high" width="1365" height="1200">
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__inner">
@@ -100,22 +104,23 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
           </div>
         </div>
       </div>
-      <!-- Two real photographs from last year, deliberately unequal
-           (1.62fr / 1fr), each in its own orientation — two prints pinned
-           to a wall rather than a two-up grid. index.html carries the same
-           pair. On phones .c-wide-left stacks them in this order. -->
-      <div class="cols c-wide-left" data-reveal style="align-items:start; margin-top:clamp(34px,4.4vw,64px)">
-        <div class="taped tilt-1">
-          <div class="photo ar-43">
-            <img src="images/12bars-of-christmas-hero.jpg"
-                 alt="Five people in Christmas sweaters packed together at the bar, holding green holiday mugs" loading="lazy" decoding="async" width="1800" height="1199">
-          </div>
+      <!-- Three real photographs from last year, in one row of 3:4 prints,
+           the same .c-3 row the Haunted page uses. index.html carries the
+           same three; change both together. "The sweaters" was the hero
+           until 11/22/26, when 12bars-of-christmas-hero-2.jpg took over; it
+           stays on as a print. On phones .c-3 stacks them in this order. -->
+      <div class="cols c-3" data-reveal style="align-items:start; margin-top:clamp(34px,4.4vw,64px)">
+        <div class="taped tilt-1"><div class="photo ar-34">
+            <img src="images/12bars-of-christmas-sweaters.jpg"
+                 alt="Five people in Christmas sweaters packed together at the bar, holding green holiday mugs" loading="lazy" decoding="async" width="1800" height="1199"></div>
           <span class="taped__cap">The sweaters</span></div>
-        <div class="taped tilt-3">
-          <div class="photo ar-34">
+        <div class="taped tilt-3"><div class="photo ar-34">
+            <img src="images/12bars-of-christmas-polaroid-2.jpg"
+                 alt="Two friends in matching striped Christmas pyjamas and Santa hats leaning in together at the bar, green holiday mugs lined up in front of them" loading="lazy" decoding="async" width="1800" height="1199"></div>
+          <span class="taped__cap">The mugs</span></div>
+        <div class="taped tilt-2"><div class="photo ar-34">
             <img src="images/12bars-of-christmas-polaroid.jpg"
-                 alt="Someone dancing in the middle of the bar in Christmas pyjamas, arms up, the room going with them" loading="lazy" decoding="async" width="900" height="1170">
-          </div>
+                 alt="Someone dancing in the middle of the bar in Christmas pyjamas, arms up, the room going with them" loading="lazy" decoding="async" width="900" height="1170"></div>
           <span class="taped__cap">The cheer</span></div>
       </div>
     </div>
@@ -259,7 +264,7 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
       <div class="cols c-wide-left" data-reveal style="align-items:start">
         <a class="event" href="/12barsofchristmas">
           <div class="photo event__shot ar-169">
-            <img src="images/12bars-of-christmas-hero.jpg" alt="" loading="lazy" decoding="async" width="1800" height="1199">
+            <img src="images/12bars-of-christmas-hero-2.jpg" alt="" loading="lazy" decoding="async" width="1365" height="1200">
             <h3 class="event__title fx fx--red fx--split"><span class="ink ink--white">12 Bars of</span> <br><em class="scr ink ink--red">Christmas</em></h3>
           </div>
           <div class="event__meta">
@@ -359,6 +364,6 @@ w.setTimeout(function(){if(!w.__bssBooted)del('has-js')},2500);
      deployment, so there is no key to configure and nothing to build.
      It 404s harmlessly on localhost — data only appears once deployed. -->
 <script defer src="/_vercel/insights/script.js"></script>
-<script src="js/bss.js?v=1795373822"></script>
+<script src="js/bss.js?v=1795375914"></script>
 </body>
 </html>

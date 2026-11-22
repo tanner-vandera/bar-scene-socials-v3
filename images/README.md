@@ -7,8 +7,10 @@
 | `haunted-bar-hop-hero.jpg` | **The official Haunted picture.** Homepage hero, Haunted page hero, and every Haunted event card (homepage, about, Christmas and Shamrock pitch cards). Three crawlers in Spider-Man suits. Portrait 2:3 — see the crop note below. |
 | `haunted-bar-hop-polaroid-1/2/3.jpg` | The three taped prints, on BOTH the homepage and the Haunted page. Those two rows are deliberately identical — change one, change the other. |
 | `haunted-bar-hop-crowd.jpg` | Both `.band--shot` backgrounds (homepage "Next up", Haunted "What you get") AND the square taped print on the tickets page, captioned "The floor". |
-| `12bars-of-christmas-hero.jpg` | Christmas hero, every Christmas event card, and the larger of the two Christmas polaroids. |
-| `12bars-of-christmas-polaroid.jpg` | The second Christmas polaroid only. |
+| `12bars-of-christmas-hero-2.jpg` | **The official 12 Bars picture (11/22/26).** Christmas hero (homepage + 12 Bars page), every Christmas event card (homepage, about, Haunted and Shamrock pitch cards, the Happening Now calendar), and the 12 Bars share card. Cropped from the owners' IMG_9023 (portrait 1365x2048) to 1365x1200, faces centred; the crop also trims the photographer's and "12BOC" watermarks off the bottom. |
+| `12bars-of-christmas-sweaters.jpg` | The hero until 11/22/26 (renamed from `12bars-of-christmas-hero.jpg`). Now only the "The sweaters" print on the homepage and 12 Bars page. |
+| `12bars-of-christmas-polaroid-2.jpg` | "The mugs" print, homepage and 12 Bars page. The owners' IMG_9020, resized to 1800 wide. |
+| `12bars-of-christmas-polaroid.jpg` | "The cheer" print (homepage, 12 Bars page) and the tickets page print. |
 | `toys-for-tots-logo.webp` | The official Toys for Tots logo (owners cleared it, 11/2/26), under the $22,000+ figure on the 12 Bars page and homepage. Red on a SOLID WHITE box — drawn with `mix-blend-mode:multiply` (`.t4t-logo`) so the white drops out. Not our mark: do not recolour or crop it. |
 | `shamrock-shuffle-hero.jpg` | Shamrock hero. |
 | `shamrock-shuffle-card.jpg` | Shamrock event card. |
@@ -97,6 +99,9 @@ The cards in `og/` are separate 1200x630 renders. They do NOT update when a hero
 changes, so swapping a hero without re-rendering means every share on iMessage,
 Facebook and Twitter keeps showing the old photograph.
 
+- `og/12barsofchristmas.jpg` — the 12 Bars card, fronting the homepage, the
+  12 Bars page and tickets. Re-rendered 11/22/26 over `12bars-of-christmas-hero-2.jpg`
+  from `_og-12bars.html`.
 - `og/hauntedbarhop.jpg` — the event card. Haunted headline over the Spider-Man
   picture. Rendered from `_og-card.html`.
 - `og/default.jpg` — the BRAND card: "Bar Scene Socials / Milwaukee bar crawls ·
