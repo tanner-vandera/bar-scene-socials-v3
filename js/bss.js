@@ -27,6 +27,84 @@
     return TIX_EXT ? ' target="_blank" rel="noopener noreferrer"' : '';
   }
 
+  /* 12 BARS OF CHRISTMAS PARTNERS — the ONE list behind every
+     <div class="partners" data-partners="christmas"> on the site: the
+     homepage, /12barsofchristmas and the lanyard specials page. Swap a
+     logo here and all three change. The specials page also reads this
+     (window.BSS_PARTNERS) to put the right logo on a sponsored special.
+
+     The confirmed 12 Bars partners (2026-11-22). Jameson and Sun Cruiser
+     were Halloween partners too and reuse those files. Logos live in
+     images/sponsors/ as white-on-transparent art, because the strip
+     sits on a dark band.
+
+       id    what a sponsored special on the specials page points at
+       name  the alt text — the partner's name as they write it
+       src   the file in images/sponsors/
+       k     optical size nudge (1 = default). Logos are matched on
+             height, so a square mark needs ~1.4 and a very wide one ~.8 */
+  var XMAS_PARTNERS = [
+    { id:'millerlite', name:'Miller Lite',     src:'millerlite.png', k:1.15 },
+    { id:'coorslight', name:'Coors Light',     src:'coorslight.png', k:1.4 },
+    { id:'bluemoon',   name:'Blue Moon',       src:'bluemoon.png',   k:1.2 },
+    { id:'absolut',    name:'Absolut Vodka',   src:'absolut.png',    k:.85 },
+    { id:'jameson',    name:'Jameson',         src:'jameson.png',    k:1 },
+    { id:'suncruiser', name:'Sun Cruiser',     src:'suncruiser.png', k:.98 }
+  ];
+  window.BSS_PARTNERS = { christmas: XMAS_PARTNERS };
+
+  /* Draws the same .partners strip the Haunted page has in static
+     markup: a "set" of marks, then the same set again, the copies
+     aria-hidden, 3s per mark (see .partners in bss.css for why both
+     halves must match).
+
+     THE SET MUST BE AT LEAST AS WIDE AS THE STRIP. The loop slides
+     exactly one set to the left and starts over, so if one set is
+     narrower than the strip, the end of every cycle shows empty space
+     and then a visible jump. With small logos (the specials page) or a
+     wide screen, six marks are not enough — so the set repeats the
+     list as many times as it takes, re-measured once the logos have
+     loaded and whenever the window is resized. */
+  function partners(el) {
+    var list = window.BSS_PARTNERS[el.getAttribute('data-partners')];
+    if (!list || !list.length) return;
+    var reps = 1;
+    function item(p, hidden) {
+      return '<li class="partners__item"' + (hidden ? ' aria-hidden="true"' : '') + '>' +
+        '<img src="/images/sponsors/' + esc(p.src) + '" alt="' + (hidden ? '' : esc(p.name)) + '"' +
+        ' style="--k:' + (p.k || 1) + '" decoding="async"></li>';
+    }
+    function draw() {
+      var set = [];
+      for (var r = 0; r < reps; r++) set = set.concat(list);
+      el.innerHTML = '<ul class="partners__track" style="animation-duration:' + (set.length * 3) + 's">' +
+        set.map(function (p, i) { return item(p, i >= list.length); }).join('') +
+        set.map(function (p) { return item(p, true); }).join('') + '</ul>';
+      [].forEach.call(el.querySelectorAll('img'), function (img) {
+        if (!img.complete) img.addEventListener('load', fit, { once: true });
+      });
+    }
+    /* Grow the set until one set covers the strip. Only grows — a set
+       that is too WIDE costs nothing — and is capped so a strip that
+       measures 0 (hidden, not laid out yet) cannot loop forever. */
+    function fit() {
+      var track = el.firstElementChild;
+      if (!track || !el.clientWidth) return;
+      // measure only once every logo has its real width
+      if ([].some.call(track.querySelectorAll('img'), function (i) { return !i.complete; })) return;
+      var setW = track.scrollWidth / 2;
+      if (setW > 0 && setW < el.clientWidth && reps < 8) {
+        var oneList = setW / reps;           // the six marks, once
+        reps = Math.min(8, Math.ceil(el.clientWidth / oneList));
+        draw();
+      }
+    }
+    draw();
+    fit();
+    var t;
+    window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(fit, 150); });
+  }
+
   /* The three events sit in the desktop nav at wordmark size, in the
      display face — the closest thing the brand has to a per-event logo
      without drawing a literal pumpkin/tree/shamrock, which the brand
@@ -1520,6 +1598,8 @@
     [].forEach.call(document.querySelectorAll('[data-month-label]'), function (el) {
       el.textContent = MONTH.label;
     });
+
+    [].forEach.call(document.querySelectorAll('[data-partners]'), partners);
 
     [].forEach.call(document.querySelectorAll('[data-ticket]'), function (el, i) {
       ticket(el);

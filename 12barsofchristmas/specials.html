@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- ── LANYARD SPECIALS — /12barsofchristmas/specials ──────────────
+     The page the QR code on the 12 Bars lanyard opens. It is for people
+     already ON the crawl, standing in a bar with a phone, so it is built
+     phone-first and has none of the selling chrome: no site header, no
+     "Get tickets", no footer.
+
+     SPONSOR SPECIALS ONLY (owners' call, 11/22). The page used to list
+     every bar's own deals; those are gone; each bar's deals are now
+     "ask your bartender". What is left is one card per sponsor deal —
+     logo, drink, price — set to be read in two seconds in a dark bar.
+
+     DELIBERATELY UNLISTED. It is not in the nav (js/bss.js), not in the
+     PAGES table in bin-seo.py, not in sitemap.xml, and it carries
+     noindex below. It is NOT in robots.txt either — a Disallow line there
+     would publish the URL to anyone who reads that file. Unlisted, not
+     secret: anyone with the link can open it.
+
+     <base href="/"> is load-bearing. This is the only page that lives
+     one folder down, and js/bss.js builds a few image paths relative
+     ("images/cursors/…"). The base makes those resolve from the site
+     root exactly as they do on every other page.
+
+     THE STREET SWITCHER only appears when at least one special is
+     limited to some streets. If every special runs on every street, it
+     hides itself and the page is just the list. When it shows,
+     ?street=brady | water | mlk preselects a street (one QR per street's
+     lanyard, if the owners want), else the street last picked on this
+     phone, else Brady. -->
+<base href="/">
+<title>12 Bars of Christmas — Today's Specials</title>
+<meta name="description" content="Today's sponsor specials for 12 Bars of Christmas lanyard holders, Saturday 12/12/26.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#B8141C">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/fonts.css?v=1795373822">
+<link rel="stylesheet" href="/css/bss.css?v=1795373822">
+<style>
+  /* Page-local on purpose: nothing else on the site uses these, and the
+     page is meant to be easy to delete after the event. Everything is
+     built from the tokens in bss.css. */
+  body.sp{padding-top:0; padding-bottom:env(safe-area-inset-bottom)}
+  .sp-wrap{max-width:640px; margin:0 auto; padding-inline:18px}
+
+  /* ── top strip ─────────────────────────────────────────── */
+  .sp-top{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+    background:var(--red-d); color:#F8F8F6;
+  }
+  .sp-top .lockup{color:#F8F8F6}
+  .sp-top .lockup__logo{width:96px}
+  .sp-top .sticker{background:rgba(17,17,16,.28); color:#F8F8F6}
+
+  /* ── head ──────────────────────────────────────────────── */
+  .sp-head{background:var(--red-d); color:#F8F8F6; padding:10px 18px 34px}
+  .sp-head .kicker{color:rgba(248,248,246,.8)}
+  .sp-head h1{
+    font-size:clamp(64px, 19vw, 120px); line-height:.5; color:#F8F8F6;
+    margin:22px 0 18px;
+  }
+  .sp-head h1 .scr{color:#FFE7E8}
+  .sp-head p{margin:0; max-width:34ch; font-size:16px; line-height:1.5; color:rgba(248,248,246,.88)}
+
+  /* ── partners strip — the shared .partners carousel, smaller ── */
+  .sp-partners{padding:26px 0 22px}
+  .sp-partners .kicker{text-align:center; margin-bottom:16px}
+  .sp-partners .partners__item{margin-right:44px}
+  .sp-partners .partners__item img{height:calc(44px * var(--k,1))}
+
+  /* ── street switcher — sticks to the top while you scroll ── */
+  .sp-bar{
+    position:sticky; top:0; z-index:20; background:var(--paper);
+    padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
+    border-bottom:1px solid var(--rule);
+  }
+  .sp-bar[hidden]{display:none}
+  .sp-streets{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:4px;
+    padding:4px; border-radius:999px; background:var(--paper-3);
+  }
+  .sp-streets button{
+    appearance:none; border:0; border-radius:999px; cursor:pointer;
+    min-height:44px; padding:6px 4px;
+    font:700 13px/1.1 var(--body); letter-spacing:.02em;
+    background:transparent; color:var(--text-2);
+    transition:background .2s var(--quart), color .2s var(--quart);
+  }
+  .sp-streets button[aria-pressed="true"]{background:#F8F8F6; color:#111110}
+
+  /* ── THE SPECIALS ──────────────────────────────────────────
+     One card per deal. Three things, in reading order: who (the logo),
+     what (the drink, in plain body type — the display face is beautiful
+     and slow to read at this size), and how much (the biggest thing on
+     the card). No outlines, no tags, no second colour: the logo is the
+     only thing that changes from card to card. */
+  .sp-head2{display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding-top:26px}
+  .sp-list{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:12px}
+  .sp-deal{
+    background:var(--paper-2); border-radius:18px;
+    padding:20px 20px 18px;
+  }
+  /* --k is each partner's size nudge from XMAS_PARTNERS — the same one
+     the carousel uses, so a round badge and a wide wordmark look equal */
+  .sp-deal__logo{display:block; height:calc(40px * var(--k,1)); width:auto; max-width:60%; object-fit:contain; object-position:left center}
+  .sp-deal__row{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+    margin-top:16px;
+  }
+  .sp-deal__what{margin:0; font:600 21px/1.25 var(--body); color:var(--text)}
+  .sp-deal__note{display:block; margin-top:4px; font:400 14px/1.4 var(--body); color:var(--text-3)}
+  .sp-deal__price{
+    flex:none; margin:0;
+    font-family:var(--display); font-weight:400; color:var(--text);
+    font-size:92px; line-height:.46; letter-spacing:.02em;
+    padding-bottom:4px;
+  }
+  .sp-deal__price sup{font-size:.45em; vertical-align:.42em; margin-right:1px}
+  .sp-empty{padding:28px 0 4px; color:var(--text-3); font-size:16px}
+
+  /* ── ask your bartender ────────────────────────────────── */
+  .sp-ask{
+    margin-top:28px; padding:22px 20px;
+    border-radius:18px; background:var(--paper-3);
+    display:grid; grid-template-columns:auto 1fr; gap:4px 16px; align-items:start;
+  }
+  .sp-ask svg{grid-row:span 2; width:36px; height:36px; color:var(--text); margin-top:2px}
+  .sp-ask h2{margin:0; font:700 18px/1.3 var(--body); color:var(--text)}
+  .sp-ask p{margin:0; font-size:15px; line-height:1.5; color:var(--text-2)}
+
+  /* ── bottom ────────────────────────────────────────────── */
+  .sp-foot{margin-top:28px; padding-top:24px; padding-bottom:8px; border-top:1px solid var(--rule)}
+  .sp-foot ul{margin:10px 0 18px; padding-left:18px; font-size:14px; line-height:1.6; color:var(--text-2)}
+  .sp-foot a.small{color:var(--text-2)}
+
+  /* ── Toys for Tots ─────────────────────────────────────── */
+  .sp-t4t{padding-bottom:calc(44px + env(safe-area-inset-bottom))}
+  .sp-t4t__line{max-width:32ch; margin:16px auto 0; font-size:16px; line-height:1.5; color:rgba(17,17,16,.78)}
+  .sp-t4t .t4t-logo{width:min(220px, 64%)}
+
+  @media (min-width:700px){
+    .sp-top,.sp-head,.sp-bar{padding-inline:max(18px, calc(50% - 302px))}
+  }
+</style>
+</head>
+<body data-page="christmas" class="sp">
+
+<header class="sp-top">
+  <a class="lockup" href="/" aria-label="Bar Scene Socials — home"><span class="logo lockup__logo" aria-hidden="true"></span></a>
+  <span class="sticker">Lanyard holders</span>
+</header>
+
+<section class="sp-head">
+  <!-- PLACEHOLDER: 5pm is last year's finish — same note as on
+       12barsofchristmas.html. Change both together. -->
+  <p class="kicker">12 Bars of Christmas<br>Sat 12/12/26 · 12–5pm</p>
+  <h1 class="d1">Today&rsquo;s <em class="scr">specials</em></h1>
+  <p>Show your lanyard at the bar. No cover at any bar on your street.</p>
+</section>
+<span class="tear tear--down" style="--tear-fill:var(--red-d)"></span>
+
+<!-- The same partners carousel as the homepage and /12barsofchristmas,
+     drawn from XMAS_PARTNERS in js/bss.js. Above the street switcher, so
+     it scrolls away and the switcher is what stays pinned. -->
+<section class="sp-partners" aria-label="Event partners">
+  <p class="kicker">Thanks to our partners</p>
+  <div class="partners" data-partners="christmas"></div>
+</section>
+
+<main>
+  <div class="sp-bar" id="sp-bar" hidden>
+    <div class="sp-streets" role="group" aria-label="Your street">
+      <button type="button" data-street="brady">Brady St</button>
+      <button type="button" data-street="water">Water St</button>
+      <button type="button" data-street="mlk">MLK &amp; Third</button>
+    </div>
+  </div>
+
+  <div class="sp-wrap">
+    <div class="sp-head2">
+      <p class="kicker">Sponsor specials</p>
+      <p class="kicker" id="sp-where" aria-live="polite"></p>
+    </div>
+    <ul class="sp-list" id="sp-list"></ul>
+    <p class="sp-empty" id="sp-empty" hidden>No sponsor specials on this street &mdash; ask your bartender what&rsquo;s on.</p>
+
+    <!-- Each bar runs its own deals too; the owners would rather send
+         people to the bartender than keep a per-bar list current. -->
+    <aside class="sp-ask">
+      <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 8.5c0-1.7 1.3-3 3-3h18c1.7 0 3 1.3 3 3v12c0 1.7-1.3 3-3 3H15l-6 5.5v-5.5H9c-1.7 0-3-1.3-3-3z"/>
+        <path d="M12.5 14.5h.01M18 14.5h.01M23.5 14.5h.01" stroke-width="3"/>
+      </svg>
+      <h2>Every bar has its own deals, too</h2>
+      <p>Ask your bartender what&rsquo;s on for lanyard holders at each stop.</p>
+    </aside>
+
+    <section class="sp-foot">
+      <p class="kicker">Good to know</p>
+      <ul>
+        <li>Specials are for lanyard holders, while the crawl runs</li>
+        <li>21+, bring your ID to every bar</li>
+        <li>Drink water too, and plan a safe way home</li>
+      </ul>
+      <a class="small" href="/12barsofchristmas">About 12 Bars of Christmas &rarr;</a>
+    </section>
+  </div>
+
+  <!-- TOYS FOR TOTS — the same white block as the $22,000+ figure on
+       /12barsofchristmas and the homepage (stat__n, t4t-logo), so it reads
+       as the same cause. Kept to one number, one line and the logo: people
+       are reading this mid-crawl. If the total changes, change it on all
+       three pages. -->
+  <span class="tear tear--down" style="--tear-fill:#F8F8F6; margin-top:28px"></span>
+  <section class="band band--tight on-white sp-t4t">
+    <div class="shell" style="text-align:center">
+      <p class="kicker">The good cause</p>
+      <p class="stat__n" style="color:var(--red-d); margin:44px 0 0">$22,000+</p>
+      <p class="stat__cap">raised for Toys for Tots since&nbsp;2013</p>
+      <p class="sp-t4t__line">Every lanyard on the crawl today sends a donation to Toys for Tots. Thanks for raising a mug for a good cause.</p>
+      <img class="t4t-logo" src="/images/toys-for-tots-logo.webp" alt="Toys for Tots" loading="lazy" decoding="async" width="1119" height="343">
+    </div>
+  </section>
+</main>
+
+<!-- bss.js BEFORE the page script: it defines window.BSS_PARTNERS, which
+     the specials read their logos and names from. -->
+<script src="/js/bss.js?v=1795373822"></script>
+<script>
+/* ── THE SPECIALS ────────────────────────────────────────────────
+   The only thing that needs editing when the real specials come in.
+   One entry per deal, shown in this order.
+
+     partner  an id from XMAS_PARTNERS in js/bss.js — that supplies the
+              logo and the name, so a partner is named in one place
+     what     the drink, as the bartender would say it
+     price    '$4' — whatever is written here is shown
+     note     optional small grey line under the drink
+     streets  'all', or a list like ['brady','water']. While every entry
+              is 'all', the street switcher stays hidden.
+
+   The partners are real; every deal, price and street below is a
+   PLACEHOLDER. */
+var SPECIALS = [
+  { partner:'millerlite', what:'Miller Lite mug fill',   price:'$4', note:'Any bar on the crawl',  streets:'all' },
+  { partner:'coorslight', what:'Coors Light pint',       price:'$4',                               streets:'all' },
+  { partner:'jameson',    what:'Jameson shot',           price:'$5',                               streets:['brady','water'] },
+  { partner:'bluemoon',   what:'Blue Moon draft',        price:'$5', note:'MLK & Third only',      streets:['mlk'] },
+  { partner:'absolut',    what:'Absolut holiday mule',   price:'$6',                               streets:'all' },
+  { partner:'suncruiser', what:'Sun Cruiser can',        price:'$5',                               streets:'all' }
+];
+
+var STREET_LABEL = { brady:'Brady Street', water:'Water Street', mlk:'MLK & Third' };
+
+(function () {
+  var KEY = 'bss-12bars-street';
+  var PARTNERS = {};
+  ((window.BSS_PARTNERS && window.BSS_PARTNERS.christmas) || []).forEach(function (p) { PARTNERS[p.id] = p; });
+  var list = document.getElementById('sp-list');
+  var empty = document.getElementById('sp-empty');
+  var where = document.getElementById('sp-where');
+  var bar = document.getElementById('sp-bar');
+  var btns = [].slice.call(document.querySelectorAll('[data-street]'));
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function store(k, v){ try { v === undefined ? (v = localStorage.getItem(k)) : localStorage.setItem(k, v); } catch (e) {} return v; }
+
+  var byStreet = SPECIALS.some(function (s) { return s.streets !== 'all'; });
+  bar.hidden = !byStreet;
+
+  var fromUrl = new URLSearchParams(location.search).get('street');
+  var street = STREET_LABEL[fromUrl] ? fromUrl : (STREET_LABEL[store(KEY)] ? store(KEY) : 'brady');
+
+  /* "$4" -> a small raised "$" and a big "4", like the ticket prices */
+  function price(p){
+    var m = /^\$(.+)$/.exec(p);
+    return m ? '<sup>$</sup>' + esc(m[1]) : esc(p);
+  }
+
+  function card(s){
+    var p = PARTNERS[s.partner] || { name:'' };
+    return '<li class="sp-deal">' +
+      (p.src ? '<img class="sp-deal__logo" src="/images/sponsors/' + esc(p.src) + '" alt="' + esc(p.name) + '" style="--k:' + (p.k || 1) + '">' : '') +
+      '<div class="sp-deal__row">' +
+        '<p class="sp-deal__what">' + esc(s.what) +
+          (s.note ? '<span class="sp-deal__note">' + esc(s.note) + '</span>' : '') + '</p>' +
+        '<p class="sp-deal__price">' + price(s.price) + '</p>' +
+      '</div></li>';
+  }
+
+  function render(){
+    var shown = SPECIALS.filter(function (s) {
+      return !byStreet || s.streets === 'all' || s.streets.indexOf(street) > -1;
+    });
+    list.innerHTML = shown.map(card).join('');
+    empty.hidden = shown.length > 0;
+    where.textContent = byStreet ? STREET_LABEL[street] : '';
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-street') === street)); });
+  }
+
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      street = b.getAttribute('data-street');
+      store(KEY, street);
+      /* keep the address bar shareable; pathname is explicit because
+         <base href="/"> would otherwise send "?street=" to the homepage */
+      history.replaceState(null, '', location.pathname + '?street=' + street);
+      render();
+    });
+  });
+  render();
+})();
+</script>
+</body>
+</html>
