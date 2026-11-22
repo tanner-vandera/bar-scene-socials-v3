@@ -666,9 +666,22 @@ the red "Ugly sweaters for a good cause" band with last year's two prints,
 "Your ticket includes", the street picker and the $22,000+ figure (which the
 owners asked to look like the Shamrock one). The event row leads with 12 Bars;
 Haunted moved to the small slot, locked, with a "That's a wrap" sticker. The
-**Event partners** carousel came off the homepage (owners' call, 11/2) and is
-not on the 12 Bars page — those are the Halloween partners, and nobody has
-confirmed them for Christmas. It still runs on the Haunted page. The Haunted-era homepage is in git history.
+**Event partners** carousel is back (11/22) with the 12 Bars partners, on the
+homepage, the 12 Bars page and the lanyard specials page. All three draw from
+ONE list, `XMAS_PARTNERS` near the top of `js/bss.js`: Miller Lite, Coors
+Light, Blue Moon, Absolut, Jameson and Sun Cruiser (confirmed 11/22). Jameson
+and Sun Cruiser reuse the Halloween files. The Haunted page keeps its own
+static Halloween strip.
+
+**Lanyard specials** (`/12barsofchristmas/specials`, file
+`12barsofchristmas/specials.html`) is the page the lanyard QR opens. Unlisted
+on purpose: noindex, not in the nav, `bin-seo.py` or the sitemap. It shows
+SPONSOR specials only (owners' call, 11/22) — per-bar deals are left to the
+bartender, which the page says. The deals are the `SPECIALS` list at the
+bottom of that file; every deal and price is a placeholder. The street
+switcher only appears when a special is limited to some streets, and
+`?street=brady|water|mlk` preselects one. `bin-bump.sh` covers this subfolder
+too. The Haunted-era homepage is in git history.
 
 **The Haunted page itself is mostly unchanged** (the owners are deciding what
 it becomes). Since 11/2: its tickets carry their own date, the hero line reads

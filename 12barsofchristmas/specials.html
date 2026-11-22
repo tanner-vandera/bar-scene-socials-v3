@@ -9,6 +9,11 @@
      phone-first and has none of the selling chrome: no site header, no
      "Get tickets", no footer.
 
+     SPONSOR SPECIALS ONLY (owners' call, 11/22). The page used to list
+     every bar's own deals; those are gone; each bar's deals are now
+     "ask your bartender". What is left is one card per sponsor deal —
+     logo, drink, price — set to be read in two seconds in a dark bar.
+
      DELIBERATELY UNLISTED. It is not in the nav (js/bss.js), not in the
      PAGES table in bin-seo.py, not in sitemap.xml, and it carries
      noindex below. It is NOT in robots.txt either — a Disallow line there
@@ -20,25 +25,28 @@
      ("images/cursors/…"). The base makes those resolve from the site
      root exactly as they do on every other page.
 
-     THE STREET. ?street=brady | water | mlk preselects a street, so the
-     owners can print one QR per street's lanyard if they want. With no
-     parameter the page opens on the street last picked on this phone,
-     and falls back to Brady. -->
+     THE STREET SWITCHER only appears when at least one special is
+     limited to some streets. If every special runs on every street, it
+     hides itself and the page is just the list. When it shows,
+     ?street=brady | water | mlk preselects a street (one QR per street's
+     lanyard, if the owners want), else the street last picked on this
+     phone, else Brady. -->
 <base href="/">
-<title>12 Bars of Christmas — Lanyard Specials</title>
-<meta name="description" content="Drink and food specials for 12 Bars of Christmas lanyard holders, Saturday 12/12/26.">
+<title>12 Bars of Christmas — Today's Specials</title>
+<meta name="description" content="Today's sponsor specials for 12 Bars of Christmas lanyard holders, Saturday 12/12/26.">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#B8141C">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/css/fonts.css">
-<link rel="stylesheet" href="/css/bss.css">
+<link rel="stylesheet" href="/css/fonts.css?v=1795373822">
+<link rel="stylesheet" href="/css/bss.css?v=1795373822">
 <style>
   /* Page-local on purpose: nothing else on the site uses these, and the
      page is meant to be easy to delete after the event. Everything is
      built from the tokens in bss.css. */
   body.sp{padding-top:0; padding-bottom:env(safe-area-inset-bottom)}
+  .sp-wrap{max-width:640px; margin:0 auto; padding-inline:18px}
 
   /* ── top strip ─────────────────────────────────────────── */
   .sp-top{
@@ -60,12 +68,19 @@
   .sp-head h1 .scr{color:#FFE7E8}
   .sp-head p{margin:0; max-width:34ch; font-size:16px; line-height:1.5; color:rgba(248,248,246,.88)}
 
+  /* ── partners strip — the shared .partners carousel, smaller ── */
+  .sp-partners{padding:26px 0 22px}
+  .sp-partners .kicker{text-align:center; margin-bottom:16px}
+  .sp-partners .partners__item{margin-right:44px}
+  .sp-partners .partners__item img{height:calc(44px * var(--k,1))}
+
   /* ── street switcher — sticks to the top while you scroll ── */
   .sp-bar{
     position:sticky; top:0; z-index:20; background:var(--paper);
     padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
     border-bottom:1px solid var(--rule);
   }
+  .sp-bar[hidden]{display:none}
   .sp-streets{
     display:grid; grid-template-columns:repeat(3,1fr); gap:4px;
     padding:4px; border-radius:999px; background:var(--paper-3);
@@ -78,67 +93,56 @@
     transition:background .2s var(--quart), color .2s var(--quart);
   }
   .sp-streets button[aria-pressed="true"]{background:#F8F8F6; color:#111110}
-  .sp-find{position:relative; margin-top:10px}
-  .sp-find input{
-    width:100%; min-height:44px; padding:10px 14px 10px 40px;
-    border-radius:12px; border:1px solid var(--rule); background:var(--paper-2);
-    color:var(--text);
-    /* 16px, not less: iOS zooms the whole page into any smaller field */
-    font:400 16px/1.2 var(--body);
-  }
-  .sp-find input::placeholder{color:var(--text-3)}
-  .sp-find input:focus{outline:none; border-color:var(--rule-hard)}
-  .sp-find svg{position:absolute; left:14px; top:50%; translate:0 -50%; width:16px; height:16px; color:var(--text-3)}
 
-  /* ── the list ──────────────────────────────────────────── */
-  .sp-list{list-style:none; margin:0; padding:18px 18px 8px; display:grid; gap:14px; max-width:640px; margin-inline:auto}
-  .sp-meta{
-    max-width:640px; margin:0 auto; padding:16px 18px 0;
-    display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  /* ── THE SPECIALS ──────────────────────────────────────────
+     One card per deal. Three things, in reading order: who (the logo),
+     what (the drink, in plain body type — the display face is beautiful
+     and slow to read at this size), and how much (the biggest thing on
+     the card). No outlines, no tags, no second colour: the logo is the
+     only thing that changes from card to card. */
+  .sp-head2{display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding-top:26px}
+  .sp-list{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:12px}
+  .sp-deal{
+    background:var(--paper-2); border-radius:18px;
+    padding:20px 20px 18px;
   }
-  .sp-card{
-    background:var(--paper-2); border:1px solid var(--rule); border-radius:16px;
-    padding:18px 18px 14px;
+  /* --k is each partner's size nudge from XMAS_PARTNERS — the same one
+     the carousel uses, so a round badge and a wide wordmark look equal */
+  .sp-deal__logo{display:block; height:calc(40px * var(--k,1)); width:auto; max-width:60%; object-fit:contain; object-position:left center}
+  .sp-deal__row{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+    margin-top:16px;
   }
-  .sp-card__top{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
-  .sp-card h2{
-    font-family:var(--display); font-weight:400; text-transform:uppercase;
-    font-size:38px; line-height:.62; letter-spacing:.04em; color:var(--text);
-    margin:6px 0 0; text-wrap:balance;
+  .sp-deal__what{margin:0; font:600 21px/1.25 var(--body); color:var(--text)}
+  .sp-deal__note{display:block; margin-top:4px; font:400 14px/1.4 var(--body); color:var(--text-3)}
+  .sp-deal__price{
+    flex:none; margin:0;
+    font-family:var(--display); font-weight:400; color:var(--text);
+    font-size:92px; line-height:.46; letter-spacing:.02em;
+    padding-bottom:4px;
   }
-  .sp-card__addr{margin:10px 0 0; font-size:13px; line-height:1.4; color:var(--text-3)}
-  .sp-card__addr a{color:inherit; text-decoration-color:var(--rule-hard); text-underline-offset:3px}
-  .sp-card .sticker{flex:none; margin-top:2px; color:#91EC8E; background:rgba(145,236,142,.12)}
+  .sp-deal__price sup{font-size:.45em; vertical-align:.42em; margin-right:1px}
+  .sp-empty{padding:28px 0 4px; color:var(--text-3); font-size:16px}
 
-  .sp-deals{list-style:none; margin:14px 0 0; padding:0}
-  .sp-deals li{
-    display:flex; align-items:baseline; gap:10px;
-    padding:11px 0; border-top:1px dashed var(--rule);
-    font-size:16px; line-height:1.35; color:var(--text);
+  /* ── ask your bartender ────────────────────────────────── */
+  .sp-ask{
+    margin-top:28px; padding:22px 20px;
+    border-radius:18px; background:var(--paper-3);
+    display:grid; grid-template-columns:auto 1fr; gap:4px 16px; align-items:start;
   }
-  .sp-deals li span:first-child{flex:1}
-  .sp-deals em{
-    display:block; font-style:normal; font-size:12.5px; color:var(--text-3); margin-top:2px;
-  }
-  .sp-price{
-    flex:none; font:700 17px/1 var(--body); color:#91EC8E; white-space:nowrap;
-  }
-
-  .sp-empty{max-width:640px; margin:0 auto; padding:40px 18px; text-align:center; color:var(--text-3); font-size:16px}
+  .sp-ask svg{grid-row:span 2; width:36px; height:36px; color:var(--text); margin-top:2px}
+  .sp-ask h2{margin:0; font:700 18px/1.3 var(--body); color:var(--text)}
+  .sp-ask p{margin:0; font-size:15px; line-height:1.5; color:var(--text-2)}
 
   /* ── bottom ────────────────────────────────────────────── */
-  .sp-foot{
-    max-width:640px; margin:18px auto 0; padding:24px 18px 40px;
-    border-top:1px solid var(--rule);
-  }
+  .sp-foot{margin-top:28px; padding-top:24px; padding-bottom:8px; border-top:1px solid var(--rule)}
   .sp-foot ul{margin:10px 0 18px; padding-left:18px; font-size:14px; line-height:1.6; color:var(--text-2)}
   .sp-foot a.small{color:var(--text-2)}
 
-  /* Shown on localhost only, so nobody forgets the specials are made up. */
-  .sp-dev{
-    margin:0; padding:10px 18px; background:#F2B01E; color:#111110;
-    font:700 12px/1.4 var(--body); text-align:center;
-  }
+  /* ── Toys for Tots ─────────────────────────────────────── */
+  .sp-t4t{padding-bottom:calc(44px + env(safe-area-inset-bottom))}
+  .sp-t4t__line{max-width:32ch; margin:16px auto 0; font-size:16px; line-height:1.5; color:rgba(17,17,16,.78)}
+  .sp-t4t .t4t-logo{width:min(220px, 64%)}
 
   @media (min-width:700px){
     .sp-top,.sp-head,.sp-bar{padding-inline:max(18px, calc(50% - 302px))}
@@ -146,7 +150,6 @@
 </style>
 </head>
 <body data-page="christmas" class="sp">
-<p class="sp-dev" id="sp-dev" hidden>Local preview — every special below is a placeholder.</p>
 
 <header class="sp-top">
   <a class="lockup" href="/" aria-label="Bar Scene Socials — home"><span class="logo lockup__logo" aria-hidden="true"></span></a>
@@ -157,144 +160,148 @@
   <!-- PLACEHOLDER: 5pm is last year's finish — same note as on
        12barsofchristmas.html. Change both together. -->
   <p class="kicker">12 Bars of Christmas<br>Sat 12/12/26 · 12–5pm</p>
-  <h1 class="d1">Tonight&rsquo;s <em class="scr">specials</em></h1>
+  <h1 class="d1">Today&rsquo;s <em class="scr">specials</em></h1>
   <p>Show your lanyard at the bar. No cover at any bar on your street.</p>
 </section>
 <span class="tear tear--down" style="--tear-fill:var(--red-d)"></span>
 
+<!-- The same partners carousel as the homepage and /12barsofchristmas,
+     drawn from XMAS_PARTNERS in js/bss.js. Above the street switcher, so
+     it scrolls away and the switcher is what stays pinned. -->
+<section class="sp-partners" aria-label="Event partners">
+  <p class="kicker">Thanks to our partners</p>
+  <div class="partners" data-partners="christmas"></div>
+</section>
+
 <main>
-  <div class="sp-bar">
+  <div class="sp-bar" id="sp-bar" hidden>
     <div class="sp-streets" role="group" aria-label="Your street">
       <button type="button" data-street="brady">Brady St</button>
       <button type="button" data-street="water">Water St</button>
       <button type="button" data-street="mlk">MLK &amp; Third</button>
     </div>
-    <label class="sp-find">
-      <span class="kicker" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Find a bar</span>
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5" stroke-linecap="round"/></svg>
-      <input type="search" id="sp-q" placeholder="Find a bar or a drink" autocomplete="off" enterkeyhint="search">
-    </label>
   </div>
 
-  <div class="sp-meta">
-    <p class="tiny" id="sp-count" aria-live="polite"></p>
-    <p class="tiny" id="sp-pickup"></p>
-  </div>
-  <ol class="sp-list" id="sp-list"></ol>
-  <p class="sp-empty" id="sp-empty" hidden>No bar or drink matches that. Try another word.</p>
+  <div class="sp-wrap">
+    <div class="sp-head2">
+      <p class="kicker">Sponsor specials</p>
+      <p class="kicker" id="sp-where" aria-live="polite"></p>
+    </div>
+    <ul class="sp-list" id="sp-list"></ul>
+    <p class="sp-empty" id="sp-empty" hidden>No sponsor specials on this street &mdash; ask your bartender what&rsquo;s on.</p>
 
-  <section class="sp-foot">
-    <p class="kicker">Good to know</p>
-    <ul>
-      <li>Specials are for lanyard holders, while the crawl runs</li>
-      <li>21+, bring your ID to every bar</li>
-      <li>Drink water too, and plan a safe way home</li>
-    </ul>
-    <a class="small" href="/12barsofchristmas">About 12 Bars of Christmas &rarr;</a>
+    <!-- Each bar runs its own deals too; the owners would rather send
+         people to the bartender than keep a per-bar list current. -->
+    <aside class="sp-ask">
+      <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 8.5c0-1.7 1.3-3 3-3h18c1.7 0 3 1.3 3 3v12c0 1.7-1.3 3-3 3H15l-6 5.5v-5.5H9c-1.7 0-3-1.3-3-3z"/>
+        <path d="M12.5 14.5h.01M18 14.5h.01M23.5 14.5h.01" stroke-width="3"/>
+      </svg>
+      <h2>Every bar has its own deals, too</h2>
+      <p>Ask your bartender what&rsquo;s on for lanyard holders at each stop.</p>
+    </aside>
+
+    <section class="sp-foot">
+      <p class="kicker">Good to know</p>
+      <ul>
+        <li>Specials are for lanyard holders, while the crawl runs</li>
+        <li>21+, bring your ID to every bar</li>
+        <li>Drink water too, and plan a safe way home</li>
+      </ul>
+      <a class="small" href="/12barsofchristmas">About 12 Bars of Christmas &rarr;</a>
+    </section>
+  </div>
+
+  <!-- TOYS FOR TOTS — the same white block as the $22,000+ figure on
+       /12barsofchristmas and the homepage (stat__n, t4t-logo), so it reads
+       as the same cause. Kept to one number, one line and the logo: people
+       are reading this mid-crawl. If the total changes, change it on all
+       three pages. -->
+  <span class="tear tear--down" style="--tear-fill:#F8F8F6; margin-top:28px"></span>
+  <section class="band band--tight on-white sp-t4t">
+    <div class="shell" style="text-align:center">
+      <p class="kicker">The good cause</p>
+      <p class="stat__n" style="color:var(--red-d); margin:44px 0 0">$22,000+</p>
+      <p class="stat__cap">raised for Toys for Tots since&nbsp;2013</p>
+      <p class="sp-t4t__line">Every lanyard on the crawl today sends a donation to Toys for Tots. Thanks for raising a mug for a good cause.</p>
+      <img class="t4t-logo" src="/images/toys-for-tots-logo.webp" alt="Toys for Tots" loading="lazy" decoding="async" width="1119" height="343">
+    </div>
   </section>
 </main>
 
+<!-- bss.js BEFORE the page script: it defines window.BSS_PARTNERS, which
+     the specials read their logos and names from. -->
+<script src="/js/bss.js?v=1795373822"></script>
 <script>
 /* ── THE SPECIALS ────────────────────────────────────────────────
-   One list per street, one entry per bar. This is the only thing that
-   needs editing when the real specials come in.
+   The only thing that needs editing when the real specials come in.
+   One entry per deal, shown in this order.
 
-     name     the bar, as printed on the lanyard
-     addr     street address — shown under the name and opens Maps
-     pickup   true on the street's mug & lanyard pickup bar
-     deals    [ what, price, note? ]  — note is the small grey line
+     partner  an id from XMAS_PARTNERS in js/bss.js — that supplies the
+              logo and the name, so a partner is named in one place
+     what     the drink, as the bartender would say it
+     price    '$4' — whatever is written here is shown
+     note     optional small grey line under the drink
+     streets  'all', or a list like ['brady','water']. While every entry
+              is 'all', the street switcher stays hidden.
 
-   Bar names and pickup bars are this year's, from the TicketSignup
-   pages (same lists as 12barsofchristmas.html).
-   EVERY ADDRESS AND EVERY DEAL BELOW IS A PLACEHOLDER. */
-var P = 'Address TBD';
-var STREETS = {
-  brady: { label:'Brady Street', bars:[
-    { name:'Up-Down', addr:P, pickup:true, deals:[['Holiday mug fill','$4','Domestic tap'],['Fireball shot','$4'],['Pinball','Free','First game with lanyard']] },
-    { name:'Club Brady', addr:P, deals:[['Mug fill, any domestic','$4'],['Candy cane martini','$7']] },
-    { name:'Nomad', addr:P, deals:[['Mug fill','$4'],['Jameson shot','$5'],['Bloody Mary','$7','Beer chaser included']] },
-    { name:'Pete’s Pub', addr:P, deals:[['Mug fill','$3'],['Rail mixers','$5']] },
-    { name:'Jack’s American Pub', addr:P, deals:[['Mug fill','$4'],['Bucket of 5 Miller Lite','$18'],['Wings, 6 pc','$6','Kitchen open till 4pm']] },
-    { name:'The Garage', addr:P, deals:[['Mug fill','$4'],['Skrewball shot','$5']] },
-    { name:'HiHat', addr:P, deals:[['Holiday old fashioned','$7'],['Mug fill','$4']] },
-    { name:'Mango’s Cafe', addr:P, deals:[['Margarita','$6'],['Mug fill','$4']] },
-    { name:'Jo-Cats', addr:P, deals:[['Mug fill','$3'],['Peppermint schnapps shot','$3']] },
-    { name:'Saint Bibiana', addr:P, deals:[['Mug fill','$4'],['Spiked cider','$6']] },
-    { name:'Malone’s on Brady', addr:P, deals:[['Mug fill','$4'],['Irish coffee','$6']] },
-    { name:'Nashville North', addr:P, deals:[['Mug fill','$4'],['Whiskey shot','$4']] },
-    { name:'Sticky Rice', addr:P, deals:[['Sake bomb','$6'],['Mug fill','$4']] },
-    { name:'Famous Smokeshop & Hosed on Brady', addr:P, deals:[['Mug fill','$4'],['Shot of the day','$4']] }
-  ]},
-  water: { label:'Water Street', bars:[
-    { name:'Brothers', addr:P, pickup:true, deals:[['Holiday mug fill','$4','Domestic tap'],['Fireball shot','$4']] },
-    { name:'Red Rock', addr:P, deals:[['Mug fill','$4'],['Jameson shot','$5']] },
-    { name:'Pourman’s', addr:P, deals:[['Mug fill','$3'],['Vodka cranberry','$5']] },
-    { name:'McGillycuddy’s', addr:P, deals:[['Mug fill','$4'],['Irish car bomb','$7']] },
-    { name:'Elwood’s', addr:P, deals:[['Mug fill','$4'],['Pitcher','$12']] },
-    { name:'Mojo', addr:P, deals:[['Mug fill','$4'],['Candy cane shot','$4']] },
-    { name:'Water Street Brewery', addr:P, deals:[['House beer mug fill','$5'],['Pretzel & beer cheese','$7']] },
-    { name:'Trinity Three Irish Pubs', addr:P, deals:[['Mug fill','$4'],['Guinness','$6']] },
-    { name:'The Harp', addr:P, deals:[['Mug fill','$4'],['Hot toddy','$7']] }
-  ]},
-  mlk: { label:'MLK & Third', bars:[
-    { name:'The New Fashioned', addr:P, pickup:true, deals:[['Holiday mug fill','$4','Domestic tap'],['Old fashioned','$8']] },
-    { name:'RWB', addr:P, deals:[['Mug fill','$4'],['Shot of the day','$4']] },
-    { name:'Drink Wisconsinbly', addr:P, deals:[['Mug fill','$4'],['Brandy old fashioned','$7'],['Cheese curds','$6']] },
-    { name:'Oak Barrel', addr:P, deals:[['Mug fill','$4'],['Bourbon pour','$6']] },
-    { name:'Who’s on Third', addr:P, deals:[['Mug fill','$4'],['Bucket of 5','$18']] },
-    { name:'Uncle Buck’s', addr:P, deals:[['Mug fill','$3'],['Rail mixers','$5']] },
-    { name:'Lucky Clover', addr:P, deals:[['Mug fill','$4'],['Jameson shot','$5']] },
-    { name:'Milwaukee Brat House', addr:P, deals:[['Mug fill','$4'],['Brat','$5']] },
-    { name:'Deer Camp', addr:P, deals:[['Mug fill','$4'],['Spiked hot cocoa','$6']] },
-    { name:'The Spread', addr:P, deals:[['Mug fill','$4'],['Sliders, 2 pc','$6']] },
-    { name:'Old German Beer Hall', addr:P, deals:[['Liter','$10','In your own mug, or theirs'],['Pretzel','$6']] }
-  ]}
-};
+   The partners are real; every deal, price and street below is a
+   PLACEHOLDER. */
+var SPECIALS = [
+  { partner:'millerlite', what:'Miller Lite mug fill',   price:'$4', note:'Any bar on the crawl',  streets:'all' },
+  { partner:'coorslight', what:'Coors Light pint',       price:'$4',                               streets:'all' },
+  { partner:'jameson',    what:'Jameson shot',           price:'$5',                               streets:['brady','water'] },
+  { partner:'bluemoon',   what:'Blue Moon draft',        price:'$5', note:'MLK & Third only',      streets:['mlk'] },
+  { partner:'absolut',    what:'Absolut holiday mule',   price:'$6',                               streets:'all' },
+  { partner:'suncruiser', what:'Sun Cruiser can',        price:'$5',                               streets:'all' }
+];
+
+var STREET_LABEL = { brady:'Brady Street', water:'Water Street', mlk:'MLK & Third' };
 
 (function () {
   var KEY = 'bss-12bars-street';
+  var PARTNERS = {};
+  ((window.BSS_PARTNERS && window.BSS_PARTNERS.christmas) || []).forEach(function (p) { PARTNERS[p.id] = p; });
   var list = document.getElementById('sp-list');
   var empty = document.getElementById('sp-empty');
-  var count = document.getElementById('sp-count');
-  var pickup = document.getElementById('sp-pickup');
-  var q = document.getElementById('sp-q');
+  var where = document.getElementById('sp-where');
+  var bar = document.getElementById('sp-bar');
   var btns = [].slice.call(document.querySelectorAll('[data-street]'));
-
-  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.getElementById('sp-dev').hidden = false;
 
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-
   function store(k, v){ try { v === undefined ? (v = localStorage.getItem(k)) : localStorage.setItem(k, v); } catch (e) {} return v; }
 
-  var fromUrl = new URLSearchParams(location.search).get('street');
-  var street = STREETS[fromUrl] ? fromUrl : (STREETS[store(KEY)] ? store(KEY) : 'brady');
+  var byStreet = SPECIALS.some(function (s) { return s.streets !== 'all'; });
+  bar.hidden = !byStreet;
 
-  function card(b){
-    var maps = b.addr && b.addr !== P
-      ? '<a href="https://maps.google.com/?q=' + encodeURIComponent(b.name + ', ' + b.addr + ', Milwaukee WI') + '" target="_blank" rel="noopener noreferrer">' + esc(b.addr) + '</a>'
-      : esc(b.addr || '');
-    return '<li class="sp-card">' +
-      '<div class="sp-card__top"><h2>' + esc(b.name) + '</h2>' +
-        (b.pickup ? '<span class="sticker">Pickup bar</span>' : '') + '</div>' +
-      (b.addr ? '<p class="sp-card__addr">' + maps + '</p>' : '') +
-      '<ul class="sp-deals">' + b.deals.map(function (d) {
-        return '<li><span>' + esc(d[0]) + (d[2] ? '<em>' + esc(d[2]) + '</em>' : '') + '</span>' +
-               '<span class="sp-price">' + esc(d[1]) + '</span></li>';
-      }).join('') + '</ul></li>';
+  var fromUrl = new URLSearchParams(location.search).get('street');
+  var street = STREET_LABEL[fromUrl] ? fromUrl : (STREET_LABEL[store(KEY)] ? store(KEY) : 'brady');
+
+  /* "$4" -> a small raised "$" and a big "4", like the ticket prices */
+  function price(p){
+    var m = /^\$(.+)$/.exec(p);
+    return m ? '<sup>$</sup>' + esc(m[1]) : esc(p);
+  }
+
+  function card(s){
+    var p = PARTNERS[s.partner] || { name:'' };
+    return '<li class="sp-deal">' +
+      (p.src ? '<img class="sp-deal__logo" src="/images/sponsors/' + esc(p.src) + '" alt="' + esc(p.name) + '" style="--k:' + (p.k || 1) + '">' : '') +
+      '<div class="sp-deal__row">' +
+        '<p class="sp-deal__what">' + esc(s.what) +
+          (s.note ? '<span class="sp-deal__note">' + esc(s.note) + '</span>' : '') + '</p>' +
+        '<p class="sp-deal__price">' + price(s.price) + '</p>' +
+      '</div></li>';
   }
 
   function render(){
-    var s = STREETS[street], term = q.value.trim().toLowerCase();
-    var bars = s.bars.filter(function (b) {
-      if (!term) return true;
-      return (b.name + ' ' + b.deals.map(function (d) { return d.join(' '); }).join(' ')).toLowerCase().indexOf(term) > -1;
+    var shown = SPECIALS.filter(function (s) {
+      return !byStreet || s.streets === 'all' || s.streets.indexOf(street) > -1;
     });
-    list.innerHTML = bars.map(card).join('');
-    empty.hidden = bars.length > 0;
-    count.textContent = term ? bars.length + ' of ' + s.bars.length + ' bars' : s.bars.length + ' bars on ' + s.label;
-    var p = s.bars.filter(function (b) { return b.pickup; })[0];
-    pickup.textContent = p && !term ? 'Pickup: ' + p.name : '';
+    list.innerHTML = shown.map(card).join('');
+    empty.hidden = shown.length > 0;
+    where.textContent = byStreet ? STREET_LABEL[street] : '';
     btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-street') === street)); });
   }
 
@@ -308,10 +315,8 @@ var STREETS = {
       render();
     });
   });
-  q.addEventListener('input', render);
   render();
 })();
 </script>
-<script src="/js/bss.js"></script>
 </body>
 </html>
