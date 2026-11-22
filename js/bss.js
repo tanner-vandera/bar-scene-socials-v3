@@ -337,8 +337,8 @@
          opened on 11/16; it now matches the "On sale now" stickers. */
       12: { name: '12 Bars of Christmas', where: '3 streets · 12pm',
             ours: true, theme: 'red', href: '/12barsofchristmas',
-            chip: 'On sale now', shot: '12bars-of-christmas-hero.jpg',
-            pos: '50% 38%' }
+            chip: 'On sale now', shot: '12bars-of-christmas-hero-2.jpg',
+            pos: '50% 52%' }
     },
     pins: {
       /* Same move as the purple tickets either side of Oct 31: confetti
