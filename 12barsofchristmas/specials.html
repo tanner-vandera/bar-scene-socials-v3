@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- ── LANYARD SPECIALS — /12barsofchristmas/specials ──────────────
+     The page the QR code on the 12 Bars lanyard opens. It is for people
+     already ON the crawl, standing in a bar with a phone, so it is built
+     phone-first and has none of the selling chrome: no site header, no
+     "Get tickets", no footer.
+
+     DELIBERATELY UNLISTED. It is not in the nav (js/bss.js), not in the
+     PAGES table in bin-seo.py, not in sitemap.xml, and it carries
+     noindex below. It is NOT in robots.txt either — a Disallow line there
+     would publish the URL to anyone who reads that file. Unlisted, not
+     secret: anyone with the link can open it.
+
+     <base href="/"> is load-bearing. This is the only page that lives
+     one folder down, and js/bss.js builds a few image paths relative
+     ("images/cursors/…"). The base makes those resolve from the site
+     root exactly as they do on every other page.
+
+     THE STREET. ?street=brady | water | mlk preselects a street, so the
+     owners can print one QR per street's lanyard if they want. With no
+     parameter the page opens on the street last picked on this phone,
+     and falls back to Brady. -->
+<base href="/">
+<title>12 Bars of Christmas — Lanyard Specials</title>
+<meta name="description" content="Drink and food specials for 12 Bars of Christmas lanyard holders, Saturday 12/12/26.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#B8141C">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/bss.css">
+<style>
+  /* Page-local on purpose: nothing else on the site uses these, and the
+     page is meant to be easy to delete after the event. Everything is
+     built from the tokens in bss.css. */
+  body.sp{padding-top:0; padding-bottom:env(safe-area-inset-bottom)}
+
+  /* ── top strip ─────────────────────────────────────────── */
+  .sp-top{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+    background:var(--red-d); color:#F8F8F6;
+  }
+  .sp-top .lockup{color:#F8F8F6}
+  .sp-top .lockup__logo{width:96px}
+  .sp-top .sticker{background:rgba(17,17,16,.28); color:#F8F8F6}
+
+  /* ── head ──────────────────────────────────────────────── */
+  .sp-head{background:var(--red-d); color:#F8F8F6; padding:10px 18px 34px}
+  .sp-head .kicker{color:rgba(248,248,246,.8)}
+  .sp-head h1{
+    font-size:clamp(64px, 19vw, 120px); line-height:.5; color:#F8F8F6;
+    margin:22px 0 18px;
+  }
+  .sp-head h1 .scr{color:#FFE7E8}
+  .sp-head p{margin:0; max-width:34ch; font-size:16px; line-height:1.5; color:rgba(248,248,246,.88)}
+
+  /* ── street switcher — sticks to the top while you scroll ── */
+  .sp-bar{
+    position:sticky; top:0; z-index:20; background:var(--paper);
+    padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
+    border-bottom:1px solid var(--rule);
+  }
+  .sp-streets{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:4px;
+    padding:4px; border-radius:999px; background:var(--paper-3);
+  }
+  .sp-streets button{
+    appearance:none; border:0; border-radius:999px; cursor:pointer;
+    min-height:44px; padding:6px 4px;
+    font:700 13px/1.1 var(--body); letter-spacing:.02em;
+    background:transparent; color:var(--text-2);
+    transition:background .2s var(--quart), color .2s var(--quart);
+  }
+  .sp-streets button[aria-pressed="true"]{background:#F8F8F6; color:#111110}
+  .sp-find{position:relative; margin-top:10px}
+  .sp-find input{
+    width:100%; min-height:44px; padding:10px 14px 10px 40px;
+    border-radius:12px; border:1px solid var(--rule); background:var(--paper-2);
+    color:var(--text);
+    /* 16px, not less: iOS zooms the whole page into any smaller field */
+    font:400 16px/1.2 var(--body);
+  }
+  .sp-find input::placeholder{color:var(--text-3)}
+  .sp-find input:focus{outline:none; border-color:var(--rule-hard)}
+  .sp-find svg{position:absolute; left:14px; top:50%; translate:0 -50%; width:16px; height:16px; color:var(--text-3)}
+
+  /* ── the list ──────────────────────────────────────────── */
+  .sp-list{list-style:none; margin:0; padding:18px 18px 8px; display:grid; gap:14px; max-width:640px; margin-inline:auto}
+  .sp-meta{
+    max-width:640px; margin:0 auto; padding:16px 18px 0;
+    display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  }
+  .sp-card{
+    background:var(--paper-2); border:1px solid var(--rule); border-radius:16px;
+    padding:18px 18px 14px;
+  }
+  .sp-card__top{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+  .sp-card h2{
+    font-family:var(--display); font-weight:400; text-transform:uppercase;
+    font-size:38px; line-height:.62; letter-spacing:.04em; color:var(--text);
+    margin:6px 0 0; text-wrap:balance;
+  }
+  .sp-card__addr{margin:10px 0 0; font-size:13px; line-height:1.4; color:var(--text-3)}
+  .sp-card__addr a{color:inherit; text-decoration-color:var(--rule-hard); text-underline-offset:3px}
+  .sp-card .sticker{flex:none; margin-top:2px; color:#91EC8E; background:rgba(145,236,142,.12)}
+
+  .sp-deals{list-style:none; margin:14px 0 0; padding:0}
+  .sp-deals li{
+    display:flex; align-items:baseline; gap:10px;
+    padding:11px 0; border-top:1px dashed var(--rule);
+    font-size:16px; line-height:1.35; color:var(--text);
+  }
+  .sp-deals li span:first-child{flex:1}
+  .sp-deals em{
+    display:block; font-style:normal; font-size:12.5px; color:var(--text-3); margin-top:2px;
+  }
+  .sp-price{
+    flex:none; font:700 17px/1 var(--body); color:#91EC8E; white-space:nowrap;
+  }
+
+  .sp-empty{max-width:640px; margin:0 auto; padding:40px 18px; text-align:center; color:var(--text-3); font-size:16px}
+
+  /* ── bottom ────────────────────────────────────────────── */
+  .sp-foot{
+    max-width:640px; margin:18px auto 0; padding:24px 18px 40px;
+    border-top:1px solid var(--rule);
+  }
+  .sp-foot ul{margin:10px 0 18px; padding-left:18px; font-size:14px; line-height:1.6; color:var(--text-2)}
+  .sp-foot a.small{color:var(--text-2)}
+
+  /* Shown on localhost only, so nobody forgets the specials are made up. */
+  .sp-dev{
+    margin:0; padding:10px 18px; background:#F2B01E; color:#111110;
+    font:700 12px/1.4 var(--body); text-align:center;
+  }
+
+  @media (min-width:700px){
+    .sp-top,.sp-head,.sp-bar{padding-inline:max(18px, calc(50% - 302px))}
+  }
+</style>
+</head>
+<body data-page="christmas" class="sp">
+<p class="sp-dev" id="sp-dev" hidden>Local preview — every special below is a placeholder.</p>
+
+<header class="sp-top">
+  <a class="lockup" href="/" aria-label="Bar Scene Socials — home"><span class="logo lockup__logo" aria-hidden="true"></span></a>
+  <span class="sticker">Lanyard holders</span>
+</header>
+
+<section class="sp-head">
+  <!-- PLACEHOLDER: 5pm is last year's finish — same note as on
+       12barsofchristmas.html. Change both together. -->
+  <p class="kicker">12 Bars of Christmas<br>Sat 12/12/26 · 12–5pm</p>
+  <h1 class="d1">Tonight&rsquo;s <em class="scr">specials</em></h1>
+  <p>Show your lanyard at the bar. No cover at any bar on your street.</p>
+</section>
+<span class="tear tear--down" style="--tear-fill:var(--red-d)"></span>
+
+<main>
+  <div class="sp-bar">
+    <div class="sp-streets" role="group" aria-label="Your street">
+      <button type="button" data-street="brady">Brady St</button>
+      <button type="button" data-street="water">Water St</button>
+      <button type="button" data-street="mlk">MLK &amp; Third</button>
+    </div>
+    <label class="sp-find">
+      <span class="kicker" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Find a bar</span>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5" stroke-linecap="round"/></svg>
+      <input type="search" id="sp-q" placeholder="Find a bar or a drink" autocomplete="off" enterkeyhint="search">
+    </label>
+  </div>
+
+  <div class="sp-meta">
+    <p class="tiny" id="sp-count" aria-live="polite"></p>
+    <p class="tiny" id="sp-pickup"></p>
+  </div>
+  <ol class="sp-list" id="sp-list"></ol>
+  <p class="sp-empty" id="sp-empty" hidden>No bar or drink matches that. Try another word.</p>
+
+  <section class="sp-foot">
+    <p class="kicker">Good to know</p>
+    <ul>
+      <li>Specials are for lanyard holders, while the crawl runs</li>
+      <li>21+, bring your ID to every bar</li>
+      <li>Drink water too, and plan a safe way home</li>
+    </ul>
+    <a class="small" href="/12barsofchristmas">About 12 Bars of Christmas &rarr;</a>
+  </section>
+</main>
+
+<script>
+/* ── THE SPECIALS ────────────────────────────────────────────────
+   One list per street, one entry per bar. This is the only thing that
+   needs editing when the real specials come in.
+
+     name     the bar, as printed on the lanyard
+     addr     street address — shown under the name and opens Maps
+     pickup   true on the street's mug & lanyard pickup bar
+     deals    [ what, price, note? ]  — note is the small grey line
+
+   Bar names and pickup bars are this year's, from the TicketSignup
+   pages (same lists as 12barsofchristmas.html).
+   EVERY ADDRESS AND EVERY DEAL BELOW IS A PLACEHOLDER. */
+var P = 'Address TBD';
+var STREETS = {
+  brady: { label:'Brady Street', bars:[
+    { name:'Up-Down', addr:P, pickup:true, deals:[['Holiday mug fill','$4','Domestic tap'],['Fireball shot','$4'],['Pinball','Free','First game with lanyard']] },
+    { name:'Club Brady', addr:P, deals:[['Mug fill, any domestic','$4'],['Candy cane martini','$7']] },
+    { name:'Nomad', addr:P, deals:[['Mug fill','$4'],['Jameson shot','$5'],['Bloody Mary','$7','Beer chaser included']] },
+    { name:'Pete’s Pub', addr:P, deals:[['Mug fill','$3'],['Rail mixers','$5']] },
+    { name:'Jack’s American Pub', addr:P, deals:[['Mug fill','$4'],['Bucket of 5 Miller Lite','$18'],['Wings, 6 pc','$6','Kitchen open till 4pm']] },
+    { name:'The Garage', addr:P, deals:[['Mug fill','$4'],['Skrewball shot','$5']] },
+    { name:'HiHat', addr:P, deals:[['Holiday old fashioned','$7'],['Mug fill','$4']] },
+    { name:'Mango’s Cafe', addr:P, deals:[['Margarita','$6'],['Mug fill','$4']] },
+    { name:'Jo-Cats', addr:P, deals:[['Mug fill','$3'],['Peppermint schnapps shot','$3']] },
+    { name:'Saint Bibiana', addr:P, deals:[['Mug fill','$4'],['Spiked cider','$6']] },
+    { name:'Malone’s on Brady', addr:P, deals:[['Mug fill','$4'],['Irish coffee','$6']] },
+    { name:'Nashville North', addr:P, deals:[['Mug fill','$4'],['Whiskey shot','$4']] },
+    { name:'Sticky Rice', addr:P, deals:[['Sake bomb','$6'],['Mug fill','$4']] },
+    { name:'Famous Smokeshop & Hosed on Brady', addr:P, deals:[['Mug fill','$4'],['Shot of the day','$4']] }
+  ]},
+  water: { label:'Water Street', bars:[
+    { name:'Brothers', addr:P, pickup:true, deals:[['Holiday mug fill','$4','Domestic tap'],['Fireball shot','$4']] },
+    { name:'Red Rock', addr:P, deals:[['Mug fill','$4'],['Jameson shot','$5']] },
+    { name:'Pourman’s', addr:P, deals:[['Mug fill','$3'],['Vodka cranberry','$5']] },
+    { name:'McGillycuddy’s', addr:P, deals:[['Mug fill','$4'],['Irish car bomb','$7']] },
+    { name:'Elwood’s', addr:P, deals:[['Mug fill','$4'],['Pitcher','$12']] },
+    { name:'Mojo', addr:P, deals:[['Mug fill','$4'],['Candy cane shot','$4']] },
+    { name:'Water Street Brewery', addr:P, deals:[['House beer mug fill','$5'],['Pretzel & beer cheese','$7']] },
+    { name:'Trinity Three Irish Pubs', addr:P, deals:[['Mug fill','$4'],['Guinness','$6']] },
+    { name:'The Harp', addr:P, deals:[['Mug fill','$4'],['Hot toddy','$7']] }
+  ]},
+  mlk: { label:'MLK & Third', bars:[
+    { name:'The New Fashioned', addr:P, pickup:true, deals:[['Holiday mug fill','$4','Domestic tap'],['Old fashioned','$8']] },
+    { name:'RWB', addr:P, deals:[['Mug fill','$4'],['Shot of the day','$4']] },
+    { name:'Drink Wisconsinbly', addr:P, deals:[['Mug fill','$4'],['Brandy old fashioned','$7'],['Cheese curds','$6']] },
+    { name:'Oak Barrel', addr:P, deals:[['Mug fill','$4'],['Bourbon pour','$6']] },
+    { name:'Who’s on Third', addr:P, deals:[['Mug fill','$4'],['Bucket of 5','$18']] },
+    { name:'Uncle Buck’s', addr:P, deals:[['Mug fill','$3'],['Rail mixers','$5']] },
+    { name:'Lucky Clover', addr:P, deals:[['Mug fill','$4'],['Jameson shot','$5']] },
+    { name:'Milwaukee Brat House', addr:P, deals:[['Mug fill','$4'],['Brat','$5']] },
+    { name:'Deer Camp', addr:P, deals:[['Mug fill','$4'],['Spiked hot cocoa','$6']] },
+    { name:'The Spread', addr:P, deals:[['Mug fill','$4'],['Sliders, 2 pc','$6']] },
+    { name:'Old German Beer Hall', addr:P, deals:[['Liter','$10','In your own mug, or theirs'],['Pretzel','$6']] }
+  ]}
+};
+
+(function () {
+  var KEY = 'bss-12bars-street';
+  var list = document.getElementById('sp-list');
+  var empty = document.getElementById('sp-empty');
+  var count = document.getElementById('sp-count');
+  var pickup = document.getElementById('sp-pickup');
+  var q = document.getElementById('sp-q');
+  var btns = [].slice.call(document.querySelectorAll('[data-street]'));
+
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.getElementById('sp-dev').hidden = false;
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function store(k, v){ try { v === undefined ? (v = localStorage.getItem(k)) : localStorage.setItem(k, v); } catch (e) {} return v; }
+
+  var fromUrl = new URLSearchParams(location.search).get('street');
+  var street = STREETS[fromUrl] ? fromUrl : (STREETS[store(KEY)] ? store(KEY) : 'brady');
+
+  function card(b){
+    var maps = b.addr && b.addr !== P
+      ? '<a href="https://maps.google.com/?q=' + encodeURIComponent(b.name + ', ' + b.addr + ', Milwaukee WI') + '" target="_blank" rel="noopener noreferrer">' + esc(b.addr) + '</a>'
+      : esc(b.addr || '');
+    return '<li class="sp-card">' +
+      '<div class="sp-card__top"><h2>' + esc(b.name) + '</h2>' +
+        (b.pickup ? '<span class="sticker">Pickup bar</span>' : '') + '</div>' +
+      (b.addr ? '<p class="sp-card__addr">' + maps + '</p>' : '') +
+      '<ul class="sp-deals">' + b.deals.map(function (d) {
+        return '<li><span>' + esc(d[0]) + (d[2] ? '<em>' + esc(d[2]) + '</em>' : '') + '</span>' +
+               '<span class="sp-price">' + esc(d[1]) + '</span></li>';
+      }).join('') + '</ul></li>';
+  }
+
+  function render(){
+    var s = STREETS[street], term = q.value.trim().toLowerCase();
+    var bars = s.bars.filter(function (b) {
+      if (!term) return true;
+      return (b.name + ' ' + b.deals.map(function (d) { return d.join(' '); }).join(' ')).toLowerCase().indexOf(term) > -1;
+    });
+    list.innerHTML = bars.map(card).join('');
+    empty.hidden = bars.length > 0;
+    count.textContent = term ? bars.length + ' of ' + s.bars.length + ' bars' : s.bars.length + ' bars on ' + s.label;
+    var p = s.bars.filter(function (b) { return b.pickup; })[0];
+    pickup.textContent = p && !term ? 'Pickup: ' + p.name : '';
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-street') === street)); });
+  }
+
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      street = b.getAttribute('data-street');
+      store(KEY, street);
+      /* keep the address bar shareable; pathname is explicit because
+         <base href="/"> would otherwise send "?street=" to the homepage */
+      history.replaceState(null, '', location.pathname + '?street=' + street);
+      render();
+    });
+  });
+  q.addEventListener('input', render);
+  render();
+})();
+</script>
+<script src="/js/bss.js"></script>
+</body>
+</html>
