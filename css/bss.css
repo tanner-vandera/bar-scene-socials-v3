@@ -4330,3 +4330,21 @@ body[data-page="home"] .sheet .kicker{ font-size:11.5px }
    that carries (6.3:1) and the lighter two wash out. */
 .listing__row--red .listing__day{color:var(--red-d)}
 .listing__row--red::after{background:var(--red)}
+
+
+/* ============================================================
+   "ON SALE NOW" — BRIGHT GREEN
+   The owners want these louder (11/25): a solid --green pill with
+   near-black type, 7.9:1, everywhere a 12 Bars "On sale now" shows —
+   hero, event cards, tickets page, about page and the calendar chip.
+   Solid on purpose, so it reads the same over a photo, the dark page
+   and a white band. Selectors repeat the scopes that otherwise set a
+   sticker's fill (.on-white, a hero or photo band) so this one wins.
+   ============================================================ */
+.sticker.sticker--onsale,
+.on-white .sticker.sticker--onsale,
+.hero__inner .sticker.sticker--onsale,
+.band--shot .shell .sticker.sticker--onsale{
+  background:var(--green); color:#111110; box-shadow:none;
+}
+.cal td.ours .ourcard__chip.ourcard__chip--go{background:var(--green); color:#111110}
