@@ -337,7 +337,7 @@
          opened on 11/16; it now matches the "On sale now" stickers. */
       12: { name: '12 Bars of Christmas', where: '3 streets · 12pm',
             ours: true, theme: 'red', href: '/12barsofchristmas',
-            chip: 'On sale now', shot: '12bars-of-christmas-hero-2.jpg',
+            chip: 'On sale now', chipGo: true, shot: '12bars-of-christmas-hero-2.jpg',
             pos: '50% 52%' }
     },
     pins: {
@@ -747,7 +747,7 @@
         : '') +
       '<span class="ourcard__name">' + esc(ev.name) + '</span>' +
       '<span class="ourcard__meta">' + esc(ev.where) + '</span>' +
-      (ev.chip ? '<span class="ourcard__chip">' + esc(ev.chip) + '</span>' : '') +
+      (ev.chip ? '<span class="ourcard__chip' + (ev.chipGo ? ' ourcard__chip--go' : '') + '">' + esc(ev.chip) + '</span>' : '') +
     '</a>';
   }
 
