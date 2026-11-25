@@ -75,6 +75,24 @@
                               alpha. See --hero-pos on haunted-bar-hop. */
   --red:        #E8202A;
   --red-d:      #B8141C;
+  /* 12 BARS STREET COLOURS — the lanyard each street wears, taken off the
+     owners' street posters by eye (11/25; swap in exact values if the
+     printer's file turns up). One colour per street so a crawler can find
+     theirs by the lanyard round their neck, not the street name.
+       --st-X      the street's own colour: strips, tickets, filled tabs
+       --st-X-on   that colour as TYPE on the light card (≥4.5:1 on #F8F8F6)
+       --st-X-ink  type ON the colour itself
+     Water prints yellow on red because the poster does; Brady's orange is
+     light enough for black. */
+  --st-brady:     #E87A10;
+  --st-brady-on:  #B35208;
+  --st-brady-ink: #111110;
+  --st-water:     #C8102E;
+  --st-water-on:  #C8102E;
+  --st-water-ink: #FFD21F;
+  --st-mlk:       #129A1E;
+  --st-mlk-on:    #0B7A16;
+  --st-mlk-ink:   #FFFFFF;
   --red-on:     #FF5A62;   /* small red type — --red is 4.20:1 on the page
                               ground and 22px script needs 4.5. */
   --plum:       #381745;   /* the deep plum ground under the costume
@@ -4254,9 +4272,15 @@ body[data-page="home"] .sheet .kicker{ font-size:11.5px }
 .stubs--streets .stub__tier{font-size:clamp(50px,5.4vw,78px)}
 .stubs--streets .stub::before{
   content:""; position:absolute; left:0; right:0; top:0;
-  height:clamp(7px,.8vw,10px); background:var(--red);
+  height:clamp(7px,.8vw,10px); background:var(--st, var(--red));
 }
-.stubs--streets .stub:focus-visible{outline-color:var(--red)}
+.stubs--streets .stub:focus-visible{outline-color:var(--st, var(--red))}
+/* Each card takes its street's lanyard colour: the torn strip, the
+   street name and (in the markup) the ticket. */
+.stubs--streets .stub[data-street="brady"]{--st:var(--st-brady); --st-on:var(--st-brady-on)}
+.stubs--streets .stub[data-street="water"]{--st:var(--st-water); --st-on:var(--st-water-on)}
+.stubs--streets .stub[data-street="mlk"]  {--st:var(--st-mlk);   --st-on:var(--st-mlk-on)}
+.stubs--streets .stub__tier{color:var(--st-on, inherit)}
 @media (max-width:900px){
   .stubs--streets{grid-template-columns:minmax(0,1fr)}
   .stubs--streets .stub__tier{font-size:clamp(54px,12vw,84px)}
@@ -4285,7 +4309,7 @@ body[data-page="home"] .sheet .kicker{ font-size:11.5px }
 .stubs--streets .stub__bars b{
   display:block; margin-bottom:3px;
   font:600 11.5px/1.2 var(--body); letter-spacing:.16em; text-transform:uppercase;
-  color:var(--red-d);
+  color:var(--st-on, var(--red-d));
 }
 
 /* THE TOYS FOR TOTS LOGO under the $22,000+ figure. The official file is
