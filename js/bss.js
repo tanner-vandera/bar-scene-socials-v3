@@ -493,7 +493,12 @@
     // The light purple is the artwork's own fill. Black on it measures
     // 6.81:1, so every mark on the stock is simply black at an opacity.
     var fill = sold ? '#C9C8C3' : (el.getAttribute('data-fill') || '#B78BCB');
-    var ink  = sold ? '#6E6D69' : '#000000';
+    // data-ink swaps the black for a light ink on a stock too dark for
+    // black — the 12 Bars street tickets: yellow on Water's red, white on
+    // Third's green. A custom ink prints at full strength, because a
+    // light ink at the artwork's 0.7 sinks into a saturated fill.
+    var custom = !sold && el.getAttribute('data-ink');
+    var ink  = sold ? '#6E6D69' : (custom || '#000000');
 
     // Keyline inset and stub rules come straight from the artwork:
     // rect 20,20 238x96 r12, and a second rect at x=44 w=190 whose two
@@ -503,7 +508,7 @@
     // The label is large display type, so the artwork's 0.7 black holds at
     // 4.86:1. The stub dates are small and 0.5 would be 3.02:1 against a
     // 4.5 requirement — they go to 0.85 (6.45:1).
-    var labelOp = sold ? 1 : 0.7, dateOp = sold ? 1 : 0.85;
+    var labelOp = (sold || custom) ? 1 : 0.7, dateOp = (sold || custom) ? 1 : 0.85;
 
     // Jomhuria's cap is .3907em and its em box is not centred on it, so the
     // baselines below centre the CAP BAND inside the keyline (20..116),

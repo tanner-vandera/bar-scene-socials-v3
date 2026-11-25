@@ -39,8 +39,8 @@
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/css/fonts.css?v=1795375914">
-<link rel="stylesheet" href="/css/bss.css?v=1795375914">
+<link rel="stylesheet" href="/css/fonts.css?v=1795623685">
+<link rel="stylesheet" href="/css/bss.css?v=1795623685">
 <style>
   /* Page-local on purpose: nothing else on the site uses these, and the
      page is meant to be easy to delete after the event. Everything is
@@ -52,20 +52,21 @@
   .sp-top{
     display:flex; align-items:center; justify-content:space-between; gap:14px;
     padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
-    background:var(--red-d); color:#F8F8F6;
+    background:var(--sp-head); color:#F8F8F6;
+    transition:background-color .3s var(--quart);
   }
   .sp-top .lockup{color:#F8F8F6}
   .sp-top .lockup__logo{width:96px}
   .sp-top .sticker{background:rgba(17,17,16,.28); color:#F8F8F6}
 
   /* ── head ──────────────────────────────────────────────── */
-  .sp-head{background:var(--red-d); color:#F8F8F6; padding:10px 18px 34px}
+  .sp-head{background:var(--sp-head); color:#F8F8F6; padding:10px 18px 34px; transition:background-color .3s var(--quart)}
   .sp-head .kicker{color:rgba(248,248,246,.8)}
   .sp-head h1{
     font-size:clamp(64px, 19vw, 120px); line-height:.5; color:#F8F8F6;
     margin:22px 0 18px;
   }
-  .sp-head h1 .scr{color:#FFE7E8}
+  .sp-head h1 .scr{color:var(--sp-scr)}
   .sp-head p{margin:0; max-width:34ch; font-size:16px; line-height:1.5; color:rgba(248,248,246,.88)}
 
   /* ── partners strip — the shared .partners carousel, smaller ── */
@@ -73,6 +74,23 @@
   .sp-partners .kicker{text-align:center; margin-bottom:16px}
   .sp-partners .partners__item{margin-right:44px}
   .sp-partners .partners__item img{height:calc(44px * var(--k,1))}
+
+  /* ── STREET COLOURS ─────────────────────────────────────
+     Each street wears its lanyard colour (tokens in bss.css), so a
+     crawler can find theirs by the lanyard round their neck. The script
+     sets data-sp-street on <body> — only when the switcher shows; with
+     no street split the page stays the event's red.
+       --sp-head   header field; white type on it clears 4.5:1
+       --sp-scr    the script word "Specials" in the header
+       --sp-price  the big price on a dark deal card
+     Not data-street: the switcher buttons are found by that attribute. */
+  body.sp{--sp-head:var(--red-d); --sp-scr:#FFE7E8; --sp-price:var(--text)}
+  body[data-sp-street="brady"]{--sp-head:var(--st-brady-on); --sp-scr:#FFE3C2;
+    --sp-tab-ink:#F8F8F6; --sp-price:var(--st-brady)}
+  body[data-sp-street="water"]{--sp-head:var(--st-water); --sp-scr:var(--st-water-ink);
+    --sp-tab-ink:var(--st-water-ink); --sp-price:var(--st-water-ink)}
+  body[data-sp-street="mlk"]{--sp-head:var(--st-mlk-on); --sp-scr:#DDF6D8;
+    --sp-tab-ink:#F8F8F6; --sp-price:#2BC23A}
 
   /* ── street switcher — sticks to the top while you scroll ── */
   .sp-bar{
@@ -92,7 +110,10 @@
     background:transparent; color:var(--text-2);
     transition:background .2s var(--quart), color .2s var(--quart);
   }
-  .sp-streets button[aria-pressed="true"]{background:#F8F8F6; color:#111110}
+  /* the pressed tab IS the header colour, and its label is the header's
+     script colour — one swatch per street across the top of the page */
+  .sp-streets button[aria-pressed="true"]{background:var(--sp-head, #F8F8F6); color:var(--sp-tab-ink, #111110)}
+  #sp-where{color:var(--sp-price)}
 
   /* ── THE SPECIALS ──────────────────────────────────────────
      One card per deal. Three things, in reading order: who (the logo),
@@ -117,7 +138,7 @@
   .sp-deal__note{display:block; margin-top:4px; font:400 14px/1.4 var(--body); color:var(--text-3)}
   .sp-deal__price{
     flex:none; margin:0;
-    font-family:var(--display); font-weight:400; color:var(--text);
+    font-family:var(--display); font-weight:400; color:var(--sp-price);
     font-size:92px; line-height:.46; letter-spacing:.02em;
     padding-bottom:4px;
   }
@@ -163,7 +184,7 @@
   <h1 class="d1">Today&rsquo;s <em class="scr">specials</em></h1>
   <p>Show your lanyard at the bar. No cover at any bar on your street.</p>
 </section>
-<span class="tear tear--down" style="--tear-fill:var(--red-d)"></span>
+<span class="tear tear--down" style="--tear-fill:var(--sp-head)"></span>
 
 <!-- The same partners carousel as the homepage and /12barsofchristmas,
      drawn from XMAS_PARTNERS in js/bss.js. Above the street switcher, so
@@ -232,7 +253,7 @@
 
 <!-- bss.js BEFORE the page script: it defines window.BSS_PARTNERS, which
      the specials read their logos and names from. -->
-<script src="/js/bss.js?v=1795375914"></script>
+<script src="/js/bss.js?v=1795623685"></script>
 <script>
 /* ── THE SPECIALS ────────────────────────────────────────────────
    The only thing that needs editing when the real specials come in.
@@ -304,6 +325,12 @@ var STREET_LABEL = { brady:'Brady Street', water:'Water Street', mlk:'MLK & Thir
     empty.hidden = shown.length > 0;
     where.textContent = byStreet ? STREET_LABEL[street] : '';
     btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-street') === street)); });
+    if (byStreet) {
+      document.body.setAttribute('data-sp-street', street);
+      /* the phone's own status bar follows the header colour */
+      var tc = document.querySelector('meta[name="theme-color"]');
+      if (tc) tc.setAttribute('content', getComputedStyle(document.body).getPropertyValue('--sp-head').trim() || '#B8141C');
+    }
   }
 
   btns.forEach(function (b) {
